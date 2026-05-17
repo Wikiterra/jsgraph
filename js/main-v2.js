@@ -3,15 +3,17 @@
 
 import '../assets/wiki.js';
 import '../assets/xtc.js';
-import '../assets/NumFormatter.js';
 import '../assets/jsg.js';
 import '../assets/jsgx3d.js';
 import '../assets/jsgMouseHandler.js';
 import '../assets/EarthMap.js';
+import '../assets/earth-map-data.js';
 import '../assets/Tabs.js';
 import '../assets/DataX.js';
 import '../assets/ModelAnimation.js';
 import '../assets/app.js';
+import '../assets/app-math.js';
 import '../assets/app-draw.js';
+import '../assets/demos-manager.js';
 import '../assets/demos-data.js';
 import './ui.js';

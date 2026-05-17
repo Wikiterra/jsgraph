@@ -10,8 +10,9 @@ import * as sliders  from './ui/sliders.js';
 import * as sunmoon  from './ui/sunmoon.js';
 import * as calendar from './ui/calendar.js';
 import * as playback from './ui/playback.js';
+import * as saveRestore from './ui/save-restore.js';
 
-const MODULES = [layers, rays, sliders, sunmoon, calendar, playback];
+const MODULES = [layers, rays, sliders, sunmoon, calendar, playback, saveRestore];
 
 const origUpdateAll = window.UpdateAll;
 window.UpdateAll = function () {
