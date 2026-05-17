@@ -141,6 +141,15 @@
 - Removed dead `DrawDateTime`, `DrawSunMoonAzimuthElevation`, `DrawMousePos` methods from `app.js` (replaced by top-bar displays; the only call sites were the suppression comment and a commented-out `OnClick`)
 - Inlined `ThisPageUrl`/`ThisPageShortUrl` = `location.href` at the top of `app.js`; dropped the post-import override block in `main-v2.js`
 
+## wiki.js auto-init handlers disabled (2026-05-17)
+
+Removed three wiki-specific lifecycle handlers from the end of `wiki.js`:
+- `xOnDomReady(InitWikiJS)` — registered `OnDocKeyDown` (Enter / 1–9 wiki paging) on `<html>` and `OnDblCklick` on every h1–h4. No such headers exist in this app; the keydown handler was a latent conflict surface.
+- `xOnDomReady(WikiMenuBarHandling.Init)` — only scans for `.menubar` divs (none exist).
+- `xOnLoad(UrlParams.Parse + OnOffSections.HandleUrlParameters + MarkSearch)` — wiki search highlight + `?open=`/`?close=` URL params, all irrelevant.
+
+The `xEventManager` load-handler chain is still installed by `app.js`'s own `xOnLoad(...)` registration, so `xOnLoadFinished` (read by `jsg.js`'s draw gate) is still set correctly.
+
 ## Dead variable removal (2026-05-17)
 
 - `AnimRestartAction = 'stop'` in `app.js` was declared, exported, never read. Dropped both the declaration and the two export-list entries.

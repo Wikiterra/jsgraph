@@ -469,7 +469,7 @@ function IsLayoutFullscreen(){return!xHasClass('Layout-Root','limitWidth');}
 function AddToCookie(aName,aValue,aSep,aDays){var value=xGetCookie(aName)||'';if(value!=''){value+=aSep;}
 value+=aValue;xSetCookie(aName,value,aDays);}
 function AddCBReq(aText){AddToCookie('AddCBReq',aText,'ï¿½',1);}
-xOnDomReady(InitWikiJS);function SEL(grp,idList,bUpdateLayout){function isInList(l,ele){for(var i=0;i<l.length;i++){if(l[i]==ele){return true;}}
+function SEL(grp,idList,bUpdateLayout){function isInList(l,ele){for(var i=0;i<l.length;i++){if(l[i]==ele){return true;}}
 return false;}
 bUpdateLayout=xDefBool(bUpdateLayout,false);var top=xScrollTop(null,true);for(var i=0;i<grp.length;i++){if(isInList(idList,grp[i])){xDisplay('SEL_ELE_'+grp[i],'');}}
 for(var i=0;i<grp.length;i++){if(!isInList(idList,grp[i])){xDisplay('SEL_ELE_'+grp[i],'none');}}
@@ -520,7 +520,7 @@ this.params[name]=value;}}},GetStr:function(name,def){this.Parse();name=name.toL
 return xDef(def)?def:'';},GetNum:function(name,def){this.Parse();var param=this.GetStr(name);if(param!=''){var val=parseFloat(param);if(!isNaN(val))return val;}
 return xDef(def)?def:'';},};var OnOffSections={HandleUrlParameters:function(){var idStr=UrlParams.GetStr('open');if(idStr!=''){this.SetStates(idStr,true);}
 var idStr=UrlParams.GetStr('close');if(idStr!=''){this.SetStates(idStr,false);}
-var url=location.href;var p=url.indexOf('#');if(p>=0){var urlHeader=url.substr(p+1);if(urlHeader!=''){urlHeader=urlHeader.replace(/H_/,'').replace(/_/g,' ');var onOffHeaderList=xGetAll('[data-onoffid]');for(var i=0;i<onOffHeaderList.length;i++){var headerElement=onOffHeaderList[i];var headerText=xInnerHTML(headerElement);if(headerText.indexOf(urlHeader)==0){var id=headerElement.dataset.onoffid;this.SetState(id,true);break;}}}}},SetStates:function(idStr,state){var idList=idStr.split(',');for(var i=0;i<idList.length;i++){var id=idList[i];if(id!=''){this.SetState(id,state);}}},SetState:function(id,state){var grp='SEL_GRP_'+id;var stateStr=state?'ON':'OFF';if(xDef(window[grp])){try{SEL(window[grp],[id+stateStr],true);}catch(e){}}},};xOnDomReady(function(){WikiMenuBarHandling.Init();});xOnLoad(function(){UrlParams.Parse();OnOffSections.HandleUrlParameters();MarkSearch();});
+var url=location.href;var p=url.indexOf('#');if(p>=0){var urlHeader=url.substr(p+1);if(urlHeader!=''){urlHeader=urlHeader.replace(/H_/,'').replace(/_/g,' ');var onOffHeaderList=xGetAll('[data-onoffid]');for(var i=0;i<onOffHeaderList.length;i++){var headerElement=onOffHeaderList[i];var headerText=xInnerHTML(headerElement);if(headerText.indexOf(urlHeader)==0){var id=headerElement.dataset.onoffid;this.SetState(id,true);break;}}}}},SetStates:function(idStr,state){var idList=idStr.split(',');for(var i=0;i<idList.length;i++){var id=idList[i];if(id!=''){this.SetState(id,state);}}},SetState:function(id,state){var grp='SEL_GRP_'+id;var stateStr=state?'ON':'OFF';if(xDef(window[grp])){try{SEL(window[grp],[id+stateStr],true);}catch(e){}}},};
 Object.assign(globalThis, {
   xClass2Type, xType, xDef, xAny, xObj, xObjOrNull, xFunc, xFuncOrNull, xArray, xStr, xNum, xBool, xIsNumeric,
   xDefAny, xDefAnyOrNull, xDefObj, xDefObjOrNull, xDefFunc, xDefFuncOrNull, xDefArray, xDefStr, xDefNum, xDefBool,
