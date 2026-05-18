@@ -14,7 +14,10 @@
       "Bash(grep -nE \"^\\\\};?\\\\s*$\" \"d:/Workspaces/Curiosity432-user/wikiterra-apps/Flat-Earth-Dome/fed-wabis-v2/assets/app.js\")",
       "Bash(node --check assets/app-draw.js)",
       "Bash(node --check js/ui/save-restore.js)",
-      "Bash(node --check js/ui.js)"
+      "Bash(node --check js/ui.js)",
+      "Bash(python)",
+      "Bash(git checkout *)",
+      "Bash(python trim-wiki.py)"
     ],
     "additionalDirectories": [
       "d:\\Workspaces\\Curiosity432-user\\wikiterra-apps\\Flat-Earth-Dome\\fed-wabis-v3\\src"

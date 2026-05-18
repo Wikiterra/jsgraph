@@ -167,3 +167,72 @@ The `xEventManager` load-handler chain is still installed by `app.js`'s own `xOn
 - Each submodule exports `init()` + `sync()`; orchestrator wraps `UpdateAll` once and iterates
 - Dropped IIFE wrapper; `var` → `const`/`let` and arrow functions in moved code
 - Fixed lingering bug: removed dangling `applyCalendarInput()` call from the outside-click handler (function never existed)
+
+---
+
+## Phase 8 — JS module decomposition (2026-05-17 → 2026-05-18)
+
+Goal: break the two monoliths (`app.js` 3232 lines, `wiki.js` 920 lines) into focused, cohesive modules; remove dead code and the last inline JS. Load order in `main-v2.js` after this phase: `wiki → xtc → jsg/jsgx3d/jsgMouseHandler → EarthMap → earth-map-data → Tabs → DataX → ModelAnimation → app → app-math → app-draw → demos-manager → demos-data → ui`.
+
+### `app.js` decomposition: 3232 → 453 lines (−86%)
+
+- **`assets/demos-data.js`** (new, 1230 lines) — extracted `Demos.AddState` / `Demos.AddDemo` payloads + the `Tpse`/`Ttxt`/`Tpnt`/`Tval` task helpers + `AnimT1..10`/`AnimTxt` constants. Loads after `demos-manager.js`; references `FeDomeApp`, `Demos`, `AnimationSpeed`, x-helpers via `globalThis`.
+- **`assets/app-math.js`** (new, 164 lines) — extracted 24 pure-math coord/transform methods (`DateToEarthRotAngle`, `CompTransMatCelestToGlobe`, `CompTransMatLocalFeToGlobalFe`, `CompTransMatSunToCelest`, `CompTransMatMoonToCelest`, `CompTransMatDomeToFe`, `SunAngleToCelestCoord`, `MoonAngleToCelestCoord`, `CompMoonNorthCelestCoord`, `DateToSunAngleCelest`, `DateToMoonPrecessAngle`, `DateToMoonAngleCelest`, `CelestCoordToLocalGlobeCoord`, `CelestLatLongToLocalGlobeCoord`, `CelestLatLongToGlobalFeSphereCoord`, `CelestCoordToLocalGlobeAngles`, `LatLongToCoord`, `CoordToLatLong`, `LocalGlobeCoordToAngles`, `FeLatLongToGlobalFeCoord`, `CelestLatLongToDomeCoord`, `CelestCoordToDomeCoord`, `CelestCoordToGlobalFeCoord`, `DomeCoordToGlobalFeCoord`) via `Object.assign(FeDomeApp, {...})`.
+- **`assets/app-draw.js`** (new, 1009 lines) — extracted 25 `FeDomeApp.Draw*` methods plus `DateTimeToString` (which sat in the middle of the Draw block) via `Object.assign(FeDomeApp, {...})`.
+- **`assets/demos-manager.js`** (new, 401 lines) — extracted `AnimationSpeed`, the `Demos` registry (`Init`, `SetButtonText`, `Reset`, `UpdateDemoPanels`, `GetCurrPos`, `GetNStates`, `GetLastPos`, `SetPos`, `SetDemo`, `SetSusDemo`, `SetNewDemo`, `IsActive`/`IsPlaying`/`IsEndPos`/`Prev`/`Next`/`Play`/`Stop`), and the `xOnLoad`/`xOnDomReady` Tabs button-wiring handlers (`ResetButton`/`TFEButton`/`BackButton`/`ForwButton`/`PlayButton`/`CountButton`).
+- **`assets/app.js`** (now 453 lines) — `FeDomeApp` data + lifecycle methods (`CreateFeGraph`, `Init`, `ClearDescription`, `OnMouseMove`, `OnScroll`, `Update`), `UpdateAllRunning`/`UpdateAll`/`ResetApp`/`TFE`/`HandleUrlCommands`, the three `DataX.Assign*` wiring calls, and the constant helpers (`ToRad`/`ToDeg`/`sqr`/`Limit1`/`Limit01`/`ToRange`).
+
+### `wiki.js` cleanup: 920 → 424 lines (−54%)
+
+Verified 0 external references for each deletion via cross-codebase grep before removing. All survivors are still in the export list:
+
+- Deleted: `WikiMenuBarHandling`, `MarkSearch`/`highlightWord`/`highlightRegExp`/`DoMarkSearch`/`ToggleMarks` (wiki search-highlight machinery), `OnOffSections`, wiki.js's own `UrlParams` object (DataX has its own internal `UrlParams`), `LayoutMaximize`/`LayoutNormal`/`IsLayoutMaximized`/`LayoutFullscreenOn`/`LayoutFullscreenOff`/`IsLayoutFullscreen`, `Zoom` singleton + `CZoom` class + all `ZoomInit`/`ZoomPics`/`ZoomDebug`/`ZoomIn`/`ZoomOut`/`ZoomEnable`/`ZoomDisable` shims, `CProgressbar`/`Progressbar`, `EditPage`/`ShowUploadForm`/`ShowWikiFunctions`/`OnDocKeyDown`/`UrlEncode`/`Trim`/`OnDblCklick`/`InitWikiJS`, `MarkupMathText`/`ProcessMathText`, `AddToCookie`/`AddCBReq`/`SEL`/`SplitWords`/`decodeHtml`, `xGreekNamesToUnicode`/`xGreekNameUnicodeDict`/`xGetUnicodeOfGreekName`, `xDebug`/`xDebugOutId`/`xClearLog`/`xDbg*`/`xDbgOut`/`xDbgApp`, `xClipboardBuffer`/`xToClipboard`, `xImage`/`xChangeImage`/`xMultiImage`, `htmlString`, the entire `xOptions` + `xTransform*` cluster (`xSupportsTransform`/`xTransform`/`xTransformOrigin`/`xGetTransformPropertyName`/`xGetTransformDocOffset`/`xTransformNone`/`xTransformTranslate`/`xTransformTranslateScale`).
+- Kept (still used externally): `xSetCookie`/`xGetCookie`/`xDeleteCookie` (DataX cookie save/restore), `xTimeMS` (ModelAnimation), `CImgCache` + `IC` singleton (jsg.js image cache).
+- `xLog` reduced to a `function xLog() {}` no-op stub because `CImgCache.DisplayStatus` calls it internally.
+- One leftover reference cleaned: `xEventManager.TriggerLayoutChange` had a stray `xOptions.Transform.OffsetElement = null;` that needed removing after the xTransform cluster was deleted.
+- Object.assign + export lists pruned to match the surviving symbol set.
+
+### `EarthMap.js` split
+
+- **`assets/earth-map-data.js`** (new, 4 lines wrapping a 12.8 KB literal) — extracted the entire `ContinentList: [...]` polygon data (5 continents, ~30 lands with PolyX/PolyY arrays + lakes). Loaded immediately after `EarthMap.js` in `main-v2.js`; assigns `EarthMap.ContinentList = [...]`.
+- `EarthMap.js` itself stays at 45 lines but now contains only the drawing methods + config (`SetWaterColor`, `SetLakeColor`, `SetContinentColor`, `SetLandColor`, `DrawGlobe`, `DrawFlatEarth`, `PointOnGlobe`, etc.) with `ContinentList: []` as an empty placeholder.
+
+### `NumFormatter.js` deleted
+
+- 88-line module had zero external references across the entire codebase. DataX's `FormatNum` is its own internal method, not from this file. Import removed from `main-v2.js`; file deleted.
+
+### Inline `onclick` removed (last inline JS)
+
+- **`js/ui/save-restore.js`** (new, 13 lines) — wires the four save-restore panel buttons (Get App State, Get App URL, Set App State, Clear) via `addEventListener`, following the existing `init()`/`sync()` contract of the other `js/ui/*.js` modules.
+- `index.html`: the four buttons now use `id="sr-get-state"` / `sr-get-url` / `sr-set-state` / `sr-clear` instead of inline `onclick="DataX..."` attributes. No inline JS attributes remain anywhere.
+- `js/ui.js`: imports the new module and adds it to `MODULES`.
+
+### Save/restore panel: verified live
+
+- `index.html` has `<details class="save-restore">` with `#SaveRestorePanel` textarea + screenshot button.
+- `app.js` calls `DataX.AssignSaveRestoreDomObj('SaveRestorePanel')` which attaches a keydown(Enter)→`SetAppState` handler and restores from the `FeDomeAppAppState` cookie on page load.
+- DataX uses `xTextControl` from `assets/xtc.js`; both kept.
+
+### Net result
+
+| File | Before | After | Δ |
+|---|---:|---:|---:|
+| `assets/app.js` | 3232 | 453 | −86% |
+| `assets/wiki.js` | 920 | 424 | −54% |
+| `assets/NumFormatter.js` | 88 | (deleted) | — |
+| **New** `assets/demos-data.js` | — | 1230 | — |
+| **New** `assets/app-draw.js` | — | 1009 | — |
+| **New** `assets/demos-manager.js` | — | 401 | — |
+| **New** `assets/app-math.js` | — | 164 | — |
+| **New** `assets/earth-map-data.js` | — | 4 | — |
+| **New** `js/ui/save-restore.js` | — | 13 | — |
+
+All files pass `node --check`. Behavior verified by user (date/time playback, layer toggles, ray controls, calendar widget, save/restore, screenshot export).
+
+### wiki.js — 29 more dead helpers removed (2026-05-18)
+
+Second pass after the big Phase 8 cleanup. Cross-grepped each helper for external + internal usage; deleted only true leaves with no callers.
+
+- Deleted: `xMoveTo`, `xLeft`, `xTop`, `xOpacity`, `xResizeTo`, `xVisibility`, `xShow`, `xHide`, `xDisplay`, `xIsDisplayed`, `xCreateTextNode`, `xAppendChild`, `xInsertBefore`, `xRemoveChild`, `xChildNodes`, `xHasChildNodes`, `xElementWidth`, `xElementHeight`, `xNaturalWidth`, `xNaturalHeight`, `xScrollWidth`, `xScrollHeight`, `xClientWidth`, `xClientHeight`, `xTagName`, `xZIndex`, `xCursor`, `xGetFirst`, `xArrayMap` — 29 leaf helpers, all `ext=0` and only their own declaration/export bookkeeping inside wiki.js.
+- Kept (still kept alive by internal callers): `xPageX`/`xPageY`/`xScrollLeft`/`xScrollTop` (used by `xEvent.Init` mouse wrapper), `xFStr` (used by `CImgCache.GetStatus`), `xMaskRegExp`/`xIsRoot`/`xIsElementAndNotRoot` (used by `xHasClass`/`xAddClass`/`xRemoveClass` + `xPageX`/`xPageY`).
+- File: 424 → 364 lines (−60). Object.assign and export lists pruned to match. Cross-codebase grep confirmed no residual references.

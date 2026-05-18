@@ -37,11 +37,7 @@ function xArrForEach(arr, func, thisArg) {
   var t
   if (arguments.length > 2) t = thisArg; var n = arr.length; for (var i = 0; i < n; i++) { func.call(t, arr[i], i, arr); }
 }
-function xArrayMap(arr, func, thisArg) {
-  var t
-  if (arguments.length > 2) t = thisArg; var n = arr.length; var newArr = Array(n); for (var i = 0; i < n; i++) { newArr[i] = func.call(t, arr[i], i, arr); }
-  return newArr;
-}
+
 function xArrRemove(arr, func, thisArg) {
   var t, undef
   if (arguments.length > 2) t = thisArg; var i = 0; while (i < arr.length) { if (func.call(t, arr[i], i, arr)) { var ele = arr[i]; arr.splice(i, 1); return ele; } else { i++; } }
@@ -53,7 +49,7 @@ function xArrRemoveAll(arr, func, thisArg) {
   return n;
 }
 function xGet(id) { return document.getElementById(id); }
-function xGetFirst(selectors) { return document.querySelector(selectors); }
+
 function xGetAll(selectors) { return document.querySelectorAll(selectors); }
 function xElement(e) { return (typeof (e) === 'string') ? document.getElementById(e) : e; }
 function xDataset(e, name) { return xElement(e).getAttribute('data-' + name); }
@@ -66,62 +62,32 @@ function xInnerText(e, defaultText) {
   if (xDef(e.textContent)) { return e.textContent; }
   return defaultText;
 }
-function xTagName(e) { return xElement(e).tagName; }
-function xShow(e) { xVisibility(e, 1); }
-function xHide(e) { xVisibility(e, 0); }
-function xVisibility(e, v) {
-  if (xDef(v)) { if (!xStr(v)) v = v ? 'visible' : 'hidden'; xElement(e).style.visibility = v; } else { v = xElement(e).style.visibility; }
-  return v;
-}
-function xDisplay(e, v) {
-  e = xElement(e); var old = e.style.display; if (xStr(v)) { e.style.display = v; if (old != v) xTriggerEventDisplayChange(e); } else { v = old; }
-  return v;
-}
-function xIsDisplayed(e) {
-  e = xElement(e); while (xIsElementAndNotRoot(e)) { if (getComputedStyle(e).getPropertyValue('display') == 'none') return false; e = e.parentNode; }
-  return true;
-}
-function xMoveTo(e, iX, iY) { e = xElement(e); e.style.left = iX + 'px'; e.style.top = iY + 'px'; }
-function xLeft(e, iX) {
-  e = xElement(e); if (xStr(e.style.left)) { if (xNum(iX)) { e.style.left = iX + 'px'; } else { iX = parseInt(e.style.left, 10); if (isNaN(iX)) iX = 0; } }
-  else if (xDef(e.style.pixelLeft)) { if (xNum(iX)) { e.style.pixelLeft = iX; } else { iX = e.style.pixelLeft; } } else { iX = 0; }
-  return iX;
-}
-function xTop(e, iY) {
-  e = xElement(e); if (xStr(e.style.top)) { if (xNum(iY)) { e.style.top = iY + 'px'; } else { iY = parseInt(e.style.top, 10); if (isNaN(iY)) iY = 0; } }
-  else if (xDef(e.style.pixelTop)) {
-    if (xNum(iY)) { e.style.pixelTop = iY; }
-    else { iY = e.style.pixelTop; }
-  } else { iY = 0; }
-  return iY;
-}
-function xOpacity(e, uO) {
-  if (xNum(uO)) { xElement(e).style.opacity = uO; } else { uO = xElement(e).style.opacity; }
-  return uO;
-}
-function xResizeTo(e, uW, uH, bBorderBoxSizing) { xWidth(e, uW, bBorderBoxSizing); xHeight(e, uH, bBorderBoxSizing); }
-function xElementWidth(e, uW) {
-  if (xNum(uW)) { xElement(e).width = uW; }
-  else { uW = xElement(e).width; }
-  return uW;
-}
+
+
+
+
+
+
+
+
+
+
+
+
 function xWidth(e, uW, bBorderBoxSizing) {
   if (xNum(uW)) { if (uW < 0) uW = 0; uW = Math.round(uW); xSetCW(xElement(e), uW, bBorderBoxSizing); } else { uW = xElement(e).offsetWidth; }
   return uW;
 }
-function xScrollWidth(e) { return xElement(e).scrollWidth; }
-function xNaturalWidth(img) { img = xElement(img); if (xDef(img.naturalWidth)) return img.naturalWidth; var tmpImg = new Image(); tmpImg.src = img.src; return tmpImg.width; }
-function xElementHeight(e, uH) {
-  if (xNum(uH)) { xElement(e).height = uH; } else { uH = xElement(e).height; }
-  return uH;
-}
+
+
+
 function xHeight(e, uH, bBorderBoxSizing) {
   if (xNum(uH)) { if (uH < 0) uH = 0; uH = Math.round(uH); xSetCH(xElement(e), uH, bBorderBoxSizing); }
   else { uH = xElement(e).offsetHeight; }
   return uH;
 }
-function xScrollHeight(e) { return xElement(e).scrollHeight; }
-function xNaturalHeight(img) { img = xElement(img); if (xDef(img.naturalHeight)) return img.naturalHeight; var tmpImg = new Image(); tmpImg.src = img.src; return tmpImg.height; }
+
+
 function xGetCS(ele, sP) { return parseInt(window.getComputedStyle(ele, '').getPropertyValue(sP), 10); }
 function xSetCW(ele, uW, bBorderBoxSizing) {
   var pl = 0, pr = 0, bl = 0, br = 0; bBorderBoxSizing = xDefBool(bBorderBoxSizing, true); var cssW = uW; if (bBorderBoxSizing) {
@@ -141,18 +107,8 @@ function xSetCH(ele, uH, bBorderBoxSizing) {
   }
   if (cssH < 0) cssH = 0; ele.style.height = cssH + 'px';
 }
-function xClientWidth() {
-  var w = 0; if (document.compatMode == 'CSS1Compat' && !window.opera && document.documentElement && document.documentElement.clientWidth) { w = document.documentElement.clientWidth; }
-  else if (document.body && document.body.clientWidth) { w = document.body.clientWidth; }
-  else if (xDef(window.innerWidth) && xDef(window.innerHeight) && xDef(document.height)) { w = window.innerWidth; if (document.height > window.innerHeight) { w -= 16; } }
-  return w;
-}
-function xClientHeight() {
-  var h = 0; if (document.compatMode == 'CSS1Compat' && !window.opera && document.documentElement && document.documentElement.clientHeight) { h = document.documentElement.clientHeight; }
-  else if (document.body && document.body.clientHeight) { h = document.body.clientHeight; }
-  else if (xDef(window.innerWidth) && xDef(window.innerHeight) && xDef(document.width)) { h = window.innerHeight; if (document.width > window.innerWidth) { h -= 16; } }
-  return h;
-}
+
+
 function xPageX(e) {
   e = xElement(e); var x = 0; var n = e; while (xIsElementAndNotRoot(e)) { x += e.offsetLeft; e = e.offsetParent; }
   e = n; while (xIsElementAndNotRoot(e)) { x -= e.scrollLeft; e = e.parentNode; }
@@ -181,14 +137,8 @@ function xScrollTop(e, bWin, val) {
   else { if (xNum(val)) { xElement(e).scrollTop = val; } else { offset = xElement(e).scrollTop; } }
   return offset;
 }
-function xZIndex(e, uZ) {
-  if (xNum(uZ)) { xElement(e).style.zIndex = uZ; } else { uZ = parseInt(xElement(e).style.zIndex, 10); }
-  return uZ;
-}
-function xCursor(e, c) {
-  if (xStr(c)) { xElement(e).style.cursor = c; } else { c = xElement(e).style.cursor; }
-  return c;
-}
+
+
 function xStyle(e, sStyle, sVal) {
   if (xDef(sVal)) { xElement(e).style[sStyle] = sVal; } else { sVal = xElement(e).style[sStyle]; }
   return sVal;
@@ -206,12 +156,12 @@ function xParent(e, bNode) {
   else { return xElement(e).offsetParent; }
 }
 function xCreateElement(sTag) { return document.createElement(sTag); }
-function xCreateTextNode(s) { return document.createTextNode(s); }
-function xHasChildNodes(oParent) { return oParent.hasChildNodes(); }
-function xChildNodes(oParent) { return oParent.childNodes; }
-function xAppendChild(oParent, oChild) { return oParent.appendChild(oChild); }
-function xInsertBefore(oParent, oChild, oRef) { return oParent.insertBefore(oChild, oRef); }
-function xRemoveChild(oParent, oChild) { return oParent.removeChild(oChild); }
+
+
+
+
+
+
 function xGetByTag(t, p) { t = t || '*'; p = p || document; return p.getElementsByTagName(t); }
 function xGetByClass(className, p) { p = p || document; return p.getElementsByClassName(className); }
 function xAddEvent(e, eventType, callback, cap) { cap = xDefBool(cap, false); var wrapper = function xOnCallbackEventWrapper(e) { callback(new xEvent(e)); }; callback.xWrapperFunc = wrapper; xElement(e).addEventListener(eventType, wrapper, cap); }
@@ -383,15 +333,10 @@ CImgCache.prototype.CallOnLoadFuncs = function (aImageID) {
 Object.assign(globalThis, {
   xClass2Type, xType, xDef, xAny, xObj, xObjOrNull, xFunc, xFuncOrNull, xArray, xStr, xNum, xBool, xIsNumeric,
   xDefAny, xDefAnyOrNull, xDefObj, xDefObjOrNull, xDefFunc, xDefFuncOrNull, xDefArray, xDefStr, xDefNum, xDefBool,
-  xArgsToArray, xFStr, xArrFind, xArrFindIndex, xArrForEach, xArrayMap, xArrRemove, xArrRemoveAll,
-  xGet, xGetFirst, xGetAll, xElement, xDataset, xInnerHTML, xInnerText, xTagName,
-  xShow, xHide, xVisibility, xDisplay, xIsDisplayed, xMoveTo, xLeft, xTop, xOpacity,
-  xResizeTo, xElementWidth, xWidth, xScrollWidth, xNaturalWidth, xElementHeight, xHeight, xScrollHeight, xNaturalHeight,
-  xGetCS, xSetCW, xSetCH, xClientWidth, xClientHeight,
-  xPageX, xPageY, xIsRoot, xIsElementAndNotRoot, xScrollLeft, xScrollTop, xZIndex, xCursor, xStyle,
+  xArgsToArray, xFStr, xArrFind, xArrFindIndex, xArrForEach, xArrRemove, xArrRemoveAll,
+  xGet, xGetAll, xElement, xDataset, xInnerHTML, xInnerText, xWidth, xHeight, xGetCS, xSetCW, xSetCH, xPageX, xPageY, xIsRoot, xIsElementAndNotRoot, xScrollLeft, xScrollTop, xStyle,
   xMaskRegExp, xHasClass, xAddClass, xRemoveClass, xToggleClass, xSetClassIf, xSetEnabled, xSetDisabled,
-  xParent, xCreateElement, xCreateTextNode, xHasChildNodes, xChildNodes, xAppendChild, xInsertBefore, xRemoveChild,
-  xGetByTag, xGetByClass, xAddEvent, xRemoveEvent, xEvent,
+  xParent, xCreateElement, xGetByTag, xGetByClass, xAddEvent, xRemoveEvent, xEvent,
   xCallbackChain, xOnLoadFinished, xEventManager,
   xAddEventLayoutChange, xRemoveEventLayoutChange, xTriggerEventLayoutChange,
   xAddEventDisplayChange, xRemoveEventDisplayChange, xTriggerEventDisplayChange,
@@ -404,15 +349,10 @@ Object.assign(globalThis, {
 export {
   xClass2Type, xType, xDef, xAny, xObj, xObjOrNull, xFunc, xFuncOrNull, xArray, xStr, xNum, xBool, xIsNumeric,
   xDefAny, xDefAnyOrNull, xDefObj, xDefObjOrNull, xDefFunc, xDefFuncOrNull, xDefArray, xDefStr, xDefNum, xDefBool,
-  xArgsToArray, xFStr, xArrFind, xArrFindIndex, xArrForEach, xArrayMap, xArrRemove, xArrRemoveAll,
-  xGet, xGetFirst, xGetAll, xElement, xDataset, xInnerHTML, xInnerText, xTagName,
-  xShow, xHide, xVisibility, xDisplay, xIsDisplayed, xMoveTo, xLeft, xTop, xOpacity,
-  xResizeTo, xElementWidth, xWidth, xScrollWidth, xNaturalWidth, xElementHeight, xHeight, xScrollHeight, xNaturalHeight,
-  xGetCS, xSetCW, xSetCH, xClientWidth, xClientHeight,
-  xPageX, xPageY, xIsRoot, xIsElementAndNotRoot, xScrollLeft, xScrollTop, xZIndex, xCursor, xStyle,
+  xArgsToArray, xFStr, xArrFind, xArrFindIndex, xArrForEach, xArrRemove, xArrRemoveAll,
+  xGet, xGetAll, xElement, xDataset, xInnerHTML, xInnerText, xWidth, xHeight, xGetCS, xSetCW, xSetCH, xPageX, xPageY, xIsRoot, xIsElementAndNotRoot, xScrollLeft, xScrollTop, xStyle,
   xMaskRegExp, xHasClass, xAddClass, xRemoveClass, xToggleClass, xSetClassIf, xSetEnabled, xSetDisabled,
-  xParent, xCreateElement, xCreateTextNode, xHasChildNodes, xChildNodes, xAppendChild, xInsertBefore, xRemoveChild,
-  xGetByTag, xGetByClass, xAddEvent, xRemoveEvent, xEvent,
+  xParent, xCreateElement, xGetByTag, xGetByClass, xAddEvent, xRemoveEvent, xEvent,
   xCallbackChain, xOnLoadFinished, xEventManager,
   xAddEventLayoutChange, xRemoveEventLayoutChange, xTriggerEventLayoutChange,
   xAddEventDisplayChange, xRemoveEventDisplayChange, xTriggerEventDisplayChange,
