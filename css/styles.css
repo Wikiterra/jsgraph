@@ -657,6 +657,31 @@ body {
 }
 
 /* =============================================================
+   Gesture hint pill (fades out via ui.js after 5 s)
+   ============================================================= */
+#gesture-hint {
+  position: fixed;
+  bottom: calc(var(--bottom-bar-h) + 14px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.62);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 11px;
+  font-family: inherit;
+  padding: 5px 14px;
+  border-radius: 20px;
+  pointer-events: none;
+  z-index: 500;
+  white-space: nowrap;
+  transition: opacity 0.9s;
+}
+
+/* Touch-only / coarse-pointer devices: hide modifier + scroll hint */
+@media (hover: none) and (pointer: coarse) {
+  .gh-fine { display: none; }
+}
+
+/* =============================================================
    Reduced motion: cut all transitions and animations
    ============================================================= */
 @media (prefers-reduced-motion: reduce) {

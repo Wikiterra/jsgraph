@@ -12,7 +12,7 @@
 
     <!-- Top bar: demo tabs (left) + time controls + calendar (right) -->
     <header id="top-bar">
-      <!-- Demo tabs: TabSelectors / TabButton / TabEnabled / TabActive class names drive styling in styles.css -->
+      <!-- Demo tabs: TabSelectors / TabButton / TabEnabled / TabPrimary class names drive styling in styles.css -->
       <ul id="DomeDemoTabs" class="TabSelectors" role="tablist" aria-label="Demo scenarios">
         <li class="TabButton TabEnabled TabPrimary" id="IntroButton"   role="tab" aria-selected="false" aria-controls="FeGraph-Canvas">Intro</li>
         <li class="TabButton TabEnabled TabPrimary" id="EclipsesButton" role="tab" aria-selected="false" aria-controls="FeGraph-Canvas">Eclipses</li>
@@ -235,9 +235,8 @@
     <div id="canvas-status" role="status" aria-live="polite" aria-atomic="true"
       style="position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;"></div>
     <!-- Gesture hint: fades out after 5 s -->
-    <div id="gesture-hint" role="note"
-      style="position:fixed;bottom:calc(var(--bottom-bar-h) + 14px);left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.62);color:rgba(255,255,255,0.85);font-size:11px;font-family:inherit;padding:5px 14px;border-radius:20px;pointer-events:none;z-index:500;white-space:nowrap;transition:opacity 0.9s;">
-      Left-drag: rotate &nbsp;·&nbsp; Right-drag: observer position &nbsp;·&nbsp; Scroll: zoom
+    <div id="gesture-hint" role="note">
+      <span>Drag: rotate</span><span class="gh-fine"> &nbsp;·&nbsp; Ctrl-drag: observer position &nbsp;·&nbsp; Scroll: zoom</span>
     </div>
 
   </main>

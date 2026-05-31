@@ -27,7 +27,6 @@ function syncDemoAriaSelected(activeName) {
 var Demos = {
   DemoList: [],
   CurrDemo: null,
-  LastDemo: null,
   SusDemo: null,
   SusState: 0,
   CurrModAnim: null,
@@ -67,7 +66,6 @@ var Demos = {
   Reset: function (callOnStop) {
     callOnStop = xDefBool(callOnStop, true);
     this.Stop(false);
-    this.LastDemo = this.CurrDemo;
     if (this.CurrDemo) {
       this.SusDemo = this.CurrDemo;
       this.SusState = this.CurrDemo.Anim.CurrState;
@@ -86,36 +84,19 @@ var Demos = {
   },
 
   UpdateDemoPanels: function () {
-    if (this.LastDemo) {
-      xRemoveClass(this.LastDemo.Name + 'Button', 'TabActive');
-      this.LastDemo = null;
-    }
     if (this.CurrDemo) {
       xAddClass('BackButton', 'TabEnabled');
       xAddClass('PlayButton', 'TabEnabled');
       xAddClass('ForwButton', 'TabEnabled');
       xAddClass('CountButton', 'TabEnabled');
-      if (this.IsPlaying()) {
-        xInnerHTML('PlayButton', 'Stop');
-        xAddClass('PlayButton', 'TabActive');
-      } else {
-        xInnerHTML('PlayButton', 'Play');
-        xRemoveClass('PlayButton', 'TabActive');
-      }
+      xInnerHTML('PlayButton', this.IsPlaying() ? 'Stop' : 'Play');
       var pos = this.GetCurrPos() + 1;
-      if (this.IsEndPos()) {
-        pos = 'end';
-      } else {
-        pos = pos.toFixed(0);
-      }
-      xInnerHTML('CountButton', pos);
-      xAddClass(this.CurrDemo.Name + 'Button', 'TabActive');
+      xInnerHTML('CountButton', this.IsEndPos() ? 'end' : pos.toFixed(0));
       syncDemoAriaSelected(this.CurrDemo.Name);
     } else {
       if (this.SusDemo) {
         xInnerHTML('PlayButton', 'Resume');
         xAddClass('PlayButton', 'TabEnabled');
-        xAddClass('PlayButton', 'TabActive');
         xInnerHTML('CountButton', (this.SusState + 1).toFixed(0));
       } else {
         xInnerHTML('PlayButton', 'Play');
@@ -133,7 +114,7 @@ var Demos = {
     // returns ModelAnimation
     var anim = NewModelAnimation({
       ModelRef: FeDomeApp,
-      OnModelChange: function () { UpdateAll(false, false); },
+      OnModelChange: function () { UpdateAll(false); },
       PauseTime: 0,
       OnAfterStateChange: function (anim, state) { Demos.UpdateDemoPanels(); },
       OnStopPlaying: function (anim, state) {
@@ -343,7 +324,6 @@ var Demos = {
     // private function
     var i = this.Find(name);
     if (i < 0) return false;
-    this.LastDemo = this.CurrDemo;
     this.CurrDemo = this.DemoList[i];
     return true;
   },

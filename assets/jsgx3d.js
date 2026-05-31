@@ -142,7 +142,10 @@ function JsGraphX3D(aParams) {
   this.WorkPoly2D = new JsgPolygon(false, 'JsGraphX3D.WorkPoly2D (local)'); this.WorkPoint3D = JsgVect3.Null(); this.WorkPoint3D2 = JsgVect3.Null(); this.WorkPoly3D = new JsgPolygon(true, 'JsGraphX3D.WorkPoly3D'); this.WorkPoly3D2 = new JsgPolygon(true, 'JsGraphX3D.WorkPoly3D2'); this.XfmPolys3D = new JsgPolygonList(true, 'JsGraphX3D.XfmPolys3D'); this.CamPolys3D = new JsgPolygonList(true, 'JsGraphX3D.CamPolys3D'); this.ClipPolys3D1 = new JsgPolygonList(true, 'JsGraphX3D.ClipPolys3D1'); this.ClipPolys3D2 = new JsgPolygonList(true, 'JsGraphX3D.ClipPolys3D2'); this.Trans3D = null; this.Trans3DStack = []; this.Plane = new JsgPlane([0, 0, 0], [0, 1, 0], [0, 0, 1]); this.Camera = new JsgCamera(); this.PathPolys3D = new JsgPolygonList(true, 'JsGraphX3D.PathPolys3D (local)'); this.IsPath3DOpen = false; this.ApplyTransToPath3D = false; this.LastPos3D = JsgVect3.Null(); this.LastPosOnPlane = JsgVect2.Null()
   this.Poly3D = new JsgPolygon(true, 'JsGraphX3D.Poly3D'); this.ApplyTransToPoly3D = false; this.CameraClipPlaneDist = 0; this.ClipPlaneList = [null]; this.Reset3D(); this.SetAll(aParams); this.SetWindowToCameraScreen();
 }
-JsGraphX3D.inheritsFrom(JsGraph); JsGraphX3D.prototype.Reset3D = function (reset2D, clear) {
+JsGraphX3D.prototype = Object.create(JsGraph.prototype);
+JsGraphX3D.prototype.constructor = JsGraphX3D;
+JsGraphX3D.prototype.parentClass = JsGraph.prototype;
+JsGraphX3D.prototype.Reset3D = function (reset2D, clear) {
   reset2D = xDefBool(reset2D, true); clear = xDefBool(clear, true); if (reset2D) { this.Reset(false); }
   this.CameraClipPlaneDist = 0; this.Plane.Set([0, 0, 0], [0, 1, 0], [0, 0, 1]); this.ClipPlaneList = [null]; this.ClipPlaneListSize = 1; this.PathPolys3D.Reset(); this.Trans3D = null; this.Trans3DStack = []; this.IsPath3DOpen = false; this.SetViewport(); this.ResetCamera(); if (clear) { this.Clear(); }
 }

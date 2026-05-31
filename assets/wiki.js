@@ -24,12 +24,12 @@ function xDefBool(aRef, aDefault) { return (typeof (aRef) === 'boolean') ? aRef 
 function xFStr(format, etc) { var arg = arguments; var i = 1; return format.replace(/(#(#)?)/g, function (match, p1, p2) { return p2 || arg[i++]; }); }
 function xArrFind(start, arr, func, thisArg) {
   if (!xNum(start)) return xArrFind(0, start, arr, func); var t, undef
-  if (arguments.lenth > 3) t = thisArg; var n = arr.length; for (var i = start; i < n; i++) { if (func.call(t, arr[i], i, arr)) return arr[i]; }
+  if (arguments.length > 3) t = thisArg; var n = arr.length; for (var i = start; i < n; i++) { if (func.call(t, arr[i], i, arr)) return arr[i]; }
   return undef;
 }
 function xArrFindIndex(start, arr, func, thisArg) {
   if (!xNum(start)) return xArrFindIndex(0, start, arr, func); var t
-  if (arguments.lenth > 3) t = thisArg; var n = arr.length; for (var i = start; i < n; i++) { if (func.call(t, arr[i], i, arr)) return i; }
+  if (arguments.length > 3) t = thisArg; var n = arr.length; for (var i = start; i < n; i++) { if (func.call(t, arr[i], i, arr)) return i; }
   return -1;
 }
 function xArrForEach(arr, func, thisArg) {
@@ -170,7 +170,7 @@ xEvent.prototype.Init = function (evt) {
 xEvent.prototype.PreventDefault = function () { if (!this.event) return; if (this.event.preventDefault) this.event.preventDefault(); this.event.returnValue = false; };
 
 function xCallbackChain() { this.FuncList = []; this.ParamList = []; this.Active = false; }
-xCallbackChain.prototype.Add = function (aFunc, once, param) { once = xDefBool(once, false); param = xDefAny(param, null); if (once && this.Containes(aFunc)) return false; this.FuncList.push(aFunc); this.ParamList.push(param); return true; }
+xCallbackChain.prototype.Add = function (aFunc, once, param) { once = xDefBool(once, false); param = xDefAny(param, null); if (once && this.Contains(aFunc)) return false; this.FuncList.push(aFunc); this.ParamList.push(param); return true; }
 xCallbackChain.prototype.Contains = function (aFunc) { return xDef(xArrFind(this.FuncList, function CB_Compare_Funcs(func) { return func == aFunc; })); }
 xCallbackChain.prototype.Remove = function (aFunc) { return xArrRemoveAll(this.FuncList, function CB_Compare_Funcs(func) { return func == aFunc; }); }
 xCallbackChain.prototype.Call = function (aArg, aExceptionFunc) {
@@ -234,22 +234,6 @@ function xGetCookie(name) {
   return null;
 }
 function xDeleteCookie(name) { xSetCookie(name, '', -1); }
-(function () {
-  var lastTime = 0; var vendors = ['ms', 'moz', 'webkit', 'o']; for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) { window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame']; window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame']; }
-  if (!window.requestAnimationFrame)
-    window.requestAnimationFrame = function (callback, element) { var currTime = new Date().getTime(); var timeToCall = Math.max(0, 16 - (currTime - lastTime)); var id = window.setTimeout(function () { callback(currTime + timeToCall); }, timeToCall); lastTime = currTime + timeToCall; return id; }; if (!window.cancelAnimationFrame)
-    window.cancelAnimationFrame = function (id) { clearTimeout(id); };
-}()); if (typeof Object.create != 'function') {
-  Object.create = (function () {
-    var Temp = function () { }; return function (prototype) {
-      if (arguments.length > 1) { throw Error('Second argument not supported'); }
-      if (typeof prototype != 'object') { throw TypeError('Argument must be an object'); }
-      Temp.prototype = prototype; var result = new Temp(); Temp.prototype = null; return result;
-    };
-  })();
-}
-Function.prototype.inheritsFrom = function (parentClass) { this.prototype = Object.create(parentClass.prototype); this.prototype.constructor = this; this.prototype.parentClass = parentClass.prototype; return this; }
-Math.log10 = Math.log10 || function (x) { return Math.log(x) / Math.LN10; };
 function xLog() {}
 
 function CImgCache() { this.CheckLoadInterval = 100; this.MaxNLoading = 2; this.LoadDelay = 0; this.EnableStatusDisplay = false; this.NImages = 0; this.NLoading = 0; this.NUnloaded = 0; this.NError = 0; this.NAbort = 0; this.NLoaded = 0; this.Images = []; this.CState = { LoadPending: 0, Loading: 1, Loaded: 2, Error: 3, Abort: 4 }; this.ErrorMsg = ''; this.OnAllLoaded = new xCallbackChain(); this.OnImgLoaded = new xCallbackChain(); this.OnLoadCalling = false; this.LoadNextCalling = false; this.PrioList = []; this.Timer = null; var me = this; this.OnCheckLoaded = function () { me.CheckLoaded(); }; }
