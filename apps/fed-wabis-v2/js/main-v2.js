@@ -1,15 +1,19 @@
 // ES module entry point — v2 native modules (no bundler)
 // Imports run in declaration order; each file also assigns its exports to globalThis.
+//
+// The shared wabis framework now lives in the workspace package `jsgraph-vendor`
+// (single canonical copy). App-specific framework files (jsgMouseHandler, EarthMap)
+// stay local. Load order is preserved exactly as before.
 
-import '../assets/wiki.js';
-import '../assets/xtc.js';
-import '../assets/jsg.js';
-import '../assets/jsgx3d.js';
+import 'jsgraph-vendor/src/wiki.js';
+import 'jsgraph-vendor/src/xtc.js';
+import 'jsgraph-vendor/src/jsg.js';
+import 'jsgraph-vendor/src/jsgx3d.js';
 import '../assets/jsgMouseHandler.js';
 import '../assets/EarthMap.js';
 import '../assets/earth-map-data.js';
-import '../assets/DataX.js';
-import '../assets/ModelAnimation.js';
+import 'jsgraph-vendor/src/DataX.js';
+import 'jsgraph-vendor/src/ModelAnimation.js';
 import '../assets/app.js';
 import '../assets/app-math.js';
 import '../assets/app-draw.js';

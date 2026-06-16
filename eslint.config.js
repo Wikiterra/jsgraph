@@ -8,7 +8,7 @@ export default tseslint.config(
     ignores: [
       "**/dist/**",
       "**/node_modules/**",
-      "packages/jsgraph-vendor/src/**",
+      "packages/jsgraph-vendor/**",
       "apps/**/vendor/**",
       "apps/**/assets/**",
       "apps/**/app/**",
