@@ -1,0 +1,9 @@
+{
+  "name": "jsgraph-vendor",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Single canonical copy of the wabis framework (jsg, jsgx3d, ...). Intact, not refactored.",
+  "main": "index.js",
+  "types": "index.d.ts"
+}

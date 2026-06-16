@@ -1,0 +1,9 @@
+# Third-party framework and legacy app code keep their own style; modernized gradually.
+**/dist/**
+**/node_modules/**
+packages/jsgraph-vendor/src/**
+apps/**/vendor/**
+apps/**/assets/**
+apps/**/app/**
+apps/**/js/**
+pnpm-lock.yaml
