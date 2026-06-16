@@ -1,0 +1,108 @@
+{
+  "AxialTilt": 23.44,
+  "CameraDirection": 30,
+  "CameraDistance": 200150,
+  "CameraHeight": 25,
+  "DateTime": 360.5,
+  "DateTimeLast": 360.5,
+  "DayOfYear": 360,
+  "DayOfYearLast": 360,
+  "DistMoon": 384000,
+  "DistSun": 149600000,
+  "DomeHeight": 9000,
+  "DomeHeightMax": 20015,
+  "DomeHeightMin": 2000,
+  "DomeSize": 1,
+  "EarthRotAngle": 277.9508216,
+  "MoonAngleOffset": 1.38,
+  "MoonCelestAngle": 4750.090017,
+  "MoonCelestCoord": [
+    0.816891107,
+    0.4899685416,
+    0.3043349266
+  ],
+  "MoonDomeCoord": [
+    6892.580061,
+    4134.146365,
+    8242.471569
+  ],
+  "MoonEcliptic": 5.145,
+  "MoonFeCelestSphereCoord": [
+    6975.97767,
+    6752.008418,
+    -663.2166543
+  ],
+  "MoonLocalGlobeCoord": [
+    -0.1326433309,
+    0.9432846862,
+    0.3043349266
+  ],
+  "MoonNorthCelestCoord": [
+    -0.05154100424,
+    -0.4635151774,
+    0.8845887209
+  ],
+  "MoonPeriod": 27.217,
+  "MoonPrecessAngle": -35.08165986,
+  "MoonPrecessOffset": -301.996,
+  "MoonPrecessPeriod": -6798.383,
+  "MousePositionIncrement": 300,
+  "MouseViewRotationIncrement": 200,
+  "ObserverFeCoord": [
+    9666.502707,
+    2590.131594,
+    0
+  ],
+  "ObserverLat": 0,
+  "ObserverLong": 15,
+  "PointerFrom": [
+    0,
+    0
+  ],
+  "PointerTo": [
+    0,
+    0
+  ],
+  "RadiusEarth": 6371,
+  "RadiusFE": 20015,
+  "RadiusMoon": 1738,
+  "RadiusMoonFE": 26.2,
+  "RadiusSphere": 5000,
+  "RadiusSun": 696342,
+  "RadiusSunFE": 26.2,
+  "RayParameter": 1,
+  "RaySource": 0,
+  "RayTarget": 0,
+  "SidericDay": 23.93447,
+  "SunAngleOffset": 78.5,
+  "SunCelestAngle": 277.9417699,
+  "SunCelestCoord": [
+    0.1381666129,
+    -0.9086776172,
+    -0.3939733178
+  ],
+  "SunDomeCoord": [
+    1892.199988,
+    -12444.39406,
+    6997.377496
+  ],
+  "SunFeCelestSphereCoord": [
+    11863.13834,
+    2003.155859,
+    4453.117041
+  ],
+  "SunLocalGlobeCoord": [
+    0.8906234083,
+    -0.2271012318,
+    -0.3939733178
+  ],
+  "SunPeriod": 365.256363,
+  "Time": 12,
+  "TimeLast": 12,
+  "ZeroDate": 17167,
+  "Zoom": 1.4,
+  "ZoomMax": 10,
+  "ZoomMin": 1,
+  "msPerDay": 86400000,
+  "pause": 0
+}

@@ -1,0 +1,216 @@
+{
+  "AlphaOpaque": 1,
+  "Bulge": 2.825301942,
+  "CamPos": [
+    0,
+    0,
+    0
+  ],
+  "CamSceneSize": 97.75604353,
+  "CamUp": [
+    -0.08643389725,
+    -0.1497079015,
+    0.9849450369
+  ],
+  "CamViewAngl": 0.03490658504,
+  "CamViewCenter": [
+    2486.084196,
+    4306.02414,
+    872.6657344
+  ],
+  "CurrentObjAngl": [
+    0,
+    0
+  ],
+  "DeviceRatio": 1.5,
+  "EarthCentrToHorizDisc": 6370998,
+  "EquatorRadiusFE": 10007543,
+  "Flerspective": 0,
+  "FocalLength": 1237.463171,
+  "FocalLengthField": 1237.463171,
+  "FocalLengthSlider": 0.3491451159,
+  "FocalLengthSliderLast": 0.3491451159,
+  "GridDeltaAngl": 0.00003408846195,
+  "GridSpacing": 217.1775911,
+  "Height": 2,
+  "HeightSlider": 0.2168383326,
+  "HeightSliderLast": 0.2168383326,
+  "HorizDistLineOfSight": 5048.168381,
+  "HorizDistOnEyeLvl": 5048.166796,
+  "HorizDropAnglFromEyeLvl": 0.0007923665554,
+  "HorizDropFromEyeLvl": 3.999999372,
+  "HorizDropFromObsSurf": 1.999999372,
+  "HorizLftRgtDist": 5047.634504,
+  "HorizLftRgtDrop": 0.0004218145244,
+  "HorizLftRgtDropAngl": 0.000004787517008,
+  "HorizLftRgtWidth": 146.6140226,
+  "HorizRefrAngl": 0,
+  "HorizSurfDist": 5048.167325,
+  "HorizonLift": 0,
+  "LastPan": 30,
+  "LastPanSlider": 0.5773502692,
+  "LastTilt": 10,
+  "LastTiltSlider": 0.4714045208,
+  "MaxNObjectsToDraw": [
+    0,
+    0
+  ],
+  "NGridLines": 45,
+  "NObjects": [
+    1,
+    0
+  ],
+  "NObjectsDrawn": [
+    0,
+    0
+  ],
+  "NearObjIx": 0,
+  "ObjDeltaAngl": [
+    0,
+    0
+  ],
+  "ObjDeltaDist": [
+    300,
+    300
+  ],
+  "ObjDropAnglFromObsSurf": 0.05395929636,
+  "ObjDropFromObsSurf": 11.30120526,
+  "ObjFirstAngl": [
+    0,
+    0
+  ],
+  "ObjHidden": 3.792811295,
+  "ObjHiddenAngl": 0.01810931823,
+  "ObjLastAngl": [
+    0,
+    0
+  ],
+  "ObjLiftAbs": 0,
+  "ObjLiftRelToHoriz": 0,
+  "ObjNearSize": 10,
+  "ObjNearTilt": 0.1079185927,
+  "ObjRealSurfDist": 12000,
+  "ObjRefrAngl": 0,
+  "ObjSidePos": [
+    0,
+    0
+  ],
+  "ObjSideType": [
+    0,
+    0
+  ],
+  "ObjSideVar": [
+    0,
+    0
+  ],
+  "ObjSize": [
+    10,
+    10
+  ],
+  "ObjSizeAngl": 0.04774642559,
+  "ObjSizeType": [
+    1,
+    1
+  ],
+  "ObjSizeVar": [
+    0,
+    0
+  ],
+  "ObjSurfDist": [
+    12000,
+    20000
+  ],
+  "ObjSurfDistAngl": 0.001883534767,
+  "ObjTopAnglFromEyeLvl": -0.01576216294,
+  "ObjTopAnglFromEyeLvlFE": 0.03819718068,
+  "ObjType": [
+    0,
+    0
+  ],
+  "ObjVisi": 6.207188705,
+  "ObjVisibleAngl": 0.02963710736,
+  "OverlayImageAlpha": 0.5,
+  "Pan": 30,
+  "PanRad": 0.5235987756,
+  "PanSlider": 0.5773502692,
+  "PosEarthCenter": [
+    0,
+    0,
+    -6371002
+  ],
+  "PressureLast_mbar": 1013.25,
+  "Pressure_mbar": 1013.25,
+  "RadiusEarth": 6371000,
+  "RefDistance": 10000,
+  "RefractedRadiusEarth": 6371000,
+  "RefractedRadiusEarthLast": 6371000,
+  "RefractionCoeff": 0,
+  "RefractionCoeffLast": 0,
+  "RefractionFactMax": 10000,
+  "RefractionFactMin": 0.5,
+  "RefractionFactor": 1,
+  "RefractionFactorLast": 1,
+  "RefractionSlider": 0,
+  "RefractionSliderLast": 0,
+  "RefractionSync": 0,
+  "Roll": 0,
+  "SceneHeight": 97.75604353,
+  "SceneWidth": 146.6340653,
+  "ShowModel": 1,
+  "SliderObjDeltaDistLog": [
+    1.477121255,
+    1.477121255
+  ],
+  "SliderObjDeltaDistLogLast": [
+    1.477121255,
+    1.477121255
+  ],
+  "SliderObjSidePosLog": [
+    0,
+    0
+  ],
+  "SliderObjSidePosLogLast": [
+    0,
+    0
+  ],
+  "SliderObjSideVarLog": [
+    0,
+    0
+  ],
+  "SliderObjSideVarLogLast": [
+    0,
+    0
+  ],
+  "SliderObjSizeLog": [
+    1,
+    1
+  ],
+  "SliderObjSizeLogLast": [
+    1,
+    1
+  ],
+  "SliderObjSurfDistLog": [
+    3.079181246,
+    3.301029996
+  ],
+  "SliderObjSurfDistLogLast": [
+    3.079181246,
+    3.301029996
+  ],
+  "TemperatureGradient": -0.0343,
+  "TemperatureGradientLast": -0.0343,
+  "TemperatureLast_C": 15,
+  "Temperature_C": 15,
+  "Temperature_K": 288.15,
+  "TheodoliteTilt": 9.954600741,
+  "Tilt": 10,
+  "TiltSlider": 0.4714045208,
+  "UnitsType": 0,
+  "ViewAngle": 2,
+  "ViewAngleField": 2,
+  "ViewAngleSlider": 2,
+  "ViewAngleSliderLast": 2,
+  "ViewcenterHorizon": 0,
+  "pause": 0,
+  "showGrid": 1
+}
