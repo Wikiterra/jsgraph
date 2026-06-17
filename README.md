@@ -32,8 +32,17 @@ el futuro (p. ej. a three.js) es escribir un adapter nuevo, sin tocar las apps.
 ```bash
 pnpm install            # instala dependencias del workspace
 pnpm --filter earth-drop-calc dev   # arranca una app (Vite)
+pnpm --filter fed-wabis-v2 dev      # arranca la app del domo (Vite)
 pnpm typecheck          # type-check de jsgraph-core
 pnpm lint               # ESLint (ignora vendor y código legacy)
 ```
+
+Hay que abrir las apps por la URL que imprime Vite (p. ej. `http://localhost:5173`).
+
+> **No** abrir el `index.html` con VSCode Live Preview (ni cualquier servidor
+> estático de archivos). Los imports son *bare specifiers* del paquete del
+> workspace (`import 'jsgraph-vendor/src/wiki.js'`); solo Vite/pnpm los resuelven.
+> Un servidor estático falla con
+> `bare specifier ... was not remapped to anything`.
 
 Ver [MIGRATION-PLAN.md](../MIGRATION-PLAN.md) para el plan por fases.
