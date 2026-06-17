@@ -4,8 +4,7 @@
 //
 // Phase 3 (minimal seam): only graph *creation* is ported. The returned graph is
 // still the rich wabis instance; its drawing surface (g.Line3D, g.SetCamera, …) is
-// not abstracted yet, so it is treated as opaque here. See ./Renderer3D.ts for the
-// (future) full drawing port.
+// not abstracted yet, so it is treated as opaque here.
 
 export interface Graph3DConfig {
   /** DOM id the graph mounts under. */

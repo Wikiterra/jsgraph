@@ -2,5 +2,4 @@
 // Ports (interfaces the apps depend on) live in ./ports; wabis-backed
 // implementations live in ./adapters/wabis (added in Phase 3).
 
-export type { Vec3, CameraParams, Renderer3D } from "./ports/Renderer3D.js";
 export type { Graph3DConfig, Graph3D, Graph3DFactory } from "./ports/Graph3D.js";
