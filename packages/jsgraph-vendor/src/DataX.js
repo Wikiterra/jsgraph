@@ -122,4 +122,3 @@ var DataX = {
     }
 };
 Object.assign(globalThis, { DataX });
-export { DataX };

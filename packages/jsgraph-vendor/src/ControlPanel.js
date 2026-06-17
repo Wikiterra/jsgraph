@@ -421,3 +421,4 @@ CpSliderField.prototype.Update = function () {
     var enable = this.GetEnabledFromModel(); this.SetGuiEnabled(enable);
 }
 CpSliderField.prototype.UpdateLayout = function (visiState) { if (!this.DgdSlider || visiState == 0) return; this.DgdSlider.updateLayout(); if (this.LastSliderPos == -1) { this.Update(); } else { this.DgdSlider.setValue(this.LastSliderPos, 0, true); } }
+Object.assign(globalThis, { ControlPanels, ControlPanel, CpField, CpHtmlField, CpTextField, CpCheckboxField, CpRadiobuttonField, CpSliderField });

@@ -131,3 +131,4 @@ CNumFormatter.prototype.DateStrToNum = function (str, zeroDate) {
     var ms = Date.parse(str); if (isNaN(ms)) return 0; var res = Math.round(ms / 86400000); return res - zeroDate;
 }
 var NumFormatter = new CNumFormatter();
+Object.assign(globalThis, { CNumFormatter, NumFormatter });

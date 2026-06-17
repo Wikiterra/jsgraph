@@ -6,7 +6,9 @@ import { test, expect } from "@playwright/test";
 // every numeric / number-array field. Any future change to the math (e.g. during the
 // Phase 3 ESM migration) that alters an output will fail this test.
 
-const EDC_URL = "http://localhost:5301/";
+// Served from the workspace-root Vite dev server so the shared vendor under
+// ../../packages/jsgraph-vendor resolves (a per-app root would 404 on it).
+const EDC_URL = "http://localhost:5301/apps/earth-drop-calc/index.html";
 
 const scenarios: Record<string, Record<string, unknown>> = {
   // default constructor state (height 2 m, one M-Rod object, no refraction)

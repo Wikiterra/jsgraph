@@ -30,19 +30,24 @@ el futuro (p. ej. a three.js) es escribir un adapter nuevo, sin tocar las apps.
 ## Comandos
 
 ```bash
-pnpm install            # instala dependencias del workspace
-pnpm --filter earth-drop-calc dev   # arranca una app (Vite)
-pnpm --filter fed-wabis-v2 dev      # arranca la app del domo (Vite)
-pnpm typecheck          # type-check de jsgraph-core
-pnpm lint               # ESLint (ignora vendor y código legacy)
+pnpm install   # instala dependencias del workspace
+pnpm dev       # Vite raíz: sirve AMBAS apps. Abrir:
+               #   /apps/fed-wabis-v2/index.html
+               #   /apps/earth-drop-calc/index.html
+pnpm build     # build estático unificado de las dos apps → dist/ (GitHub Pages)
+pnpm preview   # sirve dist/ localmente (como lo verá Pages)
+pnpm characterize  # red de seguridad: snapshots del motor matemático (Playwright)
+pnpm typecheck     # type-check de jsgraph-core
+pnpm lint          # ESLint (ignora vendor y código legacy)
 ```
 
-Hay que abrir las apps por la URL que imprime Vite (p. ej. `http://localhost:5173`).
+Las dos apps comparten un **único** vendor wabis (`packages/jsgraph-vendor/src`).
+`earth-drop-calc` lo carga con `<script>` clásico vía `../../packages/…`, por eso se
+sirve desde el Vite **raíz** (`pnpm dev`), no per-app — un root per-app daría 404 en
+`../../packages`. Detalle de la convergencia en [MIGRATION-PLAN.md](../MIGRATION-PLAN.md) §8.
 
-> **No** abrir el `index.html` con VSCode Live Preview (ni cualquier servidor
-> estático de archivos). Los imports son *bare specifiers* del paquete del
-> workspace (`import 'jsgraph-vendor/src/wiki.js'`); solo Vite/pnpm los resuelven.
-> Un servidor estático falla con
-> `bare specifier ... was not remapped to anything`.
+> **No** abrir `index.html` con VSCode Live Preview ni un servidor estático de
+> archivos: `fed-wabis-v2` usa *bare specifiers* (`import 'jsgraph-vendor/src/wiki.js'`)
+> que sólo resuelve Vite/pnpm (`bare specifier ... was not remapped to anything`).
 
 Ver [MIGRATION-PLAN.md](../MIGRATION-PLAN.md) para el plan por fases.

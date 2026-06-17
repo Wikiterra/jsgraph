@@ -239,4 +239,3 @@ ModelAnimation.prototype.AnimationToState = function (id, params) {
 }
 ModelAnimation.prototype.ModelAnimationToState = function (id, params) { var animation = NewAnimation(params); this.ResizeStateLists(id); this.ToStateAnimationList[id] = animation; return animation; }
 Object.assign(globalThis, { Animations, AnimatorTask, Animator, NewAnimation, ModelAnimation, NewModelAnimation });
-export { Animations, AnimatorTask, Animator, NewAnimation, ModelAnimation, NewModelAnimation };

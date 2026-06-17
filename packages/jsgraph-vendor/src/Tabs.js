@@ -80,3 +80,4 @@ var Tabs = {
         return boxDomList;
     },
 }; xOnDomReady(function CB_Init_Tabs() { Tabs.Init(); });
+Object.assign(globalThis, { Tabs });

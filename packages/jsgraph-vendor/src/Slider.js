@@ -80,3 +80,4 @@ var DgdSlider = function (wrapper, options) { if (!(wrapper = xElement(wrapper))
         e.cancelBubble = true;
     }
 };
+Object.assign(globalThis, { DgdCursor, DgdPosition, DgdSliderHtml, DgdSlider });
