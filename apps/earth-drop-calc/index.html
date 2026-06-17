@@ -44,6 +44,10 @@
   <script src="../../packages/jsgraph-vendor/src/xtc.js"></script>
   <script src="../../packages/jsgraph-vendor/src/ModelAnimation.js"></script>
 
+  <!-- jsgraph-core adapter: createGraph3D() is the seam over the wabis NewGraphX3D
+       global, so the app names our factory, not the engine (DIP — Phase 3). -->
+  <script src="../../packages/jsgraph-core/src/adapters/wabis/wabisGraph3D.js"></script>
+
   <!-- ===========================================================
        App core: constants, data model, instantiation, units.
        Loaded BEFORE the body's panel scripts because panels reference

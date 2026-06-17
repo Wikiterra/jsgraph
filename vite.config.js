@@ -17,6 +17,7 @@ const copyEdcStatic = {
     const cp = (from, to) => cpSync(resolve(root, from), resolve(root, to), { recursive: true });
     cp('apps/earth-drop-calc/app', 'dist/apps/earth-drop-calc/app');
     cp('packages/jsgraph-vendor/src', 'dist/packages/jsgraph-vendor/src');
+    cp('packages/jsgraph-core/src', 'dist/packages/jsgraph-core/src');
   },
 };
 
