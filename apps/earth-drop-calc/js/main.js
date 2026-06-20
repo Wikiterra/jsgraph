@@ -12,7 +12,6 @@ import 'jsgraph-vendor/src/jsg.js';
 import 'jsgraph-vendor/src/jsgx3d.js';
 import 'jsgraph-vendor/src/NumFormatter.js';
 import 'jsgraph-vendor/src/Slider.js';
-import 'jsgraph-vendor/src/ControlPanel.js';
 import 'jsgraph-vendor/src/Tabs.js';
 import 'jsgraph-vendor/src/DataX.js';
 import 'jsgraph-vendor/src/xtc.js';
@@ -25,6 +24,10 @@ import 'jsgraph-vendor/src/core/helpers.js';
 
 // --- shared UI components (tabs, control panels, sliders, scrollers) ---
 import 'jsgraph-vendor/src/core/shared.css';
+
+// --- modern panel engine (replaces vendor ControlPanel.js) + its styles ---
+import '../app/ui/controlPanel.js';
+import '../app/ui/controlPanel.css';
 
 // --- app styles: LAST CSS layer so calc overrides win (see calculator.css) ---
 import '../styles/calculator.css';
