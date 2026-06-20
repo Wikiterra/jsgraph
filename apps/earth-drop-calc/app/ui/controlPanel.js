@@ -130,9 +130,11 @@ function TextField(panel, cfg, opts) {
   const field = el('div', fieldCls);
 
   let labelEl = null;
-  if (cfg.Label && cfg.Label !== '-' && !opts.noLabel) {
+  // Like the vendor, an absent Label defaults to the field Name; '-' means none.
+  const labelText = cfg.Label != null ? cfg.Label : cfg.Name;
+  if (labelText && labelText !== '-' && !opts.noLabel) {
     labelEl = el('label', 'cp-field__label', { for: id });
-    labelEl.innerHTML = cfg.Label;
+    labelEl.innerHTML = labelText;
     field.appendChild(labelEl);
   }
   const inputWrap = el('span', 'cp-field__control');
@@ -202,9 +204,10 @@ function SliderField(panel, cfg, opts) {
   const min = cfg.Min != null ? cfg.Min : 0;
   const max = cfg.Max != null ? cfg.Max : 1;
   const field = el('div', 'cp-field cp-field--slider' + (cfg.Color ? ' cp-field--' + cfg.Color : ''));
-  if (!opts.sliderOnly && cfg.Label && cfg.Label !== '-') {
+  const labelText = cfg.Label != null ? cfg.Label : cfg.Name;
+  if (!opts.sliderOnly && labelText && labelText !== '-') {
     const l = el('label', 'cp-field__label', { for: id });
-    l.innerHTML = cfg.Label;
+    l.innerHTML = labelText;
     field.appendChild(l);
   }
   const range = el('input', 'cp-field__range', {
@@ -235,9 +238,10 @@ function RadioField(panel, cfg) {
   const type = cfg.ValueType || 'int';
   const groupName = panel.fieldId(cfg.Name);
   const fs = el('fieldset', 'cp-field cp-field--radio', { role: 'radiogroup' });
-  if (cfg.Label && cfg.Label !== '-') {
+  const legendText = cfg.Label != null ? cfg.Label : cfg.Name;
+  if (legendText && legendText !== '-') {
     const lg = el('legend', 'cp-field__legend');
-    lg.innerHTML = cfg.Label;
+    lg.innerHTML = legendText;
     fs.appendChild(lg);
   }
   const inputs = [];
@@ -274,9 +278,10 @@ function RadioField(panel, cfg) {
 /** Checkbox group (each Item binds its own boolean ValueRef). */
 function CheckboxField(panel, cfg) {
   const fs = el('fieldset', 'cp-field cp-field--checkbox', { role: 'group' });
-  if (cfg.Label && cfg.Label !== '-') {
+  const legendText = cfg.Label != null ? cfg.Label : cfg.Name;
+  if (legendText && legendText !== '-') {
     const lg = el('legend', 'cp-field__legend');
-    lg.innerHTML = cfg.Label;
+    lg.innerHTML = legendText;
     fs.appendChild(lg);
   }
   const items = [];

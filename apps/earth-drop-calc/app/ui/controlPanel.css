@@ -13,6 +13,13 @@
   align-items: center;
   inline-size: 100%;
   font-size: var(--fs-sm, 0.875rem);
+  /* Each panel is a distinct card so stacked panels (Basics / Options / View …) in
+     one drawer section read as separate groups, not one blended list. */
+  padding: var(--space-2) var(--space-3);
+  margin-block-end: var(--space-2);
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: var(--radius-md, 8px);
+  background: color-mix(in srgb, var(--color-surface, #fff) 97%, var(--color-text, #222));
 }
 .cp-panel--cols1 { grid-template-columns: minmax(0, 1fr); }
 .cp-panel--cols2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
