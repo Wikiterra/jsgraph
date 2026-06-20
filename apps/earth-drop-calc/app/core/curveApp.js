@@ -264,11 +264,11 @@ CurveAppClass.prototype.Update = function() {
 
   // handle height changes
   if ( this.HeightSliderLast != this.HeightSlider ) {
-    this.Height = Math.pow( 10, -1 + 6 * this.HeightSlider );
+    this.Height = sliderToHeight(this.HeightSlider);
   }
   if ( this.Height < HEIGHT_MIN ) this.Height = HEIGHT_MIN;
   if ( this.Height > HEIGHT_MAX ) this.Height = HEIGHT_MAX;
-  this.HeightSlider = ( Math.log10( this.Height ) + 1 ) / 6;
+  this.HeightSlider = heightToSlider(this.Height);
   this.HeightSliderLast = this.HeightSlider;
   if (this.BaroModel) {
     // BaroModel depends on Height
@@ -364,14 +364,13 @@ CurveAppClass.prototype.Update = function() {
   this.Temperature_K = this.Temperature_C + KELVIN_OFFSET;
   if (this.RefractionSlider != this.RefractionSliderLast) {
     // slider changed
-    if (Math.abs(this.RefractionSlider) < 0.01) this.RefractionSlider = 0; // snap to 0
-    this.RefractionCoeff = k_max * this.RefractionSlider;
+    this.RefractionCoeff = sliderToRefractionCoeff(this.RefractionSlider, k_max);
   } else if (this.RefractionCoeff != this.RefractionCoeffLast) {
     // k changed
   } else if (this.TemperatureGradient != this.TemperatureGradientLast) {
     // dT/dh changed
     if (this.Temperature_K < TEMP_K_MIN) this.Temperature_K = TEMP_K_MIN;
-    this.RefractionCoeff = REFR_COEFF_CONST * (this.Pressure_mbar / (this.Temperature_K*this.Temperature_K)) * (STD_TEMP_GRADIENT + this.TemperatureGradient);
+    this.RefractionCoeff = computeRefractionCoeff(this.Pressure_mbar, this.Temperature_K, this.TemperatureGradient);
   } else if (this.RefractionFactor != this.RefractionFactorLast) {
     // a changed
     if (this.RefractionFactor < this.RefractionFactMin) this.RefractionFactor = this.RefractionFactMin;
@@ -396,10 +395,10 @@ CurveAppClass.prototype.Update = function() {
   if (Math.abs(this.RefractionCoeff) < 0.000002) this.RefractionCoeff = 0;
 
   // compute refraction values
-  this.TemperatureGradient = (this.RefractionCoeff * this.Temperature_K * this.Temperature_K) / (REFR_COEFF_CONST * this.Pressure_mbar) - STD_TEMP_GRADIENT;
+  this.TemperatureGradient = computeTempGradientFromK(this.RefractionCoeff, this.Temperature_K, this.Pressure_mbar);
   if (Math.abs(this.TemperatureGradient) < 0.000001) this.TemperatureGradient = 0;
-  this.RefractionFactor = 1 / (1 - this.RefractionCoeff);
-  this.RefractedRadiusEarth = this.RadiusEarth * this.RefractionFactor;
+  this.RefractionFactor = computeRefractionFactor(this.RefractionCoeff);
+  this.RefractedRadiusEarth = computeRefractedRadius(this.RadiusEarth, this.RefractionFactor);
   this.RefractionSlider = this.RefractionCoeff / k_max;
 
   // store current refration values for detecting user changes
@@ -413,10 +412,9 @@ CurveAppClass.prototype.Update = function() {
 
   // handle ViewAngle and FocalLength changes
   if ( this.FocalLengthSlider != this.FocalLengthSliderLast ) {
-    var f = (FOCAL_LENGTH_MAX - FOCAL_LENGTH_MIN) * Math.pow(this.FocalLengthSlider, 2) + FOCAL_LENGTH_MIN;
-    this.ViewAngle = toDeg( 2 * Math.atan( SENSOR_DIAGONAL_35MM / 2 / f ) );
+    this.ViewAngle = focalLengthToViewAngle(focalLengthSliderToFocalLength(this.FocalLengthSlider));
   } else if ( this.FocalLengthField != this.FocalLength ) {
-    this.ViewAngle = toDeg( 2 * Math.atan( SENSOR_DIAGONAL_35MM / 2 / this.FocalLengthField ) );
+    this.ViewAngle = focalLengthToViewAngle(this.FocalLengthField);
   } else if ( this.ViewAngleSlider != this.ViewAngleSliderLast ) {
     this.ViewAngle = this.ViewAngleSlider;
   } else if ( this.ViewAngleField != this.ViewAngle ) {
@@ -425,11 +423,9 @@ CurveAppClass.prototype.Update = function() {
   if ( this.ViewAngle < VIEW_ANGLE_MIN ) this.ViewAngle = VIEW_ANGLE_MIN;
   if ( this.ViewAngle > VIEW_ANGLE_MAX ) this.ViewAngle = VIEW_ANGLE_MAX;
   this.CamViewAngl = toRad( this.ViewAngle );
-  this.FocalLength = SENSOR_DIAGONAL_35MM / ( 2 * Math.tan( this.CamViewAngl / 2 ) );
+  this.FocalLength = viewAngleToFocalLength(this.ViewAngle);
   this.FocalLengthField = this.FocalLength;
-  var f = this.FocalLength - FOCAL_LENGTH_MIN;
-  if (f < 0) f = 0;
-  this.FocalLengthSlider = Math.pow(f / (FOCAL_LENGTH_MAX - FOCAL_LENGTH_MIN), 1/2);
+  this.FocalLengthSlider = focalLengthToSlider(this.FocalLength);
   this.FocalLengthSliderLast = this.FocalLengthSlider;
   this.ViewAngleField = this.ViewAngle;
   this.ViewAngleSlider = this.ViewAngle;
@@ -439,13 +435,14 @@ CurveAppClass.prototype.Update = function() {
   this.UpdateObjectInput(1);
 
   // compute diverse values
-  this.HorizDropAnglFromEyeLvl = Math.acos( this.RefractedRadiusEarth / (this.RefractedRadiusEarth + this.Height) );
-  this.HorizDistOnEyeLvl = this.RefractedRadiusEarth * Math.sin( this.HorizDropAnglFromEyeLvl );
-  this.HorizSurfDist = this.RefractedRadiusEarth * this.HorizDropAnglFromEyeLvl;
-  this.EarthCentrToHorizDisc = this.RefractedRadiusEarth * Math.cos( this.HorizDropAnglFromEyeLvl );
-  this.HorizDropFromObsSurf = this.RefractedRadiusEarth - this.EarthCentrToHorizDisc;
-  this.HorizDropFromEyeLvl = this.HorizDropFromObsSurf + this.Height;
-  this.HorizDistLineOfSight = ( this.Height + this.RefractedRadiusEarth ) * Math.sin( this.HorizDropAnglFromEyeLvl );
+  var hg = computeHorizonGeometry(this.RefractedRadiusEarth, this.Height);
+  this.HorizDropAnglFromEyeLvl = hg.horizDropAnglFromEyeLvl;
+  this.HorizDistOnEyeLvl = hg.horizDistOnEyeLvl;
+  this.HorizSurfDist = hg.horizSurfDist;
+  this.EarthCentrToHorizDisc = hg.earthCentrToHorizDisc;
+  this.HorizDropFromObsSurf = hg.horizDropFromObsSurf;
+  this.HorizDropFromEyeLvl = hg.horizDropFromEyeLvl;
+  this.HorizDistLineOfSight = hg.horizDistLineOfSight;
 
   var exp2 = Math.floor( Math.log( PI90 / this.HorizDropAnglFromEyeLvl ) / Math.LN2 );
   this.GridDeltaAngl = (PI90 / Math.pow( 2, exp2 ) / this.NGridLines);
@@ -456,17 +453,9 @@ CurveAppClass.prototype.Update = function() {
   if (this.Tilt != this.LastTilt) {
     if (this.Tilt < TILT_MIN) this.Tilt = TILT_MIN;
     if (this.Tilt >  TILT_MAX) this.Tilt =  TILT_MAX;
-    if (this.Tilt > 0) {
-      this.TiltSlider = Math.sqrt( this.Tilt / TILT_MAX );
-    } else {
-      this.TiltSlider = - Math.sqrt( -this.Tilt / -TILT_MIN );
-    }
+    this.TiltSlider = tiltToSlider(this.Tilt, TILT_MIN, TILT_MAX);
   } else if (this.TiltSlider != this.LastTiltSlider) {
-    if (this.TiltSlider > 0) {
-      this.Tilt = Math.pow( this.TiltSlider, 2 ) * TILT_MAX;
-    } else {
-      this.Tilt = - Math.pow( this.TiltSlider, 2 ) * -TILT_MIN;
-    }
+    this.Tilt = sliderToTilt(this.TiltSlider, TILT_MIN, TILT_MAX);
   }
   this.LastTilt = this.Tilt;
   this.LastTiltSlider = this.TiltSlider;
@@ -474,17 +463,9 @@ CurveAppClass.prototype.Update = function() {
   if (this.Pan != this.LastPan) {
     if (this.Pan < PAN_MIN) this.Pan = PAN_MIN;
     if (this.Pan >  PAN_MAX) this.Pan =  PAN_MAX;
-    if (this.Pan > 0) {
-      this.PanSlider = Math.sqrt( this.Pan / 90 );
-    } else {
-      this.PanSlider = - Math.sqrt( -this.Pan / 90 );
-    }
+    this.PanSlider = panToSlider(this.Pan);
   } else if (this.PanSlider != this.LastPanSlider) {
-    if (this.PanSlider > 0) {
-      this.Pan = Math.pow( this.PanSlider, 2 ) * 90;
-    } else {
-      this.Pan = - Math.pow( this.PanSlider, 2 ) * 90;
-    }
+    this.Pan = sliderToPan(this.PanSlider);
   }
   this.PanRad = toRad( this.Pan );
   this.LastPan = this.Pan;
@@ -508,56 +489,21 @@ CurveAppClass.prototype.Update = function() {
   }
 
   // compute horizon left right drop (0 = whole earth in view, can't calculate left right drop)
-  var yFieldOfView2 = toRad( this.ViewAngle ) / Math.sqrt( 1 + 1 / (this.DeviceRatio*this.DeviceRatio) ) / 2;
-  var width2HorLRDrop = this.HorizDistLineOfSight * Math.sin( yFieldOfView2 );
-  if (width2HorLRDrop < this.HorizDistOnEyeLvl) {
-    this.HorizLftRgtWidth = width2HorLRDrop * 2;
-    this.HorizLftRgtDist = Math.sqrt( this.HorizDistOnEyeLvl*this.HorizDistOnEyeLvl - width2HorLRDrop*width2HorLRDrop );
-    var angVertHorizLRDrop = Math.atan( this.HorizLftRgtDist / this.HorizDropFromEyeLvl );
-    var angHorizLRDrop_rad = Math.PI/2 - this.HorizDropAnglFromEyeLvl - angVertHorizLRDrop;
-    this.HorizLftRgtDropAngl = toDeg( angHorizLRDrop_rad );
-    this.HorizLftRgtDrop = this.HorizDistLineOfSight * Math.sin( angHorizLRDrop_rad );
-  } else {
-    this.HorizLftRgtDist = 0;
-    this.HorizLftRgtWidth = 0;
-    this.HorizLftRgtDropAngl = 0;
-    this.HorizLftRgtDrop = 0;
-  }
-
-  function compObjVect( dist, side, size, rad, h ) {
-    // dist and side are along surface
-    var R = rad + size;
-    var a1 = side / rad;
-    var a2 = dist / rad;
-    var r = R * Math.cos( a1 );
-    var vx = R * Math.sin( a1 );
-    var vy = r * Math.sin( a2 );
-    var vz = r * Math.cos( a2 ) - (rad + h);
-    return [ vx, vy, vz ];
-  }
-
-  function compViewDist( v ) {
-    return Math.sqrt( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
-  }
-
-  function compVectAng( v1, v2 ) {
-    var sp = JsgVect3.ScalarProd( JsgVect3.Norm(v1), JsgVect3.Norm(v2) );
-    if (sp >  1) sp =  1; // handle rounding errors
-    if (sp < -1) sp = -1; // handle rounding errors
-    return Math.acos( sp );
-  }
+  var lrd = computeLeftRightDrop(
+    this.ViewAngle, this.DeviceRatio,
+    this.HorizDistLineOfSight, this.HorizDistOnEyeLvl,
+    this.HorizDropAnglFromEyeLvl, this.HorizDropFromEyeLvl
+  );
+  this.HorizLftRgtWidth = lrd.horizLftRgtWidth;
+  this.HorizLftRgtDist = lrd.horizLftRgtDist;
+  this.HorizLftRgtDropAngl = lrd.horizLftRgtDropAngl;
+  this.HorizLftRgtDrop = lrd.horizLftRgtDrop;
 
   // horizon refraction
-  if (Math.abs(this.RadiusEarth - this.RefractedRadiusEarth) > 1e-5) {
-    var dropAngle_geom = Math.acos( this.RadiusEarth / (this.RadiusEarth + this.Height) );
-    var horizSurfDist_geom = this.RadiusEarth * dropAngle_geom;
-    var vectToHorizon_geom = compObjVect( horizSurfDist_geom, 0, 0, this.RadiusEarth, this.Height );
-    var vectToHorizon_refracted = compObjVect( this.HorizSurfDist, 0, 0, this.RefractedRadiusEarth, this.Height );
-    this.HorizRefrAngl = toDeg( compVectAng( vectToHorizon_geom, vectToHorizon_refracted ) );
-    if (this.RefractionCoeff < 0) this.HorizRefrAngl *= -1;
-  } else {
-    this.HorizRefrAngl = 0;
-  }
+  this.HorizRefrAngl = computeHorizonRefractionAngle(
+    this.RadiusEarth, this.RefractedRadiusEarth,
+    this.Height, this.HorizSurfDist, this.RefractionCoeff
+  );
 
   // some computed object values
   var objIx = 0;
@@ -567,69 +513,31 @@ CurveAppClass.prototype.Update = function() {
 
   if (this.NObjects[objIx] > 0) {
 
-    // ObjRealSurfDist = distance from origin to object base along surface
-    var vectObjPos = compObjVect( this.ObjSurfDist[objIx], this.ObjSidePos[objIx], 0, this.RefractedRadiusEarth, -this.RefractedRadiusEarth );
-    this.ObjSurfDistAngl = compVectAng( vectObjPos, [ 0, 0, this.RefractedRadiusEarth ] );
-    this.ObjRealSurfDist = this.ObjSurfDistAngl * this.RefractedRadiusEarth;
-
-    // Bulge and drop
-    var d2r = Math.sin( this.ObjRealSurfDist / (2 * this.RefractedRadiusEarth) );
-    this.Bulge = this.RefractedRadiusEarth * (1 - Math.sqrt(1 - d2r*d2r));
-    this.ObjDropFromObsSurf = this.RefractedRadiusEarth * (1 - Math.cos( this.ObjRealSurfDist / this.RefractedRadiusEarth ) );
-    var hdist = this.RefractedRadiusEarth * Math.sin( this.ObjRealSurfDist / this.RefractedRadiusEarth );
-    this.ObjDropAnglFromObsSurf = toDeg( Math.atan( this.ObjDropFromObsSurf / hdist ) );
-
     this.ObjNearSize = this.GetObjectSizeVar(objIx) * this.ObjSize[objIx];
-    var vectToObjBase_refracted = compObjVect( this.ObjSurfDist[objIx], this.ObjSidePos[objIx], 0, this.RefractedRadiusEarth, this.Height );
-    var vectToObjTop_refracted  = compObjVect( this.ObjSurfDist[objIx], this.ObjSidePos[objIx], this.ObjNearSize, this.RefractedRadiusEarth, this.Height );
-    var vectToObjBase_geom = compObjVect( this.ObjSurfDist[objIx], this.ObjSidePos[objIx], 0, this.RadiusEarth, this.Height );
 
-    var objUpDir = JsgVect3.Sub( vectToObjTop_refracted, vectToObjBase_refracted );
-    this.ObjNearTilt = toDeg( compVectAng( [0,0,1], objUpDir ) );
-    this.ObjSizeAngl = toDeg( compVectAng( vectToObjBase_refracted, vectToObjTop_refracted ) );
-    if (Math.abs(this.ObjSizeAngl) < 1e-5) this.ObjSizeAngl = 0;
-    this.ObjRefrAngl = toDeg( compVectAng( vectToObjBase_geom, vectToObjBase_refracted ) );
-    if (Math.abs(this.ObjRefrAngl) < 1e-5) this.ObjRefrAngl = 0;
-    if (this.RefractionCoeff < 0) this.ObjRefrAngl *= -1;
+    var objGeom = computeObjectGeometry(
+      this.ObjSurfDist[objIx], this.ObjSidePos[objIx], this.ObjNearSize,
+      this.RefractedRadiusEarth, this.RadiusEarth, this.Height,
+      this.HorizDropAnglFromEyeLvl, this.HorizRefrAngl, this.RefractionCoeff
+    );
 
-    this.ObjLiftAbs = 0;
-    this.ObjLiftRelToHoriz = 0;
-    this.HorizonLift = 0;
-    if (this.ObjSizeAngl != 0) {
-      this.ObjLiftAbs = this.ObjNearSize * this.ObjRefrAngl / this.ObjSizeAngl;
-      this.HorizonLift = this.ObjNearSize * this.HorizRefrAngl / this.ObjSizeAngl;
-      this.ObjLiftRelToHoriz = this.ObjLiftAbs - this.HorizonLift;
-    }
-
-    // compute hidden part
-    if (this.ObjSurfDistAngl > this.HorizDropAnglFromEyeLvl) {
-
-      // object lies behind horizon
-      var cosaHorObj = Math.cos( this.ObjSurfDistAngl - this.HorizDropAnglFromEyeLvl );
-      this.ObjHidden = this.RefractedRadiusEarth * ( 1 - cosaHorObj ) / cosaHorObj;
-      this.ObjVisi = this.ObjNearSize - this.ObjHidden;
-      if (this.ObjVisi < 0) this.ObjVisi = 0;
-      this.ObjHiddenAngl = this.ObjSizeAngl * this.ObjHidden / this.ObjNearSize;
-      this.ObjVisibleAngl = this.ObjSizeAngl * this.ObjVisi / this.ObjNearSize;
-
-    } else {
-
-      // object lies in front of horizon
-      this.ObjHidden = 0;
-      this.ObjVisi = this.ObjNearSize;
-      this.ObjHiddenAngl = 0;
-      this.ObjVisibleAngl = this.ObjSizeAngl;
-    }
-
-    // compute vertical angle from horizontal to target top (= 90 deg - zenith angle)
-    // c = line of sight observer to target top
-    var a = this.RefractedRadiusEarth + this.Height;
-    var b = this.RefractedRadiusEarth + this.ObjNearSize;
-    var c = Math.sqrt( a*a + b*b -2*a*b * Math.cos( this.ObjRealSurfDist / this.RefractedRadiusEarth ) );
-    var a1 = (c*c - b*b + a*a) / (2 * a);
-    this.ObjTopAnglFromEyeLvl = -Math.asin( a1 / c ) * 180 / Math.PI;
-    this.ObjTopAnglFromEyeLvlFE = Math.atan( (this.ObjSize[objIx] - this.Height) / this.ObjRealSurfDist ) * 180 / Math.PI;
-
+    this.ObjSurfDistAngl = objGeom.objSurfDistAngl;
+    this.ObjRealSurfDist = objGeom.objRealSurfDist;
+    this.Bulge = objGeom.bulge;
+    this.ObjDropFromObsSurf = objGeom.objDropFromObsSurf;
+    this.ObjDropAnglFromObsSurf = objGeom.objDropAnglFromObsSurf;
+    this.ObjNearTilt = objGeom.objNearTilt;
+    this.ObjSizeAngl = objGeom.objSizeAngl;
+    this.ObjRefrAngl = objGeom.objRefrAngl;
+    this.ObjLiftAbs = objGeom.objLiftAbs;
+    this.ObjLiftRelToHoriz = objGeom.objLiftRelToHoriz;
+    this.HorizonLift = objGeom.horizonLift;
+    this.ObjHidden = objGeom.objHidden;
+    this.ObjVisi = objGeom.objVisi;
+    this.ObjHiddenAngl = objGeom.objHiddenAngl;
+    this.ObjVisibleAngl = objGeom.objVisibleAngl;
+    this.ObjTopAnglFromEyeLvl = objGeom.objTopAnglFromEyeLvl;
+    this.ObjTopAnglFromEyeLvlFE = objGeom.objTopAnglFromEyeLvlFE;
 
   } else {
 
@@ -707,90 +615,53 @@ CurveAppClass.prototype.UpdateObjectInput = function( objIx ) {
   if (this.NObjects[objIx] < 0) this.NObjects[objIx] = 0;
   if (this.NObjects[objIx] > 500) this.NObjects[objIx] = 500;
 
+  // Surface distance
   if (this.SliderObjSurfDistLogLast[objIx] != this.SliderObjSurfDistLog[objIx]) {
-    var distSign = this.SliderObjSurfDistLog[objIx] < 0 ? -1 : 1;
-    var distVal = Math.abs( this.SliderObjSurfDistLog[objIx] );
-    if (distVal < 1) {
-      this.ObjSurfDist[objIx] = 100 * distVal;
-    } else {
-      this.ObjSurfDist[objIx] = 10 * Math.pow( 10, this.SliderObjSurfDistLog[objIx] );
-    }
-    this.ObjSurfDist[objIx] *= distSign;
+    this.ObjSurfDist[objIx] = sliderToObjSurfDist(this.SliderObjSurfDistLog[objIx]);
   }
   var distLimit = this.RefractedRadiusEarth * Math.PI / 2;
   if (this.ObjSurfDist[objIx] < -distLimit) this.ObjSurfDist[objIx] = -distLimit;
   if (this.ObjSurfDist[objIx] >  distLimit) this.ObjSurfDist[objIx] =  distLimit;
-  var distSign = this.ObjSurfDist[objIx] < 0 ? -1 : 1;
-  var distVal  = Math.abs( this.ObjSurfDist[objIx] );
-  if (distVal < 100) {
-    this.SliderObjSurfDistLog[objIx] = distVal / 100;
-  } else {
-    this.SliderObjSurfDistLog[objIx] = Math.log10( distVal / 10 );
-  }
-  this.SliderObjSurfDistLog[objIx] *= distSign;
+  this.SliderObjSurfDistLog[objIx] = objSurfDistToSlider(this.ObjSurfDist[objIx]);
   this.SliderObjSurfDistLogLast[objIx] = this.SliderObjSurfDistLog[objIx];
 
+  // Side position
   if (this.SliderObjSidePosLog[objIx] != this.SliderObjSidePosLogLast[objIx]) {
-    var sidePosSign = this.SliderObjSidePosLog[objIx] < 0 ? -1 : 1;
-    var sidePosVal = Math.abs( this.SliderObjSidePosLog[objIx] );
-    if (sidePosVal < 1) {
-      this.ObjSidePos[objIx] = 100 * sidePosVal;
-    } else {
-      this.ObjSidePos[objIx] = 10 * Math.pow( 10, sidePosVal );
-    }
-    this.ObjSidePos[objIx] *= sidePosSign;
+    this.ObjSidePos[objIx] = sliderToObjSidePos(this.SliderObjSidePosLog[objIx]);
   }
   var sidePosLimit = this.RefractedRadiusEarth * Math.PI / 4;
   if (this.ObjSidePos[objIx] < -sidePosLimit) this.ObjSidePos[objIx] = -sidePosLimit;
   if (this.ObjSidePos[objIx] > sidePosLimit) this.ObjSidePos[objIx] = sidePosLimit;
-  var sidePosSign = this.ObjSidePos[objIx] < 0 ? -1 : 1;
-  var sidePosVal = Math.abs( this.ObjSidePos[objIx] );
-  if (sidePosVal < 100) {
-    this.SliderObjSidePosLog[objIx] = sidePosVal / 100;
-  } else {
-    this.SliderObjSidePosLog[objIx] = Math.log10( sidePosVal / 10 );
-  }
-  this.SliderObjSidePosLog[objIx] *= sidePosSign;
+  this.SliderObjSidePosLog[objIx] = objSidePosToSlider(this.ObjSidePos[objIx]);
   this.SliderObjSidePosLogLast[objIx] = this.SliderObjSidePosLog[objIx];
 
+  // Side variation
   if (this.SliderObjSideVarLog[objIx] != this.SliderObjSideVarLogLast[objIx]) {
-    var sideVarSign = this.SliderObjSideVarLog[objIx] < 0 ? -1 : 1;
-    var sideVarVal = Math.abs( this.SliderObjSideVarLog[objIx] );
-    if (sideVarVal < 1) {
-      this.ObjSideVar[objIx] = 10 * sideVarVal;
-    } else {
-      this.ObjSideVar[objIx] = Math.pow( 10, sideVarVal );
-    }
-    this.ObjSideVar[objIx] *= sideVarSign;
+    this.ObjSideVar[objIx] = sliderToObjSideVar(this.SliderObjSideVarLog[objIx]);
   }
   var sideVarLimit = this.RefractedRadiusEarth * Math.PI / 4;
   if (this.ObjSideVar[objIx] < -sideVarLimit) this.ObjSideVar[objIx] = -sideVarLimit;
   if (this.ObjSideVar[objIx] > sideVarLimit) this.ObjSideVar[objIx] = sideVarLimit;
-  var sideVarSign = this.ObjSideVar[objIx] < 0 ? -1 : 1;
-  var sideVarVal = Math.abs( this.ObjSideVar[objIx] );
-  if (sideVarVal < 10) {
-    this.SliderObjSideVarLog[objIx] = sideVarVal / 10;
-  } else {
-    this.SliderObjSideVarLog[objIx] = Math.log10( sideVarVal );
-  }
-  this.SliderObjSideVarLog[objIx] *= sideVarSign;
+  this.SliderObjSideVarLog[objIx] = objSideVarToSlider(this.ObjSideVar[objIx]);
   this.SliderObjSideVarLogLast[objIx] = this.SliderObjSideVarLog[objIx];
 
+  // Size
   if (this.SliderObjSizeLog[objIx] != this.SliderObjSizeLogLast[objIx]) {
-    this.ObjSize[objIx] = Math.pow( 10, this.SliderObjSizeLog[objIx] );
+    this.ObjSize[objIx] = sliderToObjSize(this.SliderObjSizeLog[objIx]);
   }
   if (this.ObjSize[objIx] < OBJ_SIZE_MIN) this.ObjSize[objIx] = OBJ_SIZE_MIN;
   if (this.ObjSize[objIx] > OBJ_SIZE_MAX) this.ObjSize[objIx] = OBJ_SIZE_MAX;
-  this.SliderObjSizeLog[objIx] = Math.log10( this.ObjSize[objIx] );
+  this.SliderObjSizeLog[objIx] = objSizeToSlider(this.ObjSize[objIx]);
   this.SliderObjSizeLogLast[objIx] = this.SliderObjSizeLog[objIx];
 
+  // Delta distance
   if (this.SliderObjDeltaDistLog[objIx] != this.SliderObjDeltaDistLogLast[objIx]) {
-    this.ObjDeltaDist[objIx] = 10 * Math.pow( 10, this.SliderObjDeltaDistLog[objIx] );
+    this.ObjDeltaDist[objIx] = sliderToObjDeltaDist(this.SliderObjDeltaDistLog[objIx]);
   }
   var deltaDistLimit = this.RefractedRadiusEarth * PI90;
   if (this.ObjDeltaDist[objIx] < OBJ_DELTA_DIST_MIN) this.ObjDeltaDist[objIx] = OBJ_DELTA_DIST_MIN;
   if (this.ObjDeltaDist[objIx] > deltaDistLimit) this.ObjDeltaDist[objIx] = deltaDistLimit;
-  this.SliderObjDeltaDistLog[objIx] = Math.log10( this.ObjDeltaDist[objIx] / 10 );
+  this.SliderObjDeltaDistLog[objIx] = objDeltaDistToSlider(this.ObjDeltaDist[objIx]);
   this.SliderObjDeltaDistLogLast[objIx] = this.SliderObjDeltaDistLog[objIx];
 
 }

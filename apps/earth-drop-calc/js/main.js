@@ -25,6 +25,8 @@ import 'jsgraph-vendor/src/core/wabisGraph3D.js';
 // --- app core ---
 import '../app/core/constants.js';
 import '../app/core/metadata.js';
+import '../app/core/physics.js';       // pure geometry/refraction functions
+import '../app/core/sliderMapping.js';  // slider ↔ value mappers
 import '../app/core/curveApp.js';
 import '../app/core/setup.js';
 import '../app/core/units.js';
