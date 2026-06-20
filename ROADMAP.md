@@ -48,6 +48,27 @@ arquitectónico por fases en [../MIGRATION-PLAN.md](../MIGRATION-PLAN.md).
   la altura. Eye-level dibujado en ambos modelos. Solo cambió la cámara — la física
   (snapshots matemáticos) intacta; baselines de render regenerados.
 
+**CSS / diseño (jun 2026)**
+- **Sistema de diseño compartido:** `core/tokens.css` (colores de marca, neutros,
+  radios, sombras, espaciado `--space-*`, `--tap-min`); ambas apps lo consumen.
+  Capas documentadas (tokens → vendor → componentes → app); carpetas unificadas a
+  `styles/`. — `671d148`, `6f0ac82`
+- **edc mobile-first + wide-screen:** cascada base = teléfono, card ≥768, grid de 2
+  columnas (gráfico | datos) ≥1200; tabs/sliders táctiles. fed: barra inferior con
+  scroll en móvil (controles ya no se recortan). — `f2fe9a7`, `44a5c3a`
+
+**Arquitectura / calidad (jun 2026)**
+- **Fronteras ESM reales (edc):** `physics`/`units`/`sliderMapping` ahora `export`;
+  sus consumidores `import`. El resto del bag global se volvió **contrato explícito
+  enforced por ESLint `no-undef`** (vendor + helpers + singletons + modelos
+  string-bound declarados). fed: mismo contrato (su `FeDomeApp` es un objeto
+  cohesivo por method-partials, sin módulos sueltos que convertir). — `cea9a97`, `93947eb`
+- **Bugs latentes encontrados por el contrato/lint y arreglados:** rama muerta
+  `sizeType==1` en `objectRenderer`; typo `Jsgvect3`→`JsgVect3` y `ae=` sin declarar
+  (crash en strict mode) en `EarthMap.js`. — `1be5f1b`, `93947eb`
+- **Código muerto eliminado:** `computeViewCenterAngle`, `compViewDist`, `BVal`/`BUnit`,
+  imports redundantes en `main.js`. — `84feb19`, `146acc3`
+
 ## ⏳ Pendiente
 
 
