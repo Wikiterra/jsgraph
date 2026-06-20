@@ -9,45 +9,54 @@
  * anything shared with fed-wabis-v2 in shared.css instead.
  * ============================================================================= */
 
-/* ---- CalcApp container ----
-   Narrow screens: single readable column (max 760px). Wide screens: the card
-   grows to 1400px and the body splits into two columns via .calc-grid below. */
+/* ---- CalcApp container (mobile-first) ----
+   Base = phone: full-bleed single column, no card chrome, compact padding.
+   >=768px: centered 760px card with border/shadow.
+   >=1100px: two-column (graph+controls | data+reference). */
 .CalcApp {
-  max-width: 760px;
-  margin: 16px auto;
-  padding: 16px 20px 24px;
-  background: #fff;
-  border: 1px solid #c8c8c8;
-  border-radius: 5px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  padding: var(--space-3) var(--space-3) var(--space-6);
+  background: var(--color-surface);
   box-sizing: border-box;
 }
 .CalcApp h1.CalcTitle {
-  font-size: 175%;
+  font-size: 1.4rem;
   font-weight: bold;
   line-height: 1.2;
-  margin: 0 0 0.6em;
+  margin: 0 0 var(--space-3);
   border-bottom: 2px solid var(--color-accent-strong);
-  padding-bottom: 0.3em;
+  padding-bottom: var(--space-1);
 }
 .CalcApp .Scroller { width: 100%; }
-@media (max-width: 800px) {
-  .CalcApp { margin: 0; border: none; border-radius: 0; box-shadow: none; }
+
+@media (min-width: 768px) {
+  .CalcApp {
+    max-width: 760px;
+    margin: var(--space-4) auto;
+    padding: var(--space-4) var(--space-5) var(--space-6);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+  }
+  .CalcApp h1.CalcTitle { font-size: 175%; margin-bottom: 0.6em; padding-bottom: 0.3em; }
 }
 
-/* ---- Wide-screen two-column layout ----
-   Default (mobile-first): one column, natural stacking order.
-   >=1100px: graph + controls on the left, read-only data + reference images on
-   the right, so wide monitors stop wasting horizontal space. */
+/* ---- Two-column layout (desktop) ----
+   Mobile/tablet: one column, natural stacking order. >=1200px: graph + controls
+   on the left, read-only data + reference images on the right. (1200, not 1100:
+   the 4-col data tables need ~540px of column to show every value un-clipped.) */
 .calc-grid { display: grid; grid-template-columns: 1fr; gap: 0 28px; }
-@media (min-width: 1100px) {
+@media (min-width: 1200px) {
   .CalcApp { max-width: 1400px; }
-  .calc-grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: start; }
+  .calc-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: start; }
   /* Keep the graph + its controls in view while the data column scrolls. */
-  .calc-left { position: sticky; top: 16px; }
-  /* The read-only data tables are 4-col (Label Value Label Value); their default
-     150px inputs are too wide for one column. Trim them (display-only fields). */
-  .calc-right table.ControlPanel td.Value input[type="text"] { width: 110px; }
+  .calc-left { position: sticky; top: var(--space-4); }
+  /* In two-column mode the data tables share the row with the graph, so tighten
+     them further (95px inputs + slimmer cell padding) to fit the right column
+     without clipping. ID-scoped to win over the 110px single-column rule. */
+  .calc-right table.ControlPanel td { padding: 4px 5px; }
+  #TargetDataPanel td.Value input[type="text"],
+  #HorizonDataPanel td.Value input[type="text"] { width: 95px; }
 }
 
 /* ---- Tab Selectors ---- */
@@ -67,10 +76,10 @@ ul.TabSelectors.Top { padding-bottom: 0; }
 ul.TabSelectors.Bottom { padding-top: 0; }
 ul.TabSelectors li {
   background: none;
-  display: inline;
-  margin: 0 0.2em;
-  padding: 0.2em 0.5em;
-  line-height: 2;
+  display: inline-block;       /* inline-block so padding makes a real tap target */
+  margin: 0 0.15em 0.25em;
+  padding: 0.45em 0.7em;        /* bigger touch area; wraps cleanly on phones */
+  line-height: 1.4;
   border-left: 1px solid #ddd;
   color: #ddd;
   white-space: nowrap;
@@ -164,12 +173,23 @@ table.ControlPanel.InputWidth185 td.Value input[type="text"] { width: 185px !imp
 table.ControlPanel.SliderMinWidth250 td.Slider { min-width: 250px !important; }
 table.ControlPanel.SliderMinWidth300 td.Slider { min-width: 300px !important; }
 
-/* ---- Slider widget (native <input type="range">) ---- */
+/* Phone: drop the slider min-widths so each row fits a ~360px screen instead of
+   forcing horizontal scroll. The slider still takes the remaining row width. */
+@media (max-width: 767px) {
+  table.ControlPanel.Slider.NCols2 td.Slider,
+  table.ControlPanel.Slider.NCols4 td.Slider,
+  table.ControlPanel.SliderMinWidth250 td.Slider,
+  table.ControlPanel.SliderMinWidth300 td.Slider { min-width: 90px !important; }
+}
+
+/* ---- Slider widget (native <input type="range">) ----
+   28px track for a comfortable touch target (thumb matches). */
 div.Slider {
   position: relative;
-  height: 25px;
+  height: 28px;
   background: #EEE;
   border: 1px solid #ddd;
+  border-radius: var(--radius-sm);
   touch-action: none;
 }
 div.Slider input[type="range"] {
@@ -188,7 +208,7 @@ div.Slider input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 50px;
-  height: 25px;
+  height: 28px;
   background: #CC0000;
   color: #FFF;
   border: none;
@@ -197,7 +217,7 @@ div.Slider input[type="range"]::-webkit-slider-thumb {
 }
 div.Slider input[type="range"]::-moz-range-thumb {
   width: 50px;
-  height: 25px;
+  height: 28px;
   background: #CC0000;
   border: none;
   border-radius: 3px;
@@ -215,6 +235,13 @@ div.Slider.ReadOnly { opacity: 0.5; pointer-events: none; }
 .bpic { width: 100%; }
 .bpic img { width: 100%; }
 .bpic .imgd { width: 100%; font-size: 13px; color: #555; text-align: center; }
+
+/* ---- Read-only data panels (Target / Horizon) ----
+   Compact value inputs (display-only). These are 4-col tables that can't reflow
+   cleanly via CSS, so on phones they scroll horizontally within their .Scroller
+   while the rest of the page stays single-column and fits the viewport. */
+#TargetDataPanel td.Value input[type="text"],
+#HorizonDataPanel td.Value input[type="text"] { width: 110px; }
 
 /* ---- ID-specific overrides ---- */
 #UnitsPanel { border: 2px solid #fa6; }

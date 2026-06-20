@@ -27,18 +27,26 @@ apps/
 
 Una sola cascada, de lo compartido a lo específico. Cada app la carga en este orden:
 
-| Capa           | Archivo                                         | Dueño      | Qué                                                                                                                   |
-|----------------|-------------------------------------------------|------------|-----------------------------------------------------------------------------------------------------------------------|
-| 1. Tokens      | `jsgraph-vendor/src/core/tokens.css`            | compartido | **Única fuente** de colores de marca, neutros, radios y sombras (`--color-*`, `--nav-*`, `--radius-*`, `--shadow-*`). |
-| 2. Base vendor | `jsgraph-vendor/src/styles.css`                 | vendor     | Estilos del framework wabis (DOM generado: paneles, tabs). Solo lo usa edc. No tocar salvo parche.                    |
-| 3. Componentes | `jsgraph-vendor/src/core/{shared,appShell}.css` | compartido | Tweaks de componentes comunes a ambas apps + barra de navegación.                                                     |
-| 4. App         | `apps/<app>/styles/*.css`                       | por app    | Chrome y overrides propios. **Última capa, gana.**                                                                    |
+| Capa           | Archivo                                         | Dueño      | Qué                                                                                                                                                |
+|----------------|-------------------------------------------------|------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1. Tokens      | `jsgraph-vendor/src/core/tokens.css`            | compartido | **Única fuente** de colores, neutros, radios, sombras, **espaciado** (`--space-1..6`) y **touch target** (`--tap-min`). Documenta los breakpoints. |
+| 2. Base vendor | `jsgraph-vendor/src/styles.css`                 | vendor     | Estilos del framework wabis (DOM generado: paneles, tabs). Solo lo usa edc. No tocar salvo parche.                                                 |
+| 3. Componentes | `jsgraph-vendor/src/core/{shared,appShell}.css` | compartido | Tweaks de componentes comunes a ambas apps + barra de navegación.                                                                                  |
+| 4. App         | `apps/<app>/styles/*.css`                       | por app    | Chrome y overrides propios. **Última capa, gana.**                                                                                                 |
 
 - edc carga 1–4 vía `js/main.js` (imports ESM, en orden). fed carga tokens vía `@import`
   al inicio de su `styles/styles.css` y los componentes vía `main-v2.js`.
 - Ambas apps usan `styles/` (no `css/`). Los colores de marca (`#ff8033`…) viven **solo**
   en `tokens.css`; el resto referencia `var(--…)`. Colores semánticos de una sola app
   (resaltados de campos, cabeceras de panel) se quedan locales en su `*.css`.
+
+**Mobile-first.** Estilos base = teléfono; se mejoran con `min-width`. Breakpoints
+compartidos (las media queries no leen custom properties, son constantes acordadas):
+teléfono = base · ajustes finos `<480` · tablet `≥768` · desktop `≥1100` (edc usa `≥1200`
+para su grid de 2 columnas, donde las tablas de datos de 4 columnas ya caben sin recortar).
+Objetivos táctiles vía `--tap-min` (44px); las tablas de datos de solo-lectura de edc
+(4 col., DOM generado, no reflowables por CSS) hacen scroll horizontal dentro de su
+`.Scroller` en teléfono mientras el resto de la página cabe en el viewport.
 
 ## Principio de dependencias (DIP)
 

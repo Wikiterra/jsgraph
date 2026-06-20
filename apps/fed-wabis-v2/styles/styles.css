@@ -568,7 +568,7 @@ body {
   cursor: pointer;
   transition: color 0.15s, background 0.15s, border-color 0.15s;
   white-space: nowrap;
-  min-width: 44px;
+  min-width: var(--tap-min);   /* shared touch-target token */
 }
 
 .layer-toggle:hover {
@@ -742,6 +742,13 @@ body {
   }
 
   #top-bar { gap: 4px; padding: 0 6px; overflow-x: auto; }
+
+  /* Bottom bar: its sections are flex-shrink:0 and there are four of them, so on a
+     phone the rightmost (luminaries) would be cut off. Scroll the whole bar (like
+     the top bar) so every control is reachable. Bar height is unchanged, so the
+     canvas alignment is unaffected. */
+  #bottom-bar { justify-content: flex-start; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+  #bottom-bar::-webkit-scrollbar { display: none; }
 
   #sun-moon-strip { display: none; }
 

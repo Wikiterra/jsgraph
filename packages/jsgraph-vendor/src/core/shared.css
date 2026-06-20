@@ -1,15 +1,23 @@
 /* =============================================================================
- * shared.css — Shared UI component styles used by earth-drop-calc.
- *   (Reset, tabs, control panels, sliders, scroller, wiki utilities.)
+ * shared.css — Shared, mobile-first component layer (loaded by both apps after
+ *   tokens.css). Reset, tabs, control panels, sliders, scroller, wiki utilities.
+ *   Tokens/breakpoints come from tokens.css. App-specific styling lives in the
+ *   app's own stylesheet; this file only holds what both apps can share.
  * ============================================================================= */
 
 /* ---- Reset minimal ---- */
 *, *::before, *::after { box-sizing: border-box; }
 body { margin: 0; font-family: system-ui, -apple-system, sans-serif; }
 
-/* ---- Scroller (for panel overflow) ---- */
+/* ---- Scroller (for panel overflow) ----
+   Mobile-first: panels fit the viewport (no forced min-width → no horizontal
+   scroll on phones). From tablet up, keep a min-width so multi-column control
+   panels don't collapse awkwardly; .Scroller still scrolls if they overflow. */
 .Scroller { overflow-x: auto; }
-.ScrollCanvas { min-width: 600px; }
+.ScrollCanvas { min-width: 0; }
+@media (min-width: 768px) {
+  .ScrollCanvas { min-width: 600px; }
+}
 
 /* ---- Wiki utility classes (needed by vendor scripts) ---- */
 .Wiki div.Paragraph { margin: 8px 0; }
