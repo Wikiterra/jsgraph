@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": ".",
+    "checkJs": true,
+    "allowJs": true,
+    "maxNodeModuleJsDepth": 0,
+    "strict": false,
+    "noUncheckedIndexedAccess": false
+  },
+  "include": [
+    "app/core/**/*.js",
+    "app/core/**/*.ts"
+  ],
+  "exclude": [
+    "app/core/init.js",
+    "app/core/setup.js",
+    "app/core/units.js",
+    "app/render/",
+    "app/panels/",
+    "assets/"
+  ]
+}

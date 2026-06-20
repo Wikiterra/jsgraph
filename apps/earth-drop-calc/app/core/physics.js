@@ -314,7 +314,7 @@ function computeObjectGeometry(
  * @param {number} equatorRadiusFE     — FE equator radius
  * @param {number} horizDropAnglFromEyeLvl
  * @param {boolean} isShowGlobe
- * @param {string} [aimModel]          — 'globe' | 'fe' (in split-screen mode)
+ * @param {string} [aimModel]          - 'globe' | 'fe' (in split-screen mode)
  * @returns {number} vertical view center angle in radians
  */
 function computeViewCenterAngle(

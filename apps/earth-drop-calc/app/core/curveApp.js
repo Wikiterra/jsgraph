@@ -158,7 +158,6 @@
 /**
  * CurveAppClass — data model + math engine for the curvature calculator.
  * @constructor
- * @returns {CurveAppInstance}
  */
 function CurveAppClass() {
 
@@ -359,7 +358,7 @@ function CurveAppClass() {
  * @returns {boolean}
  */
 CurveAppClass.prototype.IsShowGlobe = function() {
-  return (this.ShowModel & 1) || this.ShowModel == 4;
+  return !!((this.ShowModel & 1) || this.ShowModel == 4);
 }
 
 /**
@@ -367,7 +366,7 @@ CurveAppClass.prototype.IsShowGlobe = function() {
  * @returns {boolean}
  */
 CurveAppClass.prototype.IsShowFlatEarth = function() {
-  return (this.ShowModel & 2) || this.ShowModel == 4;
+  return !!((this.ShowModel & 2) || this.ShowModel == 4);
 }
 
 /**
@@ -761,7 +760,7 @@ CurveAppClass.prototype.Update = function() {
  * @param {number} pan       — pan angle in radians
  * @param {number} tilt      — tilt angle in degrees
  * @param {number} roll      — roll angle in degrees
- * @param {string} [aimModel] — 'globe' | 'fe' (for split-screen mode)
+ * @param {string} [aimModel] - 'globe' | 'fe' (for split-screen mode)
  */
 CurveAppClass.prototype.CompCameraParams = function( pan, tilt, roll, aimModel ) {
   var dvc, avc;
