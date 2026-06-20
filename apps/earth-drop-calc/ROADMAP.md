@@ -52,18 +52,18 @@ respecto a este plan:
 
 ---
 
-## Estado actual (baseline)
+## Estado actual (baseline post-refactor, jun 2026)
 
 | Área             | Estado                                  | Observación                                                      |
 |------------------|-----------------------------------------|------------------------------------------------------------------|
-| Arquitectura     | `core` / `render` / `panels` / `vendor` | Limpia a nivel de archivos                                       |
+| Arquitectura     | `core` / `render` / `panels` / `vendor` | Limpia a nivel de archivos. physics.js + sliderMapping.js extraídos |
 | Namespace        | **Global**                              | `CurveApp`, `graph`, `UpdateAll`, `Jsg*`, `x*`… todo en `window` |
-| Carga de paneles | `document.writeln` vía `<script src>`   | Frágil, depende del orden de parseo                              |
-| Encoding         | ISO-8859-1 / windows-1252               | `°`, `²`, `µ` como bytes únicos                                  |
-| Tests            | **0**                                   | El motor (`CurveAppClass.Update`) es puro y muy testeable        |
-| Tipos            | Ninguno                                 | `CurveAppClass` tiene ~100 propiedades sin documentar            |
-| Tooling          | Ninguno                                 | Sin lint/format/CI                                               |
-| Vendor libs      | One-liners densos                       | `jsg.js`, `jsgx3d.js`, `ControlPanel.js`… ilegibles              |
+| Carga de paneles | `RenderInto(container)` via ESM entry   | Reemplazado `document.writeln`. Entry único `js/main.js`          |
+| Encoding         | UTF-8                                   | `°`, `²`, `µ` correctos en UTF-8                                 |
+| Tests            | **9 tests** (Playwright)                | 4 snapshots matemáticos + 2 fed-wabis + 3 screenshots de render  |
+| Tipos            | JSDoc + `@ts-check`                     | `CurveAppInstance` ~100 props documentadas. 0 errores TS          |
+| Tooling          | Vite + ESLint + Prettier + Playwright   | Monorepo pnpm. CI listo (GitHub Actions)                          |
+| Vendor libs      | xtc.js/Tabs.js/Slider.js modernizados   | ControlPanel.js pendiente (~400 líneas one-liner denso)           |
 
 ---
 

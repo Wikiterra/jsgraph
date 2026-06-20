@@ -23,6 +23,15 @@ Tablero de estado a alto nivel. Detalle: fases en
 - **Build unificado** de las dos apps → `dist/` + workflow GitHub Pages. — `48c6e66`
 - **Red de seguridad:** snapshots de matemática (Fase 2) + **screenshots de render**
   (canvas por app, deterministas). — `5d8c176`
+- **Quick wins:** `.editorconfig`, meta tags, favicon, readme deploy note. — `c6af28c`
+- **Constantes físicas:** extraídos números mágicos a `constants.js`. — `c6af28c`
+- **Fase 4 (capas):** `physics.js` + `sliderMapping.js`. — `e31f199`
+- **Lógica común:** `helpers.js` (toRad, sqr, Limit1, etc.) en vendor/core. — `c3555a2`
+- **Fase 5 (tipado):** JSDoc + `@ts-check` + `wabis.d.ts`. 0 errores TS. — `c3555a2`
+- **xtc.js modernizado:** IE legacy eliminado. — `7342d0f`
+- **Tabs.js modernizado:** ARIA-based (~180 líneas). — `7342d0f`
+- **CSS reorg:** `shared.css` creado, inline styles eliminados del HTML. — `e60620d`
+- **Slider.js nativo:** DgdSlider → `<input type="range">`. — `bc5bfc3`
 
 ## ⏳ Pendiente importante (por prioridad)
 
