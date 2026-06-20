@@ -9,11 +9,8 @@ arquitectónico por fases en [../MIGRATION-PLAN.md](../MIGRATION-PLAN.md).
 
 ## Principios
 
-- **0 dependencias en runtime.** El motor (proyección 3D, refracción, geometría del
-  horizonte) es código propio. Las deps son solo de desarrollo (Vite/ESLint/Playwright),
-  nunca llegan al navegador. Nada de three.js/React "porque sí".
-- **Refactor que preserva comportamiento.** No tocar `vendor/` ni `core/` sin la red de
-  seguridad cubriéndolo. No romper compatibilidad de URLs de estado (`DataX`).
+- **0 dependencias en runtime.** El motor (proyección 3D, refracción, geometría del horizonte) es código propio. Las deps son solo de desarrollo (Vite/ESLint/Playwright), nunca llegan al navegador. Nada de three.js/React "porque sí".
+- **Refactor que preserva comportamiento.** No tocar `vendor/` ni `core/` sin la red de seguridad cubriéndolo. No romper compatibilidad de URLs de estado (`DataX`).
 - **Nativo antes que librería; sin abstracción sin un 2º caso de uso real.**
 - **Por capas, no big-bang.** Cada cambio deja ambas apps funcionando y shippables.
 
@@ -53,17 +50,6 @@ arquitectónico por fases en [../MIGRATION-PLAN.md](../MIGRATION-PLAN.md).
 
 ## ⏳ Pendiente
 
-Sin tareas accionables abiertas. Lo único que falta es un click manual fuera del repo:
-**Settings → Pages → Source: GitHub Actions** (ya anotado en Hecho) y `git push` para
-publicar.
-
-## 🔧 Mantenimiento (condicional — se dispara solo si pasa)
-
-### Si se actualiza wabis upstream
-Al traer versión nueva de walter.bislins.ch: re-copiar fuentes →
-`node tools/esm-globalize.mjs <archivos>` → reponer parches (`CreateDomObjects` en
-`jsg.js`, `ControlPanel.AppendixHtml`, `wiki.js`, marcados `// ponytail:`) →
-`pnpm characterize`. Escollos en MIGRATION-PLAN §8.
 
 ## 🚫 NO hacer (hasta que haya necesidad real)
 
