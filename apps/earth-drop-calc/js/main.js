@@ -47,3 +47,6 @@ import '../app/panels/horizonData.js';
 
 // --- DOM-ready bootstrap (wires tabs, restores URL state, first UpdateAll) ---
 import '../app/core/init.js';
+
+// shared top nav / app-switcher (branding + link to the other app)
+import 'jsgraph-vendor/src/core/appShell.js';

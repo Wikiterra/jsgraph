@@ -1,0 +1,31 @@
+.app-shell-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.5rem 1rem;
+  background: #1f2937;
+  color: #fff;
+  font: 14px system-ui, -apple-system, sans-serif;
+}
+.app-shell-nav .brand {
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+.app-shell-nav nav {
+  display: flex;
+  gap: 1rem;
+}
+.app-shell-nav a {
+  color: #cbd5e1;
+  text-decoration: none;
+  padding: 2px 0;
+}
+.app-shell-nav a:hover {
+  color: #fff;
+}
+.app-shell-nav a.active {
+  color: #fff;
+  border-bottom: 2px solid #f59e0b;
+}

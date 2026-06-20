@@ -20,3 +20,6 @@ import '../assets/app-draw.js';
 import '../assets/demos-manager.js';
 import '../assets/demos-data.js';
 import './ui.js';
+
+// shared top nav / app-switcher (branding + link to the other app)
+import 'jsgraph-vendor/src/core/appShell.js';
