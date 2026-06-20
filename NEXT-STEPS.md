@@ -34,7 +34,7 @@ El vendor dejó de ser intacto: tiene el codemod + 1 parche manual.
   `CreateDomObjects` en `jsg.js` (marcado `// ponytail:`), `pnpm characterize`.
 - Detalle de los 5 escollos en MIGRATION-PLAN §8.
 
-## 3. 🟡 earth-drop a un entrypoint ESM → elimina el parche del build
+## 3. 🔴 earth-drop a un entrypoint ESM → elimina el parche del build (PROYECTO)
 
 Es el mayor **simplificador** disponible.
 
@@ -46,10 +46,14 @@ Es el mayor **simplificador** disponible.
   - desaparece el `../../packages/…` y `pnpm --filter earth-drop-calc dev` vuelve a
     funcionar (hoy edc solo se sirve desde la raíz),
   - habilita depender de `jsgraph-core` por `import`, no por global (Fase 3 completa).
-- **Cuidado:** el canvas se inyecta con `document.write` en parse-time; al pasar a
-  módulo (deferred) hay que usar el branch `#jsg-canvas-mount` que **ya** tiene
-  `CreateDomObjects` → basta añadir ese `<div id="jsg-canvas-mount">` al HTML.
-- **Hazlo con #1 ya en verde** (toca el render).
+- **OJO, no es trivial (revisión 2026-06-17):** no es solo el canvas. Los ~21 `<script>`
+  de app del `<body>` y **los paneles** (`ControlPanel.Render → document.writeln`) se
+  inyectan en **parse-time**, posicionados por dónde está cada `<script>`. Pasar a módulo
+  (deferred) rompe TODO eso → hay que rearquitecturar la construcción del DOM (de
+  `document.write` a montaje programático en divs target). El canvas es la parte fácil
+  (branch `#jsg-canvas-mount` que ya tiene `CreateDomObjects`); los paneles son el grueso.
+  → **Es un proyecto 🔴, no un quick win.** Hacerlo solo si se decide modernizar edc, y
+  con #1 (red de render) ya en verde.
 
 ## 4. 🟡 Extender la costura `createGraph3D` — solo cuando haga falta
 
