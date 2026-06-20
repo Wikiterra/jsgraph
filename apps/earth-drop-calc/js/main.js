@@ -36,10 +36,7 @@ import '../app/render/objectRenderer.js';
 // --- panels (render into their #panel-* containers via ControlPanel.RenderInto) ---
 import '../app/panels/basics.js';
 import '../app/panels/view.js';
-import '../app/panels/obj1.js';
-import '../app/panels/obj1Options.js';
-import '../app/panels/obj2.js';
-import '../app/panels/obj2Options.js';
+import '../app/panels/objectPanels.js';
 import '../app/panels/refraction.js';
 import '../app/panels/refractionHandlers.js';
 import '../app/panels/units.js';
