@@ -12,20 +12,24 @@ del motor gráfico entre ellas.
 
 ```
 packages/
-  jsgraph-vendor/   Copia única del framework wabis, INTACTA (no se refactoriza).
-  jsgraph-core/     Capa de abstracción SOLID (ports + adapters) sobre el vendor.
+  jsgraph-vendor/        Único package compartido:
+    src/                 · framework wabis, INTACTO salvo parches mínimos (ver MIGRATION-PLAN §8)
+    src/core/            · seam SOLID propio (createGraph3D + port Graph3D.ts)
 apps/
   earth-drop-calc/  Calculadora de curvatura/caída (piloto de migración).
   fed-wabis-v2/     Flat Earth Dome Model (wabis-calc-v2).
 ```
 
+> Hubo dos packages (`jsgraph-vendor` + `jsgraph-core`); el "core" quedó tan fino
+> (un adapter) que se fusionó en uno solo. El seam vive en `jsgraph-vendor/src/core/`.
+
 ## Principio de dependencias (DIP)
 
-`apps → jsgraph-core (ports) → adapters → jsgraph-vendor`
+`apps → core seam (createGraph3D) → wabis`
 
-Las apps dependen de las **interfaces** de `jsgraph-core`, nunca de los globals
-del framework (`JsGraphX3D`, `JsgVect3`, …). Así, cambiar el motor de render en
-el futuro (p. ej. a three.js) es escribir un adapter nuevo, sin tocar las apps.
+Las apps llaman a **nuestro** `createGraph3D`, no al global del framework
+(`NewGraphX3D`). Cambiar el motor de render en el futuro (p. ej. a three.js) es
+reescribir solo ese adapter, sin tocar las apps.
 
 ## Comandos
 
@@ -37,7 +41,7 @@ pnpm dev       # Vite raíz: sirve AMBAS apps. Abrir:
 pnpm build     # build estático unificado de las dos apps → dist/ (GitHub Pages)
 pnpm preview   # sirve dist/ localmente (como lo verá Pages)
 pnpm characterize  # red de seguridad: snapshots del motor matemático (Playwright)
-pnpm typecheck     # type-check de jsgraph-core
+pnpm typecheck     # type-check del seam TS (src/core)
 pnpm lint          # ESLint (ignora vendor y código legacy)
 ```
 

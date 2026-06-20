@@ -12,9 +12,11 @@ Tablero de estado a alto nivel. Detalle: fases en
 - Monorepo pnpm + Vite; ambas apps (earth-drop-calc, fed-wabis-v2) arrancan bajo Vite.
 - **Vendor wabis único** para las dos apps (`packages/jsgraph-vendor/src`); copia local
   de earth-drop eliminada. Adaptado a carga dual classic/ESM. — `c1d0c28`
-- **Costura Fase 3 (mínima):** `createGraph3D` en `jsgraph-core` sobre `NewGraphX3D`;
-  earth-drop ya no nombra el motor. — `ec7c38f`
+- **Costura Fase 3 (mínima):** `createGraph3D` (seam) sobre `NewGraphX3D`; earth-drop
+  ya no nombra el motor. — `ec7c38f`
 - Limpieza de andamiaje sin uso en core/vendor. — `29ec674`
+- **Un solo package:** `jsgraph-core` (demasiado fino) fusionado en `jsgraph-vendor`;
+  el seam vive en `jsgraph-vendor/src/core/`.
 - **Build unificado** de las dos apps → `dist/` + workflow GitHub Pages. — `48c6e66`
 - **Red de seguridad:** snapshots de matemática (Fase 2) + **screenshots de render**
   (canvas por app, deterministas). — `5d8c176`

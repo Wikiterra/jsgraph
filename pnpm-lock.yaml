@@ -49,12 +49,6 @@ importers:
         specifier: ^7.1.2
         version: 7.3.5
 
-  packages/jsgraph-core:
-    dependencies:
-      jsgraph-vendor:
-        specifier: workspace:*
-        version: link:../jsgraph-vendor
-
   packages/jsgraph-vendor: {}
 
 packages:

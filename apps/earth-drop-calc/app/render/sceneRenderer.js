@@ -2,7 +2,7 @@
 // sceneRenderer.js - Creates the main 3D graph and draws the model scene
 //                    (earth/sky, horizon, refraction overlays, grid lines).
 // =============================================================================
-// createGraph3D: jsgraph-core seam over the wabis NewGraphX3D global (see index.html).
+// createGraph3D: core seam over the wabis NewGraphX3D global (see index.html).
 var graph = createGraph3D( {
   Id: 'JsGraph1',
   Width: '100%',

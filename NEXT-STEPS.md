@@ -45,7 +45,7 @@ Es el mayor **simplificador** disponible.
   - se borra el plugin `copy-edc-static` de `vite.config.js`,
   - desaparece el `../../packages/…` y `pnpm --filter earth-drop-calc dev` vuelve a
     funcionar (hoy edc solo se sirve desde la raíz),
-  - habilita depender de `jsgraph-core` por `import`, no por global (Fase 3 completa).
+  - habilita depender del core seam por `import`, no por global (Fase 3 completa).
 - **OJO, no es trivial (revisión 2026-06-17):** no es solo el canvas. Los ~21 `<script>`
   de app del `<body>` y **los paneles** (`ControlPanel.Render → document.writeln`) se
   inyectan en **parse-time**, posicionados por dónde está cada `<script>`. Pasar a módulo
@@ -59,5 +59,5 @@ Es el mayor **simplificador** disponible.
 
 No abstraer la superficie de dibujo `g.*` ahora: un solo motor (wabis) = flexibilidad
 especulativa. Cuando aparezca un segundo motor real (¿three.js, Fase 5?), portar
-método a método dentro de `packages/jsgraph-core/src/adapters/wabis/wabisGraph3D.js`
+método a método dentro de `packages/jsgraph-vendor/src/core/wabisGraph3D.js`
 (o un wrapper del grafo), validando cada paso con la red de render (#1).
