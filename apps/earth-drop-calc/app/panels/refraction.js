@@ -1,7 +1,4 @@
 // Refraction panel (coefficient/temperature/pressure)
-// Extracted from inline script lines 3481-3776
-
-
 
 var BaroConst = {
   hIx: 0,

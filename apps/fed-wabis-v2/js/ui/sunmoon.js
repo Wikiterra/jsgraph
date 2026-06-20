@@ -1,8 +1,10 @@
 const deg = n => n.toFixed(0) + '°';
 
 export function sync() {
-  const sunEl  = document.getElementById('sms-sun');
-  const moonEl = document.getElementById('sms-moon');
+  const strip = document.getElementById('sun-moon-strip');
+  if (!strip) return;
+  const sunEl  = strip.querySelector('.sms-sun');
+  const moonEl = strip.querySelector('.sms-moon');
   if (!sunEl || !moonEl) return;
   try {
     sunEl.textContent  = FeDomeApp.SunFeCelestSphereCoord[2]  > 0

@@ -1,7 +1,4 @@
 // Save/Restore panel (URL state)
-// Extracted from inline script lines 3970-4014
-
-
 
 function ResetApp() {
   DataX.SetAppState(

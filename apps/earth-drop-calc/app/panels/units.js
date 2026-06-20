@@ -1,7 +1,4 @@
 // Units panel (Metric/Imperial)
-// Extracted from inline script lines 3877-3947
-
-
 
 ControlPanels.NewPanel( {
     Name: 'Units-Calculator',

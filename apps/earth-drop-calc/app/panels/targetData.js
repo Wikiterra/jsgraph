@@ -1,7 +1,4 @@
 // Nearest target data + horizon data display panels
-// Extracted from inline script lines 4057-4162
-
-
 
 ControlPanels.NewPanel( {
   Name: 'TargetDataPanel',

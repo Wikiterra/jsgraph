@@ -1,7 +1,4 @@
 // View panel (Pan/Tilt/Roll)
-// Extracted from inline script lines 3048-3117
-
-
 
 ControlPanels.NewSliderPanel( {
   ModelRef: 'CurveApp',

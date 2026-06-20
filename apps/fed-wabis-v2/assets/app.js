@@ -121,6 +121,8 @@ var FeDomeApp = {
   ShowGP: true,
   ShowAzElev: true,
 
+  MoveObserverMode: false, // when true, canvas drag moves observer (no Ctrl needed)
+
   RayTarget: 0, // 0 -> observer, 1 -> Flat Earth
   RaySource: 0, // 0 -> sun, 1 -> moon, 2 -> star
 
@@ -245,7 +247,7 @@ var FeDomeApp = {
 
   OnMouseMove: function (x, y, dx, dy, boost, event) {
     var g = this.GraphObject;
-    if (event.ctrlKey) {
+    if (event.ctrlKey || FeDomeApp.MoveObserverMode) {
       var increment = this.MousePositionIncrement;
       this.ObserverLat -= dy / g.VpInnerWidth * increment;
       this.ObserverLong += dx / g.VpInnerHeight * increment;
@@ -371,6 +373,9 @@ function UpdateAll(stopAnimation) {
 
 function ResetApp() {
   Demos.Reset(false);
+  FeDomeApp.MoveObserverMode = false;
+  var moveBtn = document.getElementById('move-observer-btn');
+  if (moveBtn) moveBtn.setAttribute('aria-pressed', 'false');
   DataX.JsonToAppState(
     'FeDomeApp = { "Description": "", "PointerFrom": [ 0, 0 ], "PointerTo": [ 0, 0 ], "PointerText": "", "ObserverLat": 0, "ObserverLong": 15, "Zoom": 1.4, "CameraDirection": 30, "CameraHeight": 25, "CameraDistance": 200150, "DateTime": 360.5, "DomeSize": 1, "DomeHeight": 9000, "ShowFeGrid": true, "ShowShadow": true, "ShowDomeGrid": true, "ShowSun": true, "ShowMoon": true, "ShowSunTrack": false, "ShowMoonTrack": false, "ShowSphere": true, "ShowStars": false, "ShowDomeRays": true, "ShowSphereRays": true, "ShowManyRays": false }');
   UpdateAll(true);

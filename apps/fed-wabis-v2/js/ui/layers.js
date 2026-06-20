@@ -29,4 +29,14 @@ export function init() {
       UpdateAll();
     });
   }
+
+  /* Move observer toggle — special: toggles MoveObserverMode flag */
+  const moveBtn = document.getElementById('move-observer-btn');
+  if (moveBtn) {
+    moveBtn.addEventListener('click', () => {
+      const active = moveBtn.getAttribute('aria-pressed') !== 'true';
+      moveBtn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      FeDomeApp.MoveObserverMode = active;
+    });
+  }
 }

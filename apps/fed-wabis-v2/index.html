@@ -60,79 +60,67 @@
           </button>
         </div>
 
-        <!-- Time of day slider -->
-        <div class="tc-group">
-          <span class="tc-label">T <span id="tc-time-val">12.0</span>h</span>
-          <input class="tc-range" id="tc-time" type="range" min="0" max="24" step="0.1" value="12" aria-label="Time of day (hours)">
-        </div>
+        <!-- Reserved for future desktop timeline; main timeline is in the timeline strip below -->
+        <div class="desktop-tl-placeholder"></div>
 
-        <!-- Year timeline scrubber: click anywhere to seek, drag to scrub (mouse + touch).
-             Backed by a native range for keyboard / a11y; CSS adds the ticks + handle styling. -->
-        <div class="tc-timeline" role="group" aria-label="Year timeline">
-          <div class="timeline-shell">
-            <div class="timeline-ticks" aria-hidden="true">
-              <span class="tk" style="--p: 0">Jan</span>
-              <span class="tk" style="--p: 0.0850">Feb</span>
-              <span class="tk" style="--p: 0.1622">Mar</span>
-              <span class="tk" style="--p: 0.2472">Apr</span>
-              <span class="tk" style="--p: 0.3296">May</span>
-              <span class="tk" style="--p: 0.4148">Jun</span>
-              <span class="tk" style="--p: 0.4973">Jul</span>
-              <span class="tk" style="--p: 0.5824">Aug</span>
-              <span class="tk" style="--p: 0.6676">Sep</span>
-              <span class="tk" style="--p: 0.7500">Oct</span>
-              <span class="tk" style="--p: 0.8352">Nov</span>
-              <span class="tk" style="--p: 0.9176">Dec</span>
-            </div>
-            <input class="timeline-range" id="tc-day" type="range" min="0" max="364" step="1" value="82" aria-label="Day of year (0–364)">
-          </div>
-          <span class="timeline-label" id="tc-day-val">Mar 23</span>
-        </div>
-
-        <!-- Sun / Moon info strip -->
-        <div id="sun-moon-strip" aria-live="polite" aria-atomic="true">
-          <span id="sms-sun"  class="sms-item" title="Sun azimuth / elevation">☀ —</span>
-          <span id="sms-moon" class="sms-item" title="Moon azimuth / elevation">☾ —</span>
-        </div>
-
-        <!-- Calendar date picker -->
+        <!-- Calendar date picker — always visible, no toggle -->
         <div id="calendar-widget">
-          <button id="calendar-toggle" aria-expanded="false" aria-controls="calendar-dropdown" aria-label="Open date picker">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
-            <span id="calendar-display" aria-live="polite">—</span>
-          </button>
-          <div id="calendar-dropdown" hidden role="dialog" aria-label="Date picker">
-            <!-- Digit-scroll spinbuttons: ↑↓ arrows or scroll wheel on each field -->
+          <div id="calendar-dropdown" role="region" aria-label="Date picker">
+            <!-- Digit-scroll spinbuttons: ↑↓ arrows or scroll wheel on each field. -->
             <div class="cal-digits" role="group" aria-label="Date and time">
-              <span class="cal-spin" id="cs-month" role="spinbutton" tabindex="0"
-                    aria-label="Month" aria-valuenow="0" aria-valuemin="0" aria-valuemax="11"
-                    aria-valuetext="January" data-field="month">Jan</span>
-              <span class="cal-spin" id="cs-day" role="spinbutton" tabindex="0"
-                    aria-label="Day" aria-valuenow="1" aria-valuemin="1" aria-valuemax="31"
-                    data-field="day">01</span>
-              <span class="cal-spin cs-wide" id="cs-year" role="spinbutton" tabindex="0"
-                    aria-label="Year" aria-valuenow="2024" aria-valuemin="1900" aria-valuemax="2099"
-                    data-field="year">2024</span>
+              <span class="cal-field">
+                <span class="cal-spin" id="cs-month" role="spinbutton" tabindex="0"
+                      aria-label="Month" aria-valuenow="0" aria-valuemin="0" aria-valuemax="11"
+                      aria-valuetext="January" data-field="month">Jan</span>
+                <span class="cal-field-arrows">
+                  <button class="cal-arrow cal-up" data-field="month" tabindex="-1" aria-label="Next month">▲</button>
+                  <button class="cal-arrow cal-down" data-field="month" tabindex="-1" aria-label="Previous month">▼</button>
+                </span>
+              </span>
+              <span class="cal-field">
+                <span class="cal-spin" id="cs-day" role="spinbutton" tabindex="0"
+                      aria-label="Day" aria-valuenow="1" aria-valuemin="1" aria-valuemax="31"
+                      data-field="day">01</span>
+                <span class="cal-field-arrows">
+                  <button class="cal-arrow cal-up" data-field="day" tabindex="-1" aria-label="Next day">▲</button>
+                  <button class="cal-arrow cal-down" data-field="day" tabindex="-1" aria-label="Previous day">▼</button>
+                </span>
+              </span>
+              <span class="cal-field">
+                <span class="cal-spin cs-wide" id="cs-year" role="spinbutton" tabindex="0"
+                      aria-label="Year" aria-valuenow="2024" aria-valuemin="1900" aria-valuemax="2099"
+                      data-field="year">2024</span>
+                <span class="cal-field-arrows">
+                  <button class="cal-arrow cal-up" data-field="year" tabindex="-1" aria-label="Next year">▲</button>
+                  <button class="cal-arrow cal-down" data-field="year" tabindex="-1" aria-label="Previous year">▼</button>
+                </span>
+              </span>
               <span class="cal-sep">/</span>
-              <span class="cal-spin" id="cs-hour" role="spinbutton" tabindex="0"
-                    aria-label="Hour" aria-valuenow="12" aria-valuemin="0" aria-valuemax="23"
-                    data-field="hour">12</span>
+              <span class="cal-field">
+                <span class="cal-spin" id="cs-hour" role="spinbutton" tabindex="0"
+                      aria-label="Hour" aria-valuenow="12" aria-valuemin="0" aria-valuemax="23"
+                      data-field="hour">12</span>
+                <span class="cal-field-arrows">
+                  <button class="cal-arrow cal-up" data-field="hour" tabindex="-1" aria-label="Next hour">▲</button>
+                  <button class="cal-arrow cal-down" data-field="hour" tabindex="-1" aria-label="Previous hour">▼</button>
+                </span>
+              </span>
               <span class="cal-sep">:</span>
-              <span class="cal-spin" id="cs-min" role="spinbutton" tabindex="0"
-                    aria-label="Minute" aria-valuenow="0" aria-valuemin="0" aria-valuemax="59"
-                    data-field="min">00</span>
+              <span class="cal-field">
+                <span class="cal-spin" id="cs-min" role="spinbutton" tabindex="0"
+                      aria-label="Minute" aria-valuenow="0" aria-valuemin="0" aria-valuemax="59"
+                      data-field="min">00</span>
+                <span class="cal-field-arrows">
+                  <button class="cal-arrow cal-up" data-field="min" tabindex="-1" aria-label="Next minute">▲</button>
+                  <button class="cal-arrow cal-down" data-field="min" tabindex="-1" aria-label="Previous minute">▼</button>
+                </span>
+              </span>
               <span class="cal-utc">UTC</span>
             </div>
-            <!-- Year progress: thin bar showing day position within the year -->
-            <div class="cal-year-track" role="progressbar"
-                 aria-label="Day of year" aria-valuemin="0" aria-valuemax="364" aria-valuenow="82">
-              <div class="cal-year-fill" id="cal-year-fill"></div>
-            </div>
-            <div class="cal-step-row">
-              <button class="cal-btn" data-cal-step="-365.25" aria-label="Back 1 year">← 1yr</button>
-              <button class="cal-btn" data-cal-step="-1"     aria-label="Back 1 day">← 1d</button>
-              <button class="cal-btn" data-cal-step="1"      aria-label="Forward 1 day">1d →</button>
-              <button class="cal-btn" data-cal-step="365.25" aria-label="Forward 1 year">1yr →</button>
+            <!-- Sun / Moon azimuth strip -->
+            <div id="sun-moon-strip" class="sms-strip" aria-live="polite" aria-atomic="true">
+              <span class="sms-item sms-sun" title="Sun azimuth / elevation">☀ —</span>
+              <span class="sms-item sms-moon" title="Moon azimuth / elevation">☾ —</span>
             </div>
           </div>
         </div>
@@ -143,10 +131,37 @@
     <div id="jsg-canvas-mount"></div>
     <script type="module" src="js/main-v2.js"></script>
 
-    <!-- Bottom bar: layer toggles + param sliders + ray controls -->
+    <!-- Timeline strip: single unified timeline + mode selector (1h / 1d / 1y) -->
+    <div id="timeline-strip">
+      <button class="tl-mode-btn" id="tl-mode" aria-label="Timeline mode" title="Switch between hour / day / year timeline">
+        <span id="tl-mode-label">1d</span>
+      </button>
+      <div class="tc-timeline" role="group" aria-label="Timeline">
+        <div class="timeline-shell">
+          <div class="timeline-ticks" aria-hidden="true">
+            <span class="tk" style="--p: 0">Jan</span>
+            <span class="tk" style="--p: 0.0850">Feb</span>
+            <span class="tk" style="--p: 0.1622">Mar</span>
+            <span class="tk" style="--p: 0.2472">Apr</span>
+            <span class="tk" style="--p: 0.3296">May</span>
+            <span class="tk" style="--p: 0.4148">Jun</span>
+            <span class="tk" style="--p: 0.4973">Jul</span>
+            <span class="tk" style="--p: 0.5824">Aug</span>
+            <span class="tk" style="--p: 0.6676">Sep</span>
+            <span class="tk" style="--p: 0.7500">Oct</span>
+            <span class="tk" style="--p: 0.8352">Nov</span>
+            <span class="tk" style="--p: 0.9176">Dec</span>
+          </div>
+          <input class="timeline-range" id="tc-day" type="range" min="0" max="364" step="1" value="82" aria-label="Timeline">
+        </div>
+        <span class="timeline-label" id="tc-day-val">Mar 23</span>
+      </div>
+    </div>
+
+    <!-- Bottom bar: layer toggles + luminaries + rays + param sliders -->
     <footer id="bottom-bar">
 
-      <!-- Layer toggle section -->
+      <!-- Layer toggle section (canvas layers) -->
       <div class="layer-section" role="group" aria-label="Canvas layer visibility">
         <button class="layer-toggle" data-prop="ShowFeGrid" aria-pressed="true" aria-label="FE Grid">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 16h16M8 3v18M16 3v18"/></svg>
@@ -160,25 +175,50 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="7" r="3"/><path d="M10.2 9.8 19 21H5z" fill="currentColor" fill-opacity="0.3"/></svg>
           <span class="toggle-label">Shadow</span>
         </button>
-        <button class="layer-toggle" data-prop="ShowSphere" aria-pressed="true" aria-label="Sphere">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><ellipse cx="12" cy="12" rx="8" ry="3.5"/></svg>
-          <span class="toggle-label">Sphere</span>
+        <button class="layer-toggle" data-prop="ShowSphere" aria-pressed="true" aria-label="Personal Dome">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M3 20a9 9 0 0 1 18 0M12 11v9M6 18a7 7 0 0 1 12 0"/></svg>
+          <span class="toggle-label">P·Dome</span>
         </button>
       </div>
 
-      <!-- Rays section: dome rays / sphere rays / many-rays mode -->
+      <!-- Luminaries: Sun / Moon / Stars body toggles + a single Orbits toggle that controls both tracks -->
+      <div class="luminary-section" role="group" aria-label="Luminaries">
+        <button class="layer-toggle luminary-btn" data-prop="ShowSun" aria-pressed="true" aria-label="Sun">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><g stroke="currentColor" stroke-width="1.75" stroke-linecap="round" fill="none"><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></g></svg>
+          <span class="toggle-label">Sun</span>
+        </button>
+        <button class="layer-toggle luminary-btn" data-prop="ShowMoon" aria-pressed="true" aria-label="Moon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15 7a5 5 0 1 1-7.5 6.5A5 5 0 0 1 15 7z"/></svg>
+          <span class="toggle-label">Moon</span>
+        </button>
+        <button class="layer-toggle luminary-btn" data-prop="ShowStars" aria-pressed="false" aria-label="Stars">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="7" r="1.5"/><circle cx="13" cy="4" r="1.5"/><circle cx="20" cy="9" r="1.5"/><circle cx="8" cy="16" r="1.5"/><circle cx="18" cy="17" r="1.5"/><circle cx="12" cy="20" r="1.2"/></svg>
+          <span class="toggle-label">Stars</span>
+        </button>
+        <button class="layer-toggle luminary-btn" data-prop-list="ShowSunTrack,ShowMoonTrack" aria-pressed="false" aria-label="Orbits (sun + moon tracks)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><ellipse cx="12" cy="12" rx="9" ry="4" stroke-dasharray="2.5 2"/><ellipse cx="12" cy="12" rx="4" ry="9" stroke-dasharray="2.5 2"/></svg>
+          <span class="toggle-label">Orbits</span>
+        </button>
+
+        <!-- Move observer toggle: when active, dragging the canvas moves the observer
+             instead of rotating the view. Works on all sizes. -->
+        <button class="layer-toggle move-btn" id="move-observer-btn" aria-pressed="false" aria-label="Move observer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v20M2 12h20M5 5l14 14M19 5l-14 14"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+          <span class="toggle-label">Move</span>
+        </button>
+      </div>
+
+      <!-- Rays section: dome rays + P-Rays (sphere rays, many-rays mode together).
+           Hidden on phones; shown >=768. P-Rays toggles ShowSphereRays + ShowManyRays
+           together via data-prop-list (same wiring as the Orbits button). -->
       <div class="rays-section" role="group" aria-label="Rays">
         <button class="layer-toggle ray-btn" data-prop="ShowDomeRays" aria-pressed="true" aria-label="Dome Rays">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M3 20a9 9 0 0 1 18 0M12 20v-8M7.5 20 11 13M16.5 20 13 13"/></svg>
           <span class="toggle-label">D·Rays</span>
         </button>
-        <button class="layer-toggle ray-btn" data-prop="ShowSphereRays" aria-pressed="true" aria-label="Sphere Rays">
+        <button class="layer-toggle ray-btn" data-prop-list="ShowSphereRays,ShowManyRays" aria-pressed="false" aria-label="Sphere rays (parallel / many)">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M9 11 5 20M12 11v9M15 11l4 9"/></svg>
-          <span class="toggle-label">S·Rays</span>
-        </button>
-        <button class="layer-toggle ray-btn" data-prop="ShowManyRays" aria-pressed="false" aria-label="Many Rays">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M3 5l18 9M3 12h18M3 19l18-9"/></svg>
-          <span class="toggle-label">Rays+</span>
+          <span class="toggle-label">P·Rays</span>
         </button>
       </div>
 
@@ -210,29 +250,9 @@
         </div>
       </div>
 
-      <!-- Luminaries: Sun / Moon / Stars body toggles + a single Orbits toggle that controls both tracks -->
-      <div class="luminary-section" role="group" aria-label="Luminaries">
-        <button class="layer-toggle luminary-btn" data-prop="ShowSun" aria-pressed="true" aria-label="Sun">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><g stroke="currentColor" stroke-width="1.75" stroke-linecap="round" fill="none"><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></g></svg>
-          <span class="toggle-label">Sun</span>
-        </button>
-        <button class="layer-toggle luminary-btn" data-prop="ShowMoon" aria-pressed="true" aria-label="Moon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15 7a5 5 0 1 1-7.5 6.5A5 5 0 0 1 15 7z"/></svg>
-          <span class="toggle-label">Moon</span>
-        </button>
-        <button class="layer-toggle luminary-btn" data-prop="ShowStars" aria-pressed="false" aria-label="Stars">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="7" r="1.5"/><circle cx="13" cy="4" r="1.5"/><circle cx="20" cy="9" r="1.5"/><circle cx="8" cy="16" r="1.5"/><circle cx="18" cy="17" r="1.5"/><circle cx="12" cy="20" r="1.2"/></svg>
-          <span class="toggle-label">Stars</span>
-        </button>
-        <button class="layer-toggle luminary-btn" data-prop-list="ShowSunTrack,ShowMoonTrack" aria-pressed="false" aria-label="Orbits (sun + moon tracks)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><ellipse cx="12" cy="12" rx="9" ry="4" stroke-dasharray="2.5 2"/><ellipse cx="12" cy="12" rx="4" ry="9" stroke-dasharray="2.5 2"/></svg>
-          <span class="toggle-label">Orbits</span>
-        </button>
-      </div>
-
     </footer>
 
-    <!-- Save / restore app state -->
+    <!-- Save / restore app state — desktop only, positioned below canvas right side -->
     <details class="save-restore">
       <summary>Save / Restore State</summary>
       <div class="save-restore-body">
@@ -254,6 +274,7 @@
     <!-- Gesture hint: fades out after 5 s -->
     <div id="gesture-hint" role="note">
       <span>Drag: rotate</span><span class="gh-fine"> &nbsp;·&nbsp; Ctrl-drag: observer position &nbsp;·&nbsp; Scroll: zoom</span>
+      <span class="gh-move"> &nbsp;·&nbsp; Move button: drag repositions observer</span>
     </div>
 
   </main>

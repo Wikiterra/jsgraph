@@ -1,7 +1,4 @@
 // Save/Restore handlers
-// Extracted from inline script lines 4021-4049
-
-
 
 ControlPanels.NewPanel( {
   Name: 'UnitsPanel',

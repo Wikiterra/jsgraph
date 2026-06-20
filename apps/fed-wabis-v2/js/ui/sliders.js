@@ -21,15 +21,32 @@ function setIfNotFocused(input, valEl, value, text) {
   if (valEl) valEl.textContent = text;
 }
 
+/* Timeline mode state — shared between sync() and the input handler */
+let tlModeIx = 1; // 0=1h, 1=1d, 2=1y
+
+function fmtTimelineValue(v) {
+  if (tlModeIx === 0) return String(Math.round(v)).padStart(2, '0') + ':00';
+  if (tlModeIx === 2) return 'Year ' + (2024 + Math.round(v));
+  return fmtDayOfYear(v);
+}
+
 export function sync() {
   try {
-    setIfNotFocused(document.getElementById('tc-time'),
-                    document.getElementById('tc-time-val'),
-                    FeDomeApp.Time, FeDomeApp.Time.toFixed(1));
-
+    var tlVal;
+    if (tlModeIx === 0) {
+      tlVal = FeDomeApp.Time;
+    } else if (tlModeIx === 2) {
+      try {
+        var d = new Date((FeDomeApp.ZeroDate + FeDomeApp.DateTime) * FeDomeApp.msPerDay);
+        tlVal = d.getUTCFullYear() - 2024;
+        tlVal = Math.max(0, Math.min(4, tlVal));
+      } catch (e) { tlVal = 0; }
+    } else {
+      tlVal = FeDomeApp.DayOfYear;
+    }
     setIfNotFocused(document.getElementById('tc-day'),
                     document.getElementById('tc-day-val'),
-                    FeDomeApp.DayOfYear, fmtDayOfYear(FeDomeApp.DayOfYear));
+                    tlVal, fmtTimelineValue(tlVal));
 
     setIfNotFocused(document.getElementById('ps-moon-ecl'),
                     document.getElementById('pv-moon-ecl'),
@@ -58,19 +75,68 @@ export function sync() {
 }
 
 export function init() {
-  document.getElementById('tc-time').addEventListener('input', function () {
+  document.getElementById('tc-day').addEventListener('input', function () {
     const v = parseFloat(this.value);
-    FeDomeApp.DateTime = Math.floor(FeDomeApp.DateTime) + v / 24;
-    document.getElementById('tc-time-val').textContent = v.toFixed(1);
+    if (tlModeIx === 0) {
+      /* 1h mode: value 0-23 sets hour of day */
+      FeDomeApp.DateTime = Math.floor(FeDomeApp.DateTime) + v / 24;
+    } else if (tlModeIx === 2) {
+      /* 1y mode: value 0-4 sets year offset from 2024 */
+      var year = 2024 + Math.round(v);
+      var d = new Date((FeDomeApp.ZeroDate + FeDomeApp.DateTime) * FeDomeApp.msPerDay);
+      d.setUTCFullYear(year);
+      FeDomeApp.DateTime = d.getTime() / FeDomeApp.msPerDay - FeDomeApp.ZeroDate;
+    } else {
+      /* 1d mode: value 0-364 = day of year */
+      FeDomeApp.DateTime = v + FeDomeApp.Time / 24;
+    }
+    document.getElementById('tc-day-val').textContent = fmtTimelineValue(v);
     UpdateAll();
   });
 
-  document.getElementById('tc-day').addEventListener('input', function () {
-    const v = parseInt(this.value);
-    FeDomeApp.DateTime = v + FeDomeApp.Time / 24;
-    document.getElementById('tc-day-val').textContent = fmtDayOfYear(v);
-    UpdateAll();
-  });
+  /* Timeline mode cycling: 1h (hour), 1d (day), 1y (year) */
+  const tlMode = document.getElementById('tl-mode');
+  const tlLabel = document.getElementById('tl-mode-label');
+  if (tlMode && tlLabel) {
+    const MODES = [
+      { label: '1h', rangeMin: 0, rangeMax: 23, rangeStep: 1 },
+      { label: '1d', rangeMin: 0, rangeMax: 364, rangeStep: 1 },
+      { label: '1y', rangeMin: 0, rangeMax: 4, rangeStep: 1 },
+    ];
+    const applyMode = () => {
+      const mode = MODES[tlModeIx];
+      tlLabel.textContent = mode.label;
+      const range = document.getElementById('tc-day');
+      if (range) {
+        range.min = mode.rangeMin;
+        range.max = mode.rangeMax;
+        range.step = mode.rangeStep;
+        /* Set value based on current datetime */
+        var v;
+        if (tlModeIx === 0) {
+          v = Math.round(FeDomeApp.Time);
+        } else if (tlModeIx === 2) {
+          /* Extract year from current DateTime */
+          try {
+            var d = new Date((FeDomeApp.ZeroDate + FeDomeApp.DateTime) * FeDomeApp.msPerDay);
+            v = d.getUTCFullYear() - 2024;
+          } catch (e) { v = 0; }
+          v = Math.max(0, Math.min(4, v));
+        } else {
+          v = FeDomeApp.DayOfYear;
+        }
+        v = Math.max(mode.rangeMin, Math.min(mode.rangeMax, v));
+        range.value = v;
+        document.getElementById('tc-day-val').textContent = fmtTimelineValue(v);
+      }
+    };
+    applyMode();
+    tlMode.addEventListener('click', () => {
+      tlModeIx = (tlModeIx + 1) % MODES.length;
+      applyMode();
+      UpdateAll();
+    });
+  }
 
   document.getElementById('ps-moon-ecl').addEventListener('input', function () {
     const v = parseFloat(this.value);

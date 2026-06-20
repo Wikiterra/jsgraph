@@ -1,7 +1,4 @@
 // Basics + Options panel (Globe/FE, slider Height/Distance/Size/Refraction/Zoom/View)
-// Extracted from inline script lines 2900-3037
-
-
 
 ControlPanels.NewSliderPanel( {
   Name: 'BasicsPanel',

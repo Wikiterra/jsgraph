@@ -1,7 +1,4 @@
 // Data panel handlers and graph drawing setup
-// Extracted from inline script lines 4170-4249
-
-
 
 ControlPanels.NewPanel( {
   Name: 'HorizonDataPanel',

@@ -6,8 +6,9 @@
    Custom properties (fed-specific; shared tokens come from tokens.css)
    ============================================================= */
 :root {
-  --top-bar-h:    52px;
-  --bottom-bar-h: 72px;
+  --top-bar-h:        52px;
+  --bottom-bar-h:     72px;
+  --timeline-strip-h: 36px;
 
   --color-primary: #2d3436;
   --color-bg:      #1a1a24;
@@ -138,27 +139,7 @@ body {
   white-space: nowrap;
 }
 
-/* Time / Day compact sliders */
-.tc-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1px;
-}
-
-.tc-label {
-  font-size: 10px;
-  color: rgba(255,255,255,0.6);
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-
-.tc-range {
-  width: 68px;
-  accent-color: var(--color-accent);
-  cursor: pointer;
-  height: 14px;
-}
+/* Time / Day compact sliders — no longer used */
 
 /* Year timeline scrubber.
    The .timeline-range below is a native <input type=range>, restyled into a thin track
@@ -272,93 +253,112 @@ body {
   text-align: center;
 }
 
-/* Calendar display — pinned to the right edge of the top bar regardless of how
-   the timeline / sun-moon strip / playback cluster grow. `margin-left: auto`
-   absorbs any leftover flex space before the calendar. */
+/* =============================================================
+   Calendar — always-visible panel inside canvas area (top-right)
+   ============================================================= */
 #calendar-widget {
-  position: relative;
-  flex-shrink: 0;
-  margin-left: auto;
+  position: fixed;
+  top: calc(var(--top-bar-h) + 8px);
+  right: 10px;
+  z-index: 500;
 }
 
-#calendar-toggle {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 9px;
-  border: none;
-  border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.07);
-  color: rgba(255,255,255,0.75);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-#calendar-toggle:hover { background: rgba(255,255,255,0.13); }
-#calendar-toggle[aria-expanded="true"] { background: rgba(255,255,255,0.15); color: #fff; }
-
-#calendar-display { font-size: 12px; }
-
-/* Calendar dropdown */
+/* Calendar panel directly visible, no toggle */
 #calendar-dropdown {
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
-  z-index: 200;
   min-width: 230px;
-  background: var(--bar-bg);
+  background: rgba(16, 16, 24, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
-  padding: 10px;
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
-#calendar-dropdown[hidden] { display: none; }
-
-/* Digit-scroll spinbutton row */
+/* Digit-scroll spinbutton row: each field is a column with digit + up/down arrows.
+     ↑↓ arrow-buttons on the right side for tap-friendly increment/decrement.
+     The .cal-spin itself also supports mouse wheel and keyboard arrows. */
 .cal-digits {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
   justify-content: center;
   padding: 2px 0 4px;
+}
+
+.cal-field {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 0;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: rgba(255,255,255,0.05);
 }
 
 .cal-spin {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 30px;
-  padding: 4px 5px;
-  border-radius: var(--radius-sm);
-  border: 1px solid transparent;
-  background: rgba(255,255,255,0.07);
+  min-width: 28px;
+  padding: 4px 3px;
+  background: transparent;
   color: rgba(255,255,255,0.9);
   font-size: 13px;
   font-variant-numeric: tabular-nums;
   font-weight: 500;
   cursor: ns-resize;
   user-select: none;
-  transition: background 0.1s, border-color 0.1s;
+  line-height: 1;
 }
 
-.cal-spin.cs-wide { min-width: 44px; }
+.cal-spin.cs-wide { min-width: 40px; }
 
-.cal-spin:hover {
-  background: rgba(255,255,255,0.14);
-  border-color: rgba(255,255,255,0.2);
-}
+.cal-spin:hover { background: rgba(255,255,255,0.08); }
 
 .cal-spin:focus {
   outline: none;
-  border-color: var(--color-accent);
   background: rgba(255,128,51,0.15);
+}
+
+.cal-field-arrows {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 14px;
+  flex-shrink: 0;
+}
+
+.cal-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  border: none;
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.5);
+  font-size: 6px;
+  line-height: 1;
+  padding: 1px 0;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.cal-arrow:hover {
+  background: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.85);
+}
+
+.cal-arrow:active {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.cal-field:hover .cal-arrow {
+  background: rgba(255,255,255,0.1);
 }
 
 .cal-sep {
@@ -375,53 +375,20 @@ body {
   user-select: none;
 }
 
-.cal-step-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 4px;
-}
-
-.cal-btn {
-  padding: 5px 4px;
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.06);
-  color: rgba(255,255,255,0.8);
-  font-size: 11px;
-  cursor: pointer;
-  transition: background 0.15s;
-  white-space: nowrap;
-  text-align: center;
-}
-
-.cal-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
-
-/* Year progress track — thin bar at top of dropdown */
-.cal-year-track {
-  height: 4px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.cal-year-fill {
-  height: 100%;
-  width: 0;
-  background: var(--color-accent);
-  border-radius: 2px;
-  transition: width 0.25s ease;
-}
+/* Year progress track — no longer in use */
 
 /* =============================================================
-   Canvas — fills viewport between the two bars
+   Canvas — fills viewport between top bar and timeline strip
    ============================================================= */
 /* jsg creates #FeGraph via document.writeln(). Do NOT pre-define this element in HTML.
-   jsg sets inline height = 56% of width; our CSS positions it below the top bar. */
+   jsg sets inline height = 56% of width; our CSS overrides to fill remaining space. */
 #FeGraph {
   position: fixed !important;
   top: var(--top-bar-h) !important;
   left: 0 !important;
   right: 0 !important;
+  bottom: calc(var(--timeline-strip-h) + var(--bottom-bar-h)) !important;
+  height: auto !important;
   border: none;
   padding: 0;
   margin: 0;
@@ -443,24 +410,65 @@ body {
 .JsGraph-Canvas { display: block; }
 
 /* =============================================================
-   Bottom bar
+   Timeline strip — sits between canvas and bottom bar
    ============================================================= */
-#bottom-bar {
+#timeline-strip {
   position: fixed;
-  bottom: 0; left: 0; right: 0;
-  height: var(--bottom-bar-h);
+  bottom: var(--bottom-bar-h);
+  left: 0;
+  right: 0;
+  height: var(--timeline-strip-h);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
   padding: 0 10px;
   background: var(--bar-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  z-index: 1000;
-  box-shadow: 0 -2px 12px rgba(0,0,0,0.4);
+  z-index: 999;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
+.tl-mode-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  min-width: 36px;
+  padding: 0 6px;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.07);
+  color: var(--bar-text);
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.tl-mode-btn:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+.tl-mode-btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+/* Timeline in the strip grows to fill space */
+#timeline-strip .tc-timeline {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: none;
+}
+
+/* Desktop top-bar placeholder — hidden; timeline lives in the strip */
+.desktop-tl-placeholder { display: none; }
+
+/* Bottom bar button base — shared by playback buttons */
 .pb-btn {
   display: flex;
   align-items: center;
@@ -582,6 +590,13 @@ body {
   border-color: rgba(255,255,255,0.2);
 }
 
+/* Move button pressed: accent color to clearly indicate the mode is active */
+.layer-toggle.move-btn[aria-pressed="true"] {
+  color: #fff;
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
 .toggle-label {
   font-size: 10px;
   line-height: 1;
@@ -637,15 +652,17 @@ body {
 }
 
 /* =============================================================
-   Save / Restore panel — styled to match the dark top/bottom bars.
-   Positioned top-left under the top bar (out of the canvas focus area) and
-   collapsed by default; click the summary to expand inline. */
+   Save / Restore panel — desktop only, aligned with timeline strip row.
+   Hidden on mobile via the base <768px rules.
+   ============================================================= */
 .save-restore {
   position: fixed;
-  top: calc(var(--top-bar-h) + 8px);
-  left: 12px;
+  bottom: calc(var(--bottom-bar-h) + var(--timeline-strip-h) + 8px);
+  right: 12px;
+  top: auto;
+  left: auto;
   width: 280px;
-  background: var(--bar-bg);
+  background: rgba(16, 16, 24, 0.96);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.12);
@@ -653,7 +670,7 @@ body {
   box-shadow: var(--shadow-md);
   color: var(--bar-text);
   z-index: 900;
-  max-height: calc(100vh - var(--top-bar-h) - var(--bottom-bar-h) - 24px);
+  max-height: calc(100vh - var(--top-bar-h) - var(--bottom-bar-h) - var(--timeline-strip-h) - 48px);
   overflow: auto;
 }
 
@@ -726,19 +743,93 @@ body {
 }
 
 /* =============================================================
-   ≥ 768px: show text labels under layer toggle icons
+   Mobile-first defaults (< 768 px)
+   Hide desktop-heavy controls; show simplified layout.
    ============================================================= */
-@media (min-width: 768px) {
-  .toggle-label { display: block; }
+
+/* Demo tabs hidden on mobile */
+#DomeDemoTabs { display: none; }
+
+/* Calendar toggle hidden on mobile; calendar is always-visible panel */
+#calendar-toggle { display: none; }
+
+/* Rays and param sections hidden on mobile */
+.rays-section { display: none !important; }
+.param-section { display: none !important; }
+
+/* Save/Restore hidden on mobile */
+.save-restore { display: none; }
+
+/* Calendar panel on mobile — top-right canvas area */
+#calendar-widget {
+  position: fixed;
+  top: calc(var(--top-bar-h) + 4px);
+  right: 6px;
+  z-index: 500;
+}
+#calendar-dropdown {
+  min-width: 200px !important;
+  background: rgba(16, 16, 24, 0.95) !important;
+  padding: 5px 6px;
+}
+#calendar-dropdown .cal-year-track { display: none; }
+
+/* Timeline strip below canvas on mobile */
+#timeline-strip {
+  padding: 0 6px;
+  gap: 4px;
+}
+
+/* Sun/Moon azimuth strip */
+.sms-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 2px 0 4px;
+}
+.sms-item {
+  font-size: 11px;
+  color: rgba(255,255,255,0.55);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 /* =============================================================
-   Mobile (≤ 480px): compact bars, icon-only toggles, scrollable top bar
+   Desktop (≥ 768 px) — restore full UI
+   ============================================================= */
+@media (min-width: 768px) {
+  .toggle-label { display: block; }
+
+  /* Show all desktop controls */
+  #DomeDemoTabs { display: flex; }
+  .rays-section { display: flex !important; }
+  .param-section { display: flex !important; }
+
+  /* Calendar panel always visible */
+  #calendar-widget {
+    position: fixed;
+    top: calc(var(--top-bar-h) + 8px);
+    right: 10px;
+  }
+  #calendar-dropdown {
+    min-width: 230px !important;
+    background: rgba(16, 16, 24, 0.92) !important;
+  }
+  #calendar-dropdown .cal-year-track { display: none; }
+
+  /* Show save/restore on desktop */
+  .save-restore { display: block; }
+}
+
+/* =============================================================
+   Compact mobile (≤ 480 px)
    ============================================================= */
 @media (max-width: 480px) {
   :root {
-    --top-bar-h:    44px;
-    --bottom-bar-h: 56px;
+    --top-bar-h:        44px;
+    --bottom-bar-h:     56px;
+    --timeline-strip-h: 32px;
   }
 
   #top-bar { gap: 4px; padding: 0 6px; overflow-x: auto; }
@@ -747,22 +838,15 @@ body {
      phone the rightmost (luminaries) would be cut off. Scroll the whole bar (like
      the top bar) so every control is reachable. Bar height is unchanged, so the
      canvas alignment is unaffected. */
-  #bottom-bar { justify-content: flex-start; gap: 6px; overflow-x: auto; scrollbar-width: none; }
-  #bottom-bar::-webkit-scrollbar { display: none; }
 
-  #sun-moon-strip { display: none; }
 
   .layer-toggle { min-width: 32px; padding: 5px 4px; }
-
-  .TabSelectors li { padding: 4px 8px; font-size: 12px; }
 
   .pb-btn { width: 28px; height: 28px; }
   .pb-btn.pb-primary { width: 34px; height: 34px; }
   .pb-speed-btn { font-size: 11px; height: 26px; min-width: 48px; padding: 0 7px; }
   .tc-timeline { min-width: 100px; }
   .timeline-ticks { font-size: 7.5px; }
-
-  .tc-range { width: 52px; }
 }
 
 /* =============================================================
@@ -770,7 +854,7 @@ body {
    ============================================================= */
 #gesture-hint {
   position: fixed;
-  bottom: calc(var(--bottom-bar-h) + 14px);
+  bottom: calc(var(--bottom-bar-h) + var(--timeline-strip-h) + 14px);
   left: 50%;
   transform: translateX(-50%);
   background: rgba(0, 0, 0, 0.62);
@@ -788,6 +872,7 @@ body {
 /* Touch-only / coarse-pointer devices: hide modifier + scroll hint */
 @media (hover: none) and (pointer: coarse) {
   .gh-fine { display: none; }
+  .gh-move { display: none; }
 }
 
 /* =============================================================
