@@ -16,11 +16,25 @@ interface AppCase {
   pin?: () => void;
 }
 
+const EDC = "http://localhost:5301/";
+const edcReady = () => typeof (globalThis as any).CurveAppClass === "function";
+
 const apps: Record<string, AppCase> = {
   "earth-drop-calc": {
-    url: "http://localhost:5301/apps/earth-drop-calc/index.html",
+    url: EDC,
     canvas: "canvas",
-    ready: () => typeof (globalThis as any).CurveAppClass === "function",
+    ready: edcReady,
+  },
+  // Globe+FE split view — exercises the FE grid, globe grid, split-screen camera and
+  // the data panels (branches the default Globe render doesn't reach).
+  "earth-drop-calc-both": {
+    url: EDC,
+    canvas: "canvas",
+    ready: edcReady,
+    pin: () => {
+      (globalThis as any).CurveApp.ShowModel = 3;
+      (globalThis as any).UpdateAll();
+    },
   },
   "fed-wabis-v2": {
     url: "http://localhost:5302/",
