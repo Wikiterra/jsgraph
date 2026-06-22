@@ -257,8 +257,9 @@ function DrawShape( objIx, g, m, bOnGlobe ) {
         x1 = -0.12;
         x2 = -0.22;
       }
+      g.SetLineAttr( '#34425e', 1 );
       g.LineOnPlane( x1, sizeVar, x2, sizeVar );
-      g.SetTextAttr( 'Arial', 12, 'black', 'normal', 'normal', 'left', 'bottom', 0 );
+      g.SetTextAttr( 'Arial', 12, '#34425e', 'normal', 'normal', 'left', 'bottom', 0 );
       var numFormat = { Mode: 'fix', Precision: 2, UsePrefix: false, Units: '' };
       var txt = NumFormatter.NumToString( HVal(m.ObjSize[objIx]*sizeVar), numFormat ) + HUnit();
       g.TextOnPlane( txt, x2, sizeVar );

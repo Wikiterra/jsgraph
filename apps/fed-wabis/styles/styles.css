@@ -8,7 +8,7 @@
 :root {
   --top-bar-h:        clamp(44px, 5cqi + 1rem, 52px);
   --bottom-bar-h:     clamp(56px, 7cqi + 1.5rem, 72px);
-  --timeline-strip-h: clamp(32px, 3cqi + 0.75rem, 36px);
+  --timeline-strip-h: clamp(40px, 4cqi + 0.9rem, 46px);
 
   --color-primary: #2d3436;
   --color-bg:      #1a1a24;
@@ -270,20 +270,53 @@ body {
   z-index: 500;
 }
 
-/* Calendar panel directly visible, no toggle */
+/* Calendar panel directly visible, no toggle — compact, read-only by default */
 #calendar-dropdown {
-  min-width: 230px;
+  position: relative;
+  min-width: 0;
   background: rgba(16, 16, 24, 0.92);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
-  padding: 8px 10px;
+  padding: 4px 28px 4px 8px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
+
+/* Edit toggle — top-right corner of the calendar panel */
+.cal-edit-btn {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.55);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.cal-edit-btn:hover { background: rgba(255,255,255,0.14); color: var(--bar-text); }
+.cal-edit-btn[aria-pressed="true"] {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+
+/* Read-only by default: hide the increment arrows, plain cursor on the digits.
+   The .cal-editing class (added by the edit toggle) re-enables editing.
+   Id-scoped so these win over the later .cal-spin / .cal-field-arrows rules. */
+#calendar-dropdown .cal-field-arrows { display: none; }
+#calendar-dropdown.cal-editing .cal-field-arrows { display: flex; }
+#calendar-dropdown .cal-spin { cursor: default; }
+#calendar-dropdown.cal-editing .cal-spin { cursor: ns-resize; }
 
 /* Digit-scroll spinbutton row: each field is a column with digit + up/down arrows.
      ↑↓ arrow-buttons on the right side for tap-friendly increment/decrement.
@@ -557,10 +590,16 @@ body {
   outline-offset: 1px;
 }
 
-/* Reset button — same size as other pb-btn, slightly muted */
+/* Step buttons hidden — playback overlay shows only play/pause + reset */
+#pb-step-back, #pb-step-fwd { display: none; }
+
+/* Reset button — square icon, same height as the play button, slightly muted */
 .pb-btn.pb-reset {
   color: rgba(255,255,255,0.55);
-  margin-left: 2px;
+  margin-left: 4px;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
 }
 
 .pb-btn.pb-reset:hover {
@@ -576,6 +615,7 @@ body {
   height: var(--bottom-bar-h);
   display: flex;
   align-items: center;
+  justify-content: space-around;  /* spread the groups across the whole row */
   gap: 4px;
   padding: 0 6px;
   background: var(--bar-bg);
@@ -652,19 +692,36 @@ body {
   flex-shrink: 0;
 }
 
-/* Parameter sliders in bottom bar */
-.param-section {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* Parameter sliders grouped behind one icon button; popover floats above the bar */
+.param-group {
+  position: relative;
   flex-shrink: 0;
 }
 
-.param-slider {
+.param-popover {
+  /* fixed (not absolute) so #bottom-bar's overflow-x:auto can't clip it */
+  position: fixed;
+  bottom: calc(var(--bottom-bar-h) + 10px);
+  right: 10px;
   display: flex;
   flex-direction: column;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(16, 16, 24, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 1001;
+}
+.param-popover[hidden] { display: none; }
+
+.param-slider {
+  display: flex;
   align-items: center;
-  gap: 2px;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .param-label {
@@ -687,87 +744,32 @@ body {
   height: 14px;
 }
 
-/* =============================================================
-   Save / Restore panel — desktop only, aligned with timeline strip row.
-   Hidden on mobile via the base <768px rules.
-   ============================================================= */
-.save-restore {
+/* Sun / Moon azimuth strip — standalone, top-center under the bar */
+#sun-moon-strip {
   position: fixed;
-  bottom: calc(var(--bottom-bar-h) + var(--timeline-strip-h) + 8px);
-  right: 12px;
-  top: auto;
-  left: auto;
-  width: 280px;
-  background: rgba(16, 16, 24, 0.96);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  color: var(--bar-text);
-  z-index: 900;
-  max-height: calc(100vh - var(--top-bar-h) - var(--bottom-bar-h) - var(--timeline-strip-h) - 48px);
-  overflow: auto;
-}
-
-.save-restore summary {
-  padding: 10px 14px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 12px;
-  color: var(--bar-text);
-  list-style: none;
-  user-select: none;
-}
-
-.save-restore summary::-webkit-details-marker { display: none; }
-.save-restore summary::before { content: '+ '; color: rgba(255,255,255,0.5); font-weight: 400; }
-.save-restore[open] summary::before { content: '− '; }
-
-.save-restore-body { padding: 10px 14px 14px; border-top: 1px solid rgba(255,255,255,0.1); }
-
-.save-restore-body textarea {
-  width: 100%;
-  font-family: 'SF Mono', Consolas, monospace;
-  font-size: 11px;
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: var(--radius-sm);
-  padding: 6px;
-  resize: vertical;
-  background: rgba(255,255,255,0.05);
-  color: var(--bar-text);
-}
-
-.save-restore-body textarea:focus {
-  outline: none;
-  border-color: var(--color-accent);
-  background: rgba(255,255,255,0.08);
-}
-
-.save-restore-body p {
+  top: calc(var(--top-bar-h) + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
-}
-
-/* Match the .pb-speed-btn styling so the playback bar and save/restore feel like one app. */
-.save-restore-body button {
-  height: 26px;
-  padding: 0 10px;
-  border: 1px solid rgba(255,255,255,0.15);
+  align-items: center;
+  gap: 12px;
+  padding: 4px 10px;
+  background: rgba(16, 16, 24, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.07);
-  color: var(--bar-text);
-  font-size: 11px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  pointer-events: none;
 }
 
-.save-restore-body button:hover {
-  background: rgba(255,255,255,0.13);
-  border-color: rgba(255,255,255,0.3);
+/* Visually-hidden screen-reader region (replaces inline styles) */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
 }
 
 /* =============================================================
@@ -783,18 +785,14 @@ body {
    Hide desktop-heavy controls; show simplified layout.
    ============================================================= */
 
-/* Demo tabs hidden on mobile */
-#DomeDemoTabs { display: none; }
+/* Demo tabs stay in the header on every size (mobile-first); the tab strip
+   scrolls horizontally when it overflows. */
 
 /* Calendar toggle hidden on mobile; calendar is always-visible panel */
 #calendar-toggle { display: none; }
 
-/* Rays and param sections hidden on mobile */
+/* Rays section hidden on mobile (param sliders now live behind one icon) */
 .rays-section { display: none !important; }
-.param-section { display: none !important; }
-
-/* Save/Restore hidden on mobile */
-.save-restore { display: none; }
 
 /* Calendar panel on mobile — top-right canvas area */
 #calendar-widget {
@@ -840,7 +838,6 @@ body {
   /* Show all desktop controls */
   #DomeDemoTabs { display: flex; }
   .rays-section { display: flex !important; }
-  .param-section { display: flex !important; }
 
   /* Calendar panel always visible */
   #calendar-widget {
@@ -853,9 +850,6 @@ body {
     background: rgba(16, 16, 24, 0.92) !important;
   }
   #calendar-dropdown .cal-year-track { display: none; }
-
-  /* Show save/restore on desktop */
-  .save-restore { display: block; }
 }
 
 /* =============================================================

@@ -45,17 +45,21 @@
         <li class="TabButton TabEnabled" id="StarsButton"    role="tab" aria-selected="false" aria-controls="FeGraph-Canvas">Stars</li>
         <!-- Hidden buttons: demos-manager.js wires these via wireButton(); kept in DOM for click delegation -->
         <li class="TabButton tab-hidden" id="TFEButton">TFE</li>
-        <li class="TabButton TabEnabled" id="ResetButton" style="display:none">Reset</li>
+        <li class="TabButton tab-hidden" id="ResetButton">Reset</li>
         <li class="TabButton tab-hidden" id="BackButton">&lt;&lt;</li>
         <li class="TabButton tab-hidden" id="PlayButton">Play</li>
         <li class="TabButton tab-hidden" id="ForwButton">&gt;&gt;</li>
         <li class="TabButton tab-hidden" id="CountButton">x</li>
-        <li class="TabButton TabEnabled" id="lsb-tfe" role="tab" aria-selected="false" style="border-left:2px solid var(--color-accent);color:var(--color-accent)">☀ Eclipse</li>
       </ul>
 
       <!-- Calendar date picker — always visible, no toggle -->
       <div id="calendar-widget">
           <div id="calendar-dropdown" role="region" aria-label="Date picker">
+            <!-- Read-only by default; the edit toggle reveals the ↑↓ arrows / scroll editing. -->
+            <button class="cal-edit-btn" id="cal-edit-toggle" aria-pressed="false"
+                    aria-label="Edit date and time" title="Edit date and time">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+            </button>
             <!-- Digit-scroll spinbuttons: ↑↓ arrows or scroll wheel on each field. -->
             <div class="cal-digits" role="group" aria-label="Date and time">
               <span class="cal-field">
@@ -107,15 +111,16 @@
               </span>
               <span class="cal-utc">UTC</span>
             </div>
-            <!-- Sun / Moon azimuth strip -->
-            <div id="sun-moon-strip" class="sms-strip" aria-live="polite" aria-atomic="true">
-              <span class="sms-item sms-sun" title="Sun azimuth / elevation">☀ —</span>
-              <span class="sms-item sms-moon" title="Moon azimuth / elevation">☾ —</span>
-            </div>
           </div>
         </div>
       </div>
     </header>
+
+    <!-- Sun / Moon azimuth strip — standalone, separate from the calendar box -->
+    <div id="sun-moon-strip" class="sms-strip" aria-live="polite" aria-atomic="true">
+      <span class="sms-item sms-sun" title="Sun azimuth / elevation">☀ —</span>
+      <span class="sms-item sms-moon" title="Moon azimuth / elevation">☾ —</span>
+    </div>
 
     <!-- Canvas mount: CreateDomObjects replaces this div with #FeGraph once modules load -->
     <div id="jsg-canvas-mount"></div>
@@ -146,6 +151,9 @@
         </div>
         <span class="timeline-label" id="tc-day-val">Mar 23</span>
       </div>
+      <button class="tl-mode-btn" id="share-btn" aria-label="Copy share link" title="Copy share link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+      </button>
     </div>
 
     <!-- Bottom bar: layer toggles + luminaries + rays + param sliders -->
@@ -212,50 +220,44 @@
         </button>
       </div>
 
-      <!-- Parameter sliders: MoonEcliptic, DistSun, DistMoon, DomeHeight, DomeSize, RayParam -->
-      <div class="param-section" role="group" aria-label="Model parameters">
-        <div class="param-slider">
-          <label class="param-label" for="ps-moon-ecl">M.Ecl <span class="param-val" id="pv-moon-ecl">5.1°</span></label>
-          <input type="range" id="ps-moon-ecl" class="param-range" min="-90" max="90" step="0.5" value="5.145" aria-label="Moon ecliptic angle (degrees)">
-        </div>
-        <div class="param-slider">
-          <label class="param-label" for="ps-dist-sun">☀Dist <span class="param-val" id="pv-dist-sun">1.5e8</span></label>
-          <input type="range" id="ps-dist-sun" class="param-range" min="3" max="9" step="0.01" value="8.175" aria-label="Sun distance (log₁₀ km)">
-        </div>
-        <div class="param-slider">
-          <label class="param-label" for="ps-dome-h">DomeH <span class="param-val" id="pv-dome-h">9000</span></label>
-          <input type="range" id="ps-dome-h" class="param-range" min="2000" max="20015" step="100" value="9000" aria-label="Dome height (km)">
-        </div>
-        <div class="param-slider">
-          <label class="param-label" for="ps-dome-sz">DomeSz <span class="param-val" id="pv-dome-sz">1.0</span></label>
-          <input type="range" id="ps-dome-sz" class="param-range" min="1" max="5" step="0.1" value="1" aria-label="Dome size (× FE radius)">
-        </div>
-        <div class="param-slider">
-          <label class="param-label" for="ps-ray-p">RayP <span class="param-val" id="pv-ray-p">1.0</span></label>
-          <input type="range" id="ps-ray-p" class="param-range" min="0.5" max="2" step="0.1" value="1" aria-label="Ray parameter">
-        </div>
+      <!-- Parameter sliders behind one icon; the popover itself lives outside the
+           footer (below) because #bottom-bar's backdrop-filter + overflow would
+           clip a fixed-positioned child. -->
+      <div class="param-group" role="group" aria-label="Model parameters">
+        <button class="layer-toggle" id="param-toggle" aria-expanded="false" aria-controls="param-popover" aria-label="Model parameters">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M4 6h7M15 6h5M4 12h11M19 12h1M4 18h3M11 18h9"/><circle cx="13" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="9" cy="18" r="2"/></svg>
+          <span class="toggle-label">Params</span>
+        </button>
       </div>
 
     </footer>
 
-    <!-- Save / restore app state — desktop only, positioned below canvas right side -->
-    <details class="save-restore">
-      <summary>Save / Restore State</summary>
-      <div class="save-restore-body">
-        <textarea id="SaveRestorePanel" name="SaveRestorePanel"
-          spellcheck="false" rows="8" cols="60"></textarea>
-        <p>
-          <button type="button" id="sr-get-state">Get App State</button>
-          <button type="button" id="sr-get-url">Get App URL</button>
-          <button type="button" id="sr-set-state">Set App State</button>
-          <button type="button" id="sr-clear">Clear</button>
-        </p>
+    <!-- Param sliders popover — sibling of the bars so it isn't clipped -->
+    <div class="param-popover" id="param-popover" hidden>
+      <div class="param-slider">
+        <label class="param-label" for="ps-moon-ecl">M.Ecl <span class="param-val" id="pv-moon-ecl">5.1°</span></label>
+        <input type="range" id="ps-moon-ecl" class="param-range" min="-90" max="90" step="0.5" value="5.145" aria-label="Moon ecliptic angle (degrees)">
       </div>
-    </details>
+      <div class="param-slider">
+        <label class="param-label" for="ps-dist-sun">☀Dist <span class="param-val" id="pv-dist-sun">1.5e8</span></label>
+        <input type="range" id="ps-dist-sun" class="param-range" min="3" max="9" step="0.01" value="8.175" aria-label="Sun distance (log₁₀ km)">
+      </div>
+      <div class="param-slider">
+        <label class="param-label" for="ps-dome-h">DomeH <span class="param-val" id="pv-dome-h">9000</span></label>
+        <input type="range" id="ps-dome-h" class="param-range" min="2000" max="20015" step="100" value="9000" aria-label="Dome height (km)">
+      </div>
+      <div class="param-slider">
+        <label class="param-label" for="ps-dome-sz">DomeSz <span class="param-val" id="pv-dome-sz">1.0</span></label>
+        <input type="range" id="ps-dome-sz" class="param-range" min="1" max="5" step="0.1" value="1" aria-label="Dome size (× FE radius)">
+      </div>
+      <div class="param-slider">
+        <label class="param-label" for="ps-ray-p">RayP <span class="param-val" id="pv-ray-p">1.0</span></label>
+        <input type="range" id="ps-ray-p" class="param-range" min="0.5" max="2" step="0.1" value="1" aria-label="Ray parameter">
+      </div>
+    </div>
 
     <!-- Screen reader region: announces date/time when playback is paused -->
-    <div id="canvas-status" role="status" aria-live="polite" aria-atomic="true"
-      style="position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;"></div>
+    <div id="canvas-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
     <!-- Gesture hint: fades out after 5 s -->
     <div id="gesture-hint" role="note">
       <span>Drag: rotate &nbsp;·&nbsp; Pinch: zoom</span><span class="gh-fine"> &nbsp;·&nbsp; Ctrl-drag: observer position &nbsp;·&nbsp; Scroll: zoom</span>

@@ -67,20 +67,20 @@
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: rgba(255,255,255,0.35);
+  color: rgba(255,255,255,0.66);
   cursor: pointer;
   transition: color 0.15s, background 0.15s, border-color 0.15s;
   white-space: nowrap;
   min-width: var(--tap-min);
 }
 .layer-toggle:hover {
-  color: rgba(255,255,255,0.75);
-  background: rgba(255,255,255,0.08);
+  color: #fff;
+  background: rgba(255,255,255,0.1);
 }
 .layer-toggle[aria-pressed="true"] {
   color: #fff;
-  background: rgba(255,255,255,0.1);
-  border-color: rgba(255,255,255,0.2);
+  background: color-mix(in srgb, var(--color-accent) 28%, transparent);
+  border-color: var(--color-accent);
 }
 
 .toggle-label {
@@ -106,14 +106,26 @@
   border-color: rgba(255,255,255,0.3);
 }
 
-/* ---- Override dark vars for light theme ---- */
+/* ---- Synthwave dark theme tokens ---- */
 :root {
-  --color-primary: #2d3436;
   --top-bar-h:        clamp(40px, 4cqi + 1rem, 48px);
   --bottom-bar-h:     clamp(52px, 5cqi + 1.5rem, 60px);
-  --color-bg:      #eef0f2;
-  --bar-bg:        rgba(30, 40, 50, 0.95);
-  --bar-text:      rgba(255,255,255,0.9);
+
+  /* Brand orange accent (matches the rest of the UI) — selected states, drawer edge */
+  --color-accent:        #ff8033;
+  --color-accent-strong: #ff6000;
+
+  /* Surfaces */
+  --color-bg:      #100a26;                 /* deep indigo page bg */
+  --bar-bg:        rgba(20, 13, 43, 0.94);  /* translucent dark-purple bars */
+  --bar-text:      rgba(240, 235, 255, 0.92);
+
+  /* Drawer / control-panel surfaces + text (consumed by controlPanel.css) */
+  --color-surface: #1b1233;
+  --color-text:    #ece9ff;
+  --color-muted:   #b3a8d8;
+  --color-border:  #3a2a5c;
+  --color-primary: #ece9ff;
 }
 
 /* ---- Panel drawer (slides up from bottom) ---- */
@@ -123,9 +135,9 @@
   right: 0;
   bottom: var(--bottom-bar-h);
   max-height: 55vh;
-  background: rgba(255,255,255,0.97);
+  background: rgba(27, 18, 51, 0.98);
   border-top: 2px solid var(--color-accent);
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
   z-index: 800;
   overflow-y: auto;
   transition: transform 0.2s ease, opacity 0.15s ease;
@@ -164,7 +176,7 @@
   user-select: none;
   transition: background 0.1s;
 }
-.drawer-section-title:hover { background: rgba(0,0,0,0.04); }
+.drawer-section-title:hover { background: rgba(255,255,255,0.07); }
 .drawer-section-title::after {
   content: '▼';
   margin-left: auto;
@@ -190,14 +202,14 @@
   width: 100%;
   padding: 3px;
   border: none;
-  background: rgba(0,0,0,0.03);
-  color: #888;
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.55);
   font-size: 11px;
   cursor: pointer;
   text-align: center;
   transition: background 0.15s;
 }
-#panel-drawer-close:hover { background: rgba(0,0,0,0.07); color: #333; }
+#panel-drawer-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
 /* ---- Bottom bar model buttons ---- */
 #qs-globe[aria-pressed="true"],
@@ -220,10 +232,10 @@
   padding: 0;
   margin: 0;
   overflow: hidden;
-  /* Light "paper" background: the scene draws black FE grid/labels + white
-     text-boxes, which were invisible on the old #000 (FE view rendered all
-     black except the yellow target). */
-  background: #fff;
+  /* Blue sky — daytime gradient, lighter toward the horizon. The terrain ground
+     is filled in the scene (curveApp SurfaceCol), so this shows above it. Both
+     models share this single canvas, so both skies match. */
+  background: linear-gradient(180deg, #2e6196 0%, #4f8ab8 50%, #8cb8db 100%);
   z-index: 1;
 }
 /* jsg creates the canvas at width × 66.67% (aspect). Let jsg control the canvas
@@ -257,19 +269,19 @@
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: rgba(255,255,255,0.35);
+  color: rgba(255,255,255,0.66);
   cursor: pointer;
   transition: color 0.15s, background 0.15s, border-color 0.15s;
   white-space: nowrap;
 }
 .quick-section .layer-toggle:hover {
-  color: rgba(255,255,255,0.75);
-  background: rgba(255,255,255,0.08);
+  color: #fff;
+  background: rgba(255,255,255,0.1);
 }
 .quick-section .layer-toggle[aria-pressed="true"] {
   color: #fff;
-  background: rgba(255,255,255,0.1);
-  border-color: rgba(255,255,255,0.2);
+  background: color-mix(in srgb, var(--color-accent) 28%, transparent);
+  border-color: var(--color-accent);
 }
 
 /* ---- Top bar title ---- */
@@ -293,6 +305,37 @@ ul.TabSelectors.HiddenTabs { display: none; }
 .ref-pic { width: 100%; margin: 0; }
 .ref-pic img { width: 100%; display: block; }
 .ref-pic figcaption { font-size: 13px; color: #555; text-align: center; }
+
+/* ---- Control-panel inputs: dark theme contrast ----
+   Legacy `.Wiki input { background:#fff }` (vendor styles.css) outranks the token
+   on .cp-field__input, leaving light text on white. Re-assert dark surfaces. */
+.Wiki .cp-field__input,
+.Wiki .cp-field__output {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+.Wiki .cp-panel--readonly .cp-field__input {
+  background: #221a3d;
+  border-color: var(--color-border);
+  color: #cfc8e8;
+}
+.Wiki .cp-panel--readonly .cp-field__label { color: var(--color-muted); }
+
+/* Checkboxes / radios: accent the control, keep captions high-contrast */
+.Wiki input[type="checkbox"],
+.Wiki input[type="radio"],
+.cp-field__radio,
+.cp-field__checkbox {
+  accent-color: var(--color-accent);
+  width: 1.05em;
+  height: 1.05em;
+}
+.cp-field__choice,
+.cp-field__caption,
+.cp-field__label,
+.cp-field__legend,
+.cp-field__unit { color: var(--color-text); }
+.cp-field__unit { color: var(--color-muted); }
 
 /* ---- Mobile-first: toggle labels hidden on phones, shown at ≥480px ---- */
 .toggle-label { display: none; }

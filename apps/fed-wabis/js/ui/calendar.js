@@ -6,6 +6,8 @@ const SPIN_IDS = ['cs-month', 'cs-day', 'cs-year', 'cs-hour', 'cs-min'];
 
 const calState = { month: 0, day: 1, year: 2024, hour: 12, min: 0 };
 
+let editing = false; // calendar is display-only until the edit toggle is pressed
+
 function daysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
 
 function parseCalFromDateTime() {
@@ -95,15 +97,25 @@ export function init() {
   const calDropdown = document.getElementById('calendar-dropdown');
   if (!calDropdown) return;
 
-  /* Digit-scroll spinbuttons: ↑↓ arrows + mouse wheel */
+  /* Edit toggle: calendar shows the date/time read-only until this is pressed. */
+  const editBtn = document.getElementById('cal-edit-toggle');
+  if (editBtn) {
+    editBtn.addEventListener('click', () => {
+      editing = !editing;
+      calDropdown.classList.toggle('cal-editing', editing);
+      editBtn.setAttribute('aria-pressed', String(editing));
+    });
+  }
+
+  /* Digit-scroll spinbuttons: ↑↓ arrows + mouse wheel (only when editing) */
   SPIN_IDS.forEach((id, idx) => {
     const el = document.getElementById(id);
     if (!el) return;
     const field = el.dataset.field;
 
     el.addEventListener('keydown', e => {
-      if (e.key === 'ArrowUp')   { e.preventDefault(); stepCalField(field, +1); }
-      if (e.key === 'ArrowDown') { e.preventDefault(); stepCalField(field, -1); }
+      if (e.key === 'ArrowUp')   { if (!editing) return; e.preventDefault(); stepCalField(field, +1); }
+      if (e.key === 'ArrowDown') { if (!editing) return; e.preventDefault(); stepCalField(field, -1); }
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
         const prev = document.getElementById(SPIN_IDS[Math.max(0, idx - 1)]);
@@ -117,6 +129,7 @@ export function init() {
     });
 
     el.addEventListener('wheel', e => {
+      if (!editing) return;
       e.preventDefault();
       stepCalField(field, e.deltaY < 0 ? +1 : -1);
     }, { passive: false });

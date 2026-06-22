@@ -75,6 +75,17 @@ export function sync() {
 }
 
 export function init() {
+  /* Parameter sliders live behind one icon — toggle the popover open/closed */
+  const paramToggle = document.getElementById('param-toggle');
+  const paramPopover = document.getElementById('param-popover');
+  if (paramToggle && paramPopover) {
+    paramToggle.addEventListener('click', () => {
+      const open = paramPopover.hidden;
+      paramPopover.hidden = !open;
+      paramToggle.setAttribute('aria-expanded', String(open));
+    });
+  }
+
   document.getElementById('tc-day').addEventListener('input', function () {
     const v = parseFloat(this.value);
     if (tlModeIx === 0) {

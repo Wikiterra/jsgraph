@@ -355,13 +355,16 @@ function CurveAppClass() {
   this.ObjTopAnglFromEyeLvlFE = 0;
 
   // colors; for some elements '' -> do not draw element
-  this.EyeLvlCol = 'magenta';
-  this.FEEqCol = 'black';
-  this.FEGridCol = 'black';
-  this.GlobeGridCol = 'blue';
-  this.GlobeFGridCol = 'red';
-  this.TangentCol = 'black';
-  this.FrameCol = 'black';
+  // Soft-white terrain + blue sky (both models). Grid/lines are dark so they
+  // read on the light ground; eye-level keeps the magenta accent.
+  this.EyeLvlCol = '#e0149c';     // magenta accent — eye-level line
+  this.FEEqCol = '#2c3a5c';       // dark slate — surface equator (both models)
+  this.FEGridCol = '#37466a';     // dark slate — surface grid (both models)
+  this.GlobeGridCol = '#37466a';  // same as FE so both surfaces match
+  this.GlobeFGridCol = '#7a4f9e'; // violet — globe flat-overlay reference grid
+  this.TangentCol = '#3a3a4a';    // dark — tangent line
+  this.FrameCol = '#5a6385';      // muted slate — scene frame
+  this.SurfaceCol = '#eef1f6';    // soft white — filled ground (both models)
 
   this.Update();
 }
@@ -778,7 +781,12 @@ CurveAppClass.prototype.Update = function() {
 CurveAppClass.prototype.CompCameraParams = function( pan, tilt, roll, aimModel ) {
   var dvc, avc;
   dvc = Math.sqrt( this.HorizDistOnEyeLvl * this.HorizDistOnEyeLvl + this.HorizDropFromEyeLvl * this.HorizDropFromEyeLvl );
-  if (this.ViewcenterHorizon == 0) {
+  if (aimModel === 'globe' || aimModel === 'fe') {
+    // Globe+FE comparison: aim both halves at eye level so the eye-level line is
+    // one straight (rectilinear) line across the split. The horizons then differ
+    // by the globe dip — which is exactly what the comparison shows.
+    avc = 0;
+  } else if (this.ViewcenterHorizon == 0) {
     // view center is "the horizon" — aim at the horizon of the model being drawn
     // so it stays fixed (centred) under zoom. In Globe+FE comparison mode each
     // half passes aimModel ('globe' | 'fe') so both horizon lines land at the

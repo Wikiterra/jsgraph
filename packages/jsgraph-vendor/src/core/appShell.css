@@ -1,11 +1,4 @@
-/* WikiTerra branding + app-switcher injected into #top-bar */
-.app-shell-group {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-shrink: 0;
-}
-
+/* WikiTerra Jsgraph brand injected into #top-bar */
 .app-shell-brand {
   font-weight: 700;
   color: #fff;
@@ -13,27 +6,5 @@
   letter-spacing: 0.02em;
   font-size: 14px;
   white-space: nowrap;
-}
-
-.app-shell-links {
-  display: flex;
-  gap: 0.75rem;
-}
-
-.app-shell-links a {
-  color: rgba(255,255,255,0.55);
-  text-decoration: none;
-  font-size: 12px;
-  padding: 2px 0;
-  white-space: nowrap;
-  transition: color 0.15s;
-}
-
-.app-shell-links a:hover {
-  color: #fff;
-}
-
-.app-shell-links a.active {
-  color: #fff;
-  border-bottom: 2px solid var(--color-accent, #ff8033);
+  flex-shrink: 0;
 }

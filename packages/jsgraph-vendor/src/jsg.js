@@ -1529,7 +1529,8 @@ JsGraph.prototype.AdjustForHighResolutionDisplays = function () {
     var ratio = this.PixelRatio;
     var oldWidth = this.CanvasWidth;
     var oldHeight = this.CanvasHeight;
-    if (canvas.width != oldWidth * ratio) {
+    // ponytail: vendor patch — also test height; fill mode changes height alone.
+    if (canvas.width != oldWidth * ratio || canvas.height != oldHeight * ratio) {
       canvas.width = oldWidth * ratio;
       canvas.height = oldHeight * ratio;
     }
@@ -1539,7 +1540,8 @@ JsGraph.prototype.AdjustForHighResolutionDisplays = function () {
     var ratio = 1;
     var width = this.CanvasWidth;
     var height = this.CanvasHeight;
-    if (canvas.width != width) {
+    // ponytail: vendor patch — also test height; fill mode changes height alone.
+    if (canvas.width != width || canvas.height != height) {
       canvas.width = width;
       canvas.height = height;
     }
@@ -1571,9 +1573,10 @@ JsGraph.prototype.UpdateCanvasSize = function (aContainerWidth) {
   if (this.CanvasRatioHW == 0) {
     this.CanvasWidth = aContainerWidth - 2 * this.BorderWidth;
     this.CanvasHeight = xHeight(this.ContainerDiv) - 2 * this.BorderWidth;
-    if (!this.HighResSet || this.PixelRatio != this.LastPixelRatio) {
-      this.AdjustForHighResolutionDisplays();
-    }
+    // ponytail: vendor patch — in fill mode (ratio 0) the canvas height tracks
+    // the container, so always re-sync the canvas element. The old HighResSet
+    // guard skipped height-only changes, leaving the bitmap at construction size.
+    this.AdjustForHighResolutionDisplays();
   } else {
     var width = aContainerWidth - 2 * this.BorderWidth;
     if (this.LastCanvasWidth == width && this.PixelRatio == this.LastPixelRatio) {

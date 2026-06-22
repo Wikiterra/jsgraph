@@ -15,6 +15,37 @@ var graph = createGraph3D( {
   AutoScalePix: true
 } );
 
+// Soft-filled, bordered data panels. Replaces the old per-line white text boxes
+// that overlapped on the dark scene: one bordered box per group, dark text on a
+// soft light fill (kept light so the letters stay high-contrast).
+const PANEL_FILL   = 'rgba(244,240,252,0.94)';
+const PANEL_BORDER = '#8a6fd0';
+const PANEL_TEXT   = '#241b3a';
+
+function drawTextPanel( g, lines, x, yStart, dir, align, lineHeight, textSize, colors ) {
+  if ( !lines.length ) return;
+  g.SetTextAttr( 'Arial', textSize, PANEL_TEXT, 'normal', 'normal', align, 'bottom', 4 );
+  var maxW = 0;
+  for ( var i = 0; i < lines.length; i++ ) {
+    var bx = g.GetTextBox( lines[i], x, yStart );
+    if ( bx.w > maxW ) maxW = bx.w;
+  }
+  var padX = g.ScalePix( 7 ), padY = g.ScalePix( 5 );
+  var firstY = yStart, lastY = yStart + dir * ( lines.length - 1 ) * lineHeight;
+  var minY = Math.min( firstY, lastY ), maxY = Math.max( firstY, lastY );
+  var top = minY - lineHeight * 0.85 - padY;
+  var bot = maxY + lineHeight * 0.18 + padY;
+  var left, right;
+  if ( align === 'right' ) { right = x + padX; left = x - maxW - padX; }
+  else { left = x - padX; right = x + maxW + padX; }
+  g.SetAreaAttr( PANEL_FILL, PANEL_BORDER, g.ScalePix( 1 ) );
+  g.Rect( left, top, right, bot, 3, 0 );
+  for ( var i = 0; i < lines.length; i++ ) {
+    g.SetTextColor( ( colors && colors[i] ) ? colors[i] : PANEL_TEXT );
+    g.Text( lines[i], x, yStart + dir * i * lineHeight );
+  }
+}
+
 function DrawModel( g ) {
 
   var m = CurveApp;
@@ -56,6 +87,28 @@ function DrawModel( g ) {
     drawEyeLevel( m.PanRad );
   }
 
+  // Sky + terrain painted in screen space, split at the horizon line so the sky
+  // starts exactly at the horizon and tracks it as the camera moves. Sky gradient
+  // goes dark (high) to soft (near the horizon); ground is the soft-white surface.
+  function horizonScreenY( pan, zDrop ) {
+    var ez = JsgMat3.RotatingZ( -pan );
+    var wp = JsgMat3.Trans( ez, [ 0, m.HorizDistOnEyeLvl, -zDrop ] );
+    var w = g.VTransPoint3D( wp );
+    return g.TransXY( w[0], w[1] ).y;
+  }
+  function paintSkyGround( horizonY ) {
+    var oldSG = g.SelectTrans( 'viewport' );
+    var W = g.VpInnerWidth, H = g.VpInnerHeight;
+    g.SetAlpha( m.AlphaOpaque );
+    var sky = g.CreateLinearGradient( { X1: 0, Y1: 0, X2: 0, Y2: ( horizonY > 1 ? horizonY : 1 ),
+      Stops: [ { Pos: 0, Color: '#245a90' }, { Pos: 1, Color: '#bcd9ef' } ] } );
+    g.SetBgColor( sky );
+    g.Rect( 0, 0, W, horizonY, 2 );
+    g.SetAreaAttr( m.SurfaceCol, m.SurfaceCol, 1 );
+    g.Rect( 0, horizonY, W, H, 2 );
+    g.SelectTrans( oldSG );
+  }
+
   // Flat Earth
 
   var objIx = 0;
@@ -78,6 +131,11 @@ function DrawModel( g ) {
       } );
       drawEyeLevel( fePan );
     }
+
+    // sky + terrain split at the flat-earth horizon (= eye level; flat has no dip)
+    var fePanFill = m.IsShowBothModels() ? ( m.IsShowBothModelsMirror() ? -m.PanRad : m.PanRad ) : m.PanRad;
+    paintSkyGround( horizonScreenY( fePanFill, 0 ) );
+    drawEyeLevel( fePanFill );
 
     // draw flat earth horizon and equator
     g.SetAlpha( m.AlphaOpaque );
@@ -160,6 +218,10 @@ function DrawModel( g ) {
       } );
       drawEyeLevel( m.PanRad );
     }
+
+    // sky + terrain split at the globe horizon (dropped below eye level)
+    paintSkyGround( horizonScreenY( m.PanRad, m.HorizDropFromEyeLvl ) );
+    drawEyeLevel( m.PanRad );
 
     var drawObjIx = 1;
     if (m.ObjSurfDist[0] > m.ObjSurfDist[1]) drawObjIx = 0;
@@ -374,32 +436,17 @@ function DrawModel( g ) {
     if (posTextX > g.VpInnerWidth-tm) posTextX = g.VpInnerWidth-tm;
 
     // show left-right drop data
-    g.SetTextAttr( 'Arial', textSize, 'black', 'normal', 'normal', align, 'bottom', 4 );
-    g.SetMarkerAttr( 'Arrow1', 6, 'black', 'black', 1 );
+    g.SetMarkerAttr( 'Arrow1', 6, PANEL_BORDER, PANEL_BORDER, 1 );
     var oldTrans = g.SelectTrans( 'viewport' );
-
+    g.SetColor( PANEL_BORDER );
     g.Arrow( posDropLineX, posTextY, posDropLineX, posDropLineY, 9 );
-    g.SetBgColor( 'white' );
 
-    var txt = 'Left-Right Drop Angle = ' + NumFormatter.NumToString( m.HorizLftRgtDropAngl, numFormat ) + '°';
-    var ty = posTextY + lineHeight;
-    g.TextBox( txt, posTextX, ty, 2 );
-    g.Text( txt, posTextX, ty );
-
-    var txt = 'Left-Right Drop = ' + NumFormatter.NumToString( HVal(m.HorizLftRgtDrop), numFormat ) + HUnit();
-    ty += lineHeight;
-    g.TextBox( txt, posTextX, ty, 2 );
-    g.Text( txt, posTextX, ty );
-
-    var txt = 'Left-Right Width = ' + NumFormatter.NumToString( LVal(m.HorizLftRgtWidth), numFormat ) + LUnit();
-    ty += lineHeight;
-    g.TextBox( txt, posTextX, ty, 2 );
-    g.Text( txt, posTextX, ty );
-
-    var txt = 'Apparent Radius = ' + NumFormatter.NumToString( LVal(m.RefractedRadiusEarth), numFormat ) + LUnit();
-    ty += lineHeight;
-    g.TextBox( txt, posTextX, ty, 2 );
-    g.Text( txt, posTextX, ty );
+    drawTextPanel( g, [
+      'Left-Right Drop Angle = ' + NumFormatter.NumToString( m.HorizLftRgtDropAngl, numFormat ) + '°',
+      'Left-Right Drop = ' + NumFormatter.NumToString( HVal(m.HorizLftRgtDrop), numFormat ) + HUnit(),
+      'Left-Right Width = ' + NumFormatter.NumToString( LVal(m.HorizLftRgtWidth), numFormat ) + LUnit(),
+      'Apparent Radius = ' + NumFormatter.NumToString( LVal(m.RefractedRadiusEarth), numFormat ) + LUnit(),
+    ], posTextX, posTextY + lineHeight, +1, align, lineHeight, textSize );
 
     g.SelectTrans( oldTrans );
   }
@@ -423,42 +470,19 @@ function DrawModel( g ) {
       if (posTextX > g.VpInnerWidth-tm) posTextX = g.VpInnerWidth-tm;
 
       // show horizon data
-      g.SetTextAttr( 'Arial', textSize, 'black', 'normal', 'normal', align, 'bottom', 4 );
-      g.SetMarkerAttr( 'Arrow1', 6, 'black', 'black', 1 );
+      g.SetMarkerAttr( 'Arrow1', 6, PANEL_BORDER, PANEL_BORDER, 1 );
       var oldTrans = g.SelectTrans( 'viewport' );
-
+      g.SetColor( PANEL_BORDER );
       g.Arrow( posHorizonX, posTextY, posHorizonX, posHorizonY, 9 );
-      g.SetBgColor( 'white' );
 
-      var txt = 'Grid Spacing = ' + NumFormatter.NumToString( LVal(m.GridSpacing), numFormat ) + LUnit();
-      var ty = posTextY;
-      g.TextBox( txt, posTextX, ty, 2 );
-      g.Text( txt, posTextX, ty );
-
-      var txt = 'Sagitta (Bulge) = ' + NumFormatter.NumToString( HVal(m.Bulge), numFormat ) + HUnit();
-      ty -= lineHeight;
-      g.TextBox( txt, posTextX, ty, 2 );
-      g.Text( txt, posTextX, ty );
-
-      var txt = 'Drop from Surface = ' + NumFormatter.NumToString( HVal(m.HorizDropFromObsSurf), numFormat ) + HUnit();
-      ty -= lineHeight;
-      g.TextBox( txt, posTextX, ty, 2 );
-      g.Text( txt, posTextX, ty );
-
-      var txt = 'Drop from Eye-Level = ' + NumFormatter.NumToString( HVal(m.HorizDropFromEyeLvl), numFormat ) + HUnit();
-      ty -= lineHeight;
-      g.TextBox( txt, posTextX, ty, 2 );
-      g.Text( txt, posTextX, ty );
-
-      var txt = 'Horizon Dip Angle = ' + NumFormatter.NumToString( toDeg( m.HorizDropAnglFromEyeLvl ), numFormat ) + '°';
-      ty -= lineHeight;
-      g.TextBox( txt, posTextX, ty, 2 );
-      g.Text( txt, posTextX, ty );
-
-      var txt = 'Distance on Surface = ' + NumFormatter.NumToString( LVal(m.HorizSurfDist), numFormat ) + LUnit();
-      ty -= lineHeight;
-      g.TextBox( txt, posTextX, ty, 2 );
-      g.Text( txt, posTextX, ty );
+      drawTextPanel( g, [
+        'Grid Spacing = ' + NumFormatter.NumToString( LVal(m.GridSpacing), numFormat ) + LUnit(),
+        'Sagitta (Bulge) = ' + NumFormatter.NumToString( HVal(m.Bulge), numFormat ) + HUnit(),
+        'Drop from Surface = ' + NumFormatter.NumToString( HVal(m.HorizDropFromObsSurf), numFormat ) + HUnit(),
+        'Drop from Eye-Level = ' + NumFormatter.NumToString( HVal(m.HorizDropFromEyeLvl), numFormat ) + HUnit(),
+        'Horizon Dip Angle = ' + NumFormatter.NumToString( toDeg( m.HorizDropAnglFromEyeLvl ), numFormat ) + '°',
+        'Distance on Surface = ' + NumFormatter.NumToString( LVal(m.HorizSurfDist), numFormat ) + LUnit(),
+      ], posTextX, posTextY, -1, align, lineHeight, textSize );
 
       g.SelectTrans( oldTrans );
     }
@@ -474,36 +498,20 @@ function DrawModel( g ) {
       if (m.IsShowBothModels()) {
         tx += g.VpInnerWidth / 2;
       }
-      g.SetTextAttr( 'Arial', textSize, 'black', 'normal', 'normal', hAl, 'bottom', 4 );
-      g.SetBgColor( 'white' );
-
-      var txt = 'Target ' + (m.NearObjIx+1) + ' Visible = ' + NumFormatter.NumToString( HVal(m.ObjVisi), numFormat4 ) + HUnit() + '; Hidden = ' + NumFormatter.NumToString( HVal(m.ObjHidden), numFormat4 ) + HUnit();
-      g.SetBgColor( '#ffddff' );
-      g.TextBox( txt, tx, ty, 2 );
-      g.Text( txt, tx, ty );
-      ty += lineHeight;
 
       var eq = ' = ';
       var a = m.ObjSizeAngl;
       if (a < 1e-5) a = 0;
       if (m.IsVariableSizeObject(objIx)) eq = ' <= ';
-      var txt = 'Size ' + eq + NumFormatter.NumToString( HVal(m.ObjNearSize), numFormat4 ) + HUnit() + '; Angular Size = ' + NumFormatter.NumToString( a, numFormat ) + '°';
-      g.SetBgColor( 'white' );
-      g.TextBox( txt, tx, ty, 2 );
-      g.Text( txt, tx, ty );
-      ty += lineHeight;
-
-      var txt = 'Drop = ' + NumFormatter.NumToString( HVal(m.ObjDropFromObsSurf), numFormat ) + HUnit() + '; Drop Angle = ' + NumFormatter.NumToString( m.ObjDropAnglFromObsSurf, numFormat4 ) + '°';
-      g.TextBox( txt, tx, ty, 2 );
-      g.Text( txt, tx, ty );
-      ty += lineHeight;
-
       var va = m.ObjTopAnglFromEyeLvl;
       if (Math.abs(va) < 1e-5) va = 0;
-      var txt = 'Top Angle = ' + NumFormatter.NumToString( va, numFormat ) + '°; Tilt = ' + NumFormatter.NumToString( m.ObjNearTilt, numFormat4 ) + '°';
-      g.TextBox( txt, tx, ty, 2 );
-      g.Text( txt, tx, ty );
-      ty += lineHeight;
+
+      drawTextPanel( g, [
+        'Target ' + (m.NearObjIx+1) + ' Visible = ' + NumFormatter.NumToString( HVal(m.ObjVisi), numFormat4 ) + HUnit() + '; Hidden = ' + NumFormatter.NumToString( HVal(m.ObjHidden), numFormat4 ) + HUnit(),
+        'Size ' + eq + NumFormatter.NumToString( HVal(m.ObjNearSize), numFormat4 ) + HUnit() + '; Angular Size = ' + NumFormatter.NumToString( a, numFormat ) + '°',
+        'Drop = ' + NumFormatter.NumToString( HVal(m.ObjDropFromObsSurf), numFormat ) + HUnit() + '; Drop Angle = ' + NumFormatter.NumToString( m.ObjDropAnglFromObsSurf, numFormat4 ) + '°',
+        'Top Angle = ' + NumFormatter.NumToString( va, numFormat ) + '°; Tilt = ' + NumFormatter.NumToString( m.ObjNearTilt, numFormat4 ) + '°',
+      ], tx, ty, +1, hAl, lineHeight, textSize );
 
       g.SelectTrans( oldTrans );
 
@@ -520,31 +528,13 @@ function DrawModel( g ) {
       if (m.IsShowBothModels()) {
         tx += g.VpInnerWidth / 2;
       }
-      g.SetTextAttr( 'Arial', textSize, 'black', 'normal', 'normal', hAl, 'bottom', 4 );
-      g.SetBgColor( 'white' );
 
-      var txt = 'Lift Relativ to Horizon = ' + NumFormatter.NumToString( HVal(m.ObjLiftRelToHoriz), numFormat4 ) + HUnit();
-      g.SetBgColor( '#ffddff' );
-      g.TextBox( txt, tx, ty, 2 );
-      g.Text( txt, tx, ty );
-      ty += lineHeight;
-
-      var txt = 'Lift Absolute = ' + NumFormatter.NumToString( HVal(m.ObjLiftAbs), numFormat4 ) + HUnit();
-      g.SetBgColor( 'white' );
-      g.TextBox( txt, tx, ty, 2 );
-      g.Text( txt, tx, ty );
-      ty += lineHeight;
-
-      var txt = 'Horizon Lift = ' + NumFormatter.NumToString( HVal(m.HorizonLift), numFormat4 ) + HUnit();
-      g.TextBox( txt, tx, ty, 2 );
-      g.Text( txt, tx, ty );
-      ty += lineHeight;
-
-      g.SetTextColor( 'darkred' );
-      var txt = 'Refraction Angle = ' + NumFormatter.NumToString( m.ObjRefrAngl, numFormat ) + '°';
-      g.TextBox( txt, tx, ty, 2 );
-      g.Text( txt, tx, ty );
-      ty += lineHeight;
+      drawTextPanel( g, [
+        'Lift Relativ to Horizon = ' + NumFormatter.NumToString( HVal(m.ObjLiftRelToHoriz), numFormat4 ) + HUnit(),
+        'Lift Absolute = ' + NumFormatter.NumToString( HVal(m.ObjLiftAbs), numFormat4 ) + HUnit(),
+        'Horizon Lift = ' + NumFormatter.NumToString( HVal(m.HorizonLift), numFormat4 ) + HUnit(),
+        'Refraction Angle = ' + NumFormatter.NumToString( m.ObjRefrAngl, numFormat ) + '°',
+      ], tx, ty, +1, hAl, lineHeight, textSize, [ null, null, null, '#8a1a1a' ] );
 
       g.SelectTrans( oldTrans );
     }
@@ -565,31 +555,21 @@ function DrawModel( g ) {
         tx = g.VpInnerWidth / 2 - tm;
         hAl = 'right';
       }
-      g.SetTextAttr( 'Arial', textSize, 'black', 'normal', 'normal', hAl, 'bottom', 4 );
-      g.SetBgColor( 'white' );
-
-      var txt = 'Target ' + (m.NearObjIx+1) + ' Visible = ' + NumFormatter.NumToString( HVal(m.ObjSize[objIx]), numFormat4 ) + HUnit() + '; Hidden = ' + NumFormatter.NumToString( HVal(0), numFormat4 ) + HUnit();
-      g.SetBgColor( '#ffddff' );
-      g.TextBox( txt, tx, ty, 2 );
-      g.Text( txt, tx, ty );
-      ty += lineHeight;
 
       var eq = ' = ';
       var a = m.ObjSizeAngl;
       if (a < 1e-5) a = 0;
       if (m.IsVariableSizeObject(objIx)) eq = ' <= ';
-      var txt = 'Size ' + eq + NumFormatter.NumToString( HVal(m.ObjNearSize), numFormat4 ) + HUnit() + '; Angular Size = ' + NumFormatter.NumToString( a, numFormat ) + '°';
-      g.SetBgColor( 'white' );
-      g.TextBox( txt, tx, ty, 2 );
-      g.Text( txt, tx, ty );
-      ty += lineHeight;
-
       var va = m.ObjTopAnglFromEyeLvlFE;
       if (Math.abs(va) < 1e-5) va = 0;
-      var txt = 'Top Angle = ' + NumFormatter.NumToString( va, numFormat ) + '°';
-      g.TextBox( txt, tx, ty, 2 );
-      g.Text( txt, tx, ty );
-      ty += lineHeight;
+
+      // Same panel layout as the globe; on the flat surface Drop/Tilt are 0.
+      drawTextPanel( g, [
+        'Target ' + (m.NearObjIx+1) + ' Visible = ' + NumFormatter.NumToString( HVal(m.ObjSize[objIx]), numFormat4 ) + HUnit() + '; Hidden = ' + NumFormatter.NumToString( HVal(0), numFormat4 ) + HUnit(),
+        'Size ' + eq + NumFormatter.NumToString( HVal(m.ObjNearSize), numFormat4 ) + HUnit() + '; Angular Size = ' + NumFormatter.NumToString( a, numFormat ) + '°',
+        'Drop = ' + NumFormatter.NumToString( HVal(0), numFormat ) + HUnit() + '; Drop Angle = ' + NumFormatter.NumToString( 0, numFormat4 ) + '°',
+        'Top Angle = ' + NumFormatter.NumToString( va, numFormat ) + '°; Tilt = ' + NumFormatter.NumToString( 0, numFormat4 ) + '°',
+      ], tx, ty, +1, hAl, lineHeight, textSize );
 
     }
 
@@ -644,40 +624,32 @@ function DrawModel( g ) {
       tx += g.VpInnerWidth / 2;
     }
 
-    g.SetTextAttr( 'Arial', textSize, 'darkred', 'normal', 'normal', hAl, 'bottom', 4 );
-    if (m.RefractionCoeff < -1e-5) {
-      g.SetBgColor( '#ffeeaa' );
-    } else if (m.RefractionCoeff > 1e-5) {
-      g.SetBgColor( '#ffff80' );
-    } else {
-      g.SetBgColor( 'white' );
-    }
-
     var oldFormatMode = numFormat.Mode;
     var oldPrecision = numFormat.Precision;
     numFormat.Mode = 'fix0';
 
-    var ty = g.VpInnerHeight - lineHeight - g.ScalePix(5);
+    var refrLines = [];
     var txt = 'Refraction k = ' + NumFormatter.NumToString( m.RefractionCoeff, numFormat );
     if (m.RefractionSync == 2) {
       txt += ' (Standard Atmosphere)';
     } else {
       txt += ' ' + refractionClass( m.RefractionCoeff );
     }
-    g.TextBox( txt, tx, ty, 2 );
-    g.Text( txt, tx, ty );
+    refrLines.push( txt );
 
     if (m.Height < 84852) {
       numFormat.Precision = 5;
-      var txt = '';
+      var txt2 = '';
       if (m.TemperatureGradient < 1) {
-        txt = 'Temp. Gradient dT/dh = ' + NumFormatter.NumToString( AVal(m.TemperatureGradient), numFormat ) + AUnit()+ ' ';
+        txt2 = 'Temp. Gradient dT/dh = ' + NumFormatter.NumToString( AVal(m.TemperatureGradient), numFormat ) + AUnit()+ ' ';
       }
-      ty += lineHeight;
-      txt += tempGradClass( m.TemperatureGradient );
-      g.TextBox( txt, tx, ty, 2 );
-      g.Text( txt, tx, ty );
+      txt2 += tempGradClass( m.TemperatureGradient );
+      refrLines.push( txt2 );
     }
+
+    var ty = g.VpInnerHeight - lineHeight - g.ScalePix(5);
+    drawTextPanel( g, refrLines, tx, ty, +1, hAl, lineHeight, textSize,
+      refrLines.map( () => '#8a1a1a' ) );
 
     numFormat.Mode = oldFormatMode;
     numFormat.Precision = oldPrecision;
