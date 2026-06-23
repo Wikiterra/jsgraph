@@ -906,14 +906,17 @@ Object.assign(FeDomeApp, {
 
   DrawFeCelestSphere: function (g) {
     // draws celestial sphere at observion position of flat earth
+    // When Position (move) mode is active, highlight the personal dome.
+    var hi = this.MoveObserverMode;
+    var gridCol = hi ? '#ff8033' : 'black';
 
     // grid below surface is clipped and grid facing away is dimmer, by drawing the front part twice using clipping
     // surface clip plane
     g.AddClipPlane([0, 0, 0], [1, 0, 0], [0, 1, 0]);
 
     // draw grid
-    g.SetLineAttr('black', 1);
-    g.SetAlpha(0.15);
+    g.SetLineAttr(gridCol, hi ? 1.5 : 1);
+    g.SetAlpha(hi ? 0.4 : 0.15);
     this.DrawFeCelestSphereGrid(g);
 
     var vecObsToCam = JsgVect3.Norm(JsgVect3.Sub(g.Camera.CamPos, this.ObserverFeCoord));
@@ -922,7 +925,7 @@ Object.assign(FeDomeApp, {
     g.AddClipPlane(this.ObserverFeCoord, vecInPlane, vecUp);
 
     // draw grid second time clipped to front
-    g.SetAlpha(0.2);
+    g.SetAlpha(hi ? 0.5 : 0.2);
     this.DrawFeCelestSphereGrid(g);
     // draw equator
     g.SetAlpha(0.5);
@@ -951,7 +954,7 @@ Object.assign(FeDomeApp, {
 
     // draw base circle
     g.DeleteClipPlanes();
-    g.SetLineAttr('black', 1);
+    g.SetLineAttr(hi ? '#ff8033' : 'black', hi ? 2.5 : 1);
     this.DrawGlobalFeCircle(g, this.ObserverFeCoord, this.RadiusSphere, 1);
     g.SetAlpha(1);
   },

@@ -75,28 +75,14 @@ ControlPanels.NewSliderPanel( {
 
 } ).RenderInto('panel-basics');
 
+/* View options — Camera Aim + Show Data. Model lives in the bottom bar
+   (FE / Globe / Both), so it's not duplicated here. Rendered into its own
+   floating "View" panel, separate from Measures. */
 ControlPanels.NewPanel( {
   Name: 'OptionsPanel',
   ModelRef: 'CurveApp',
   NCols: 2,
   OnModelChange: UpdateAll
-
-} ).AddRadiobuttonField( {
-  Name: 'ShowModel',
-  Label: 'Model',
-  ValueType: 'int',
-  Items: [
-    {
-      Name: 'Globe',
-      Value: 1
-    }, {
-      Name: 'FE',
-      Value: 2
-    }, {
-      Name: 'Globe+FE',
-      Value: 3
-    }
-  ]
 
 } ).AddRadiobuttonField( {
   Name: 'ViewcenterHorizon',
@@ -132,4 +118,4 @@ ControlPanels.NewPanel( {
     }
   ]
 
-} ).RenderInto('panel-basics');
+} ).RenderInto('panel-options');

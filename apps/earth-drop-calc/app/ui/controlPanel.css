@@ -132,3 +132,20 @@
   letter-spacing: 0.02em;
   text-transform: uppercase;
 }
+
+/* ---- Responsive density ----
+   Phone: condense every panel to a single column (slider panels keep one
+   value+slider pair per row). Tablet/desktop: information panels use two
+   columns. */
+@media (max-width: 767px) {
+  .cp-panel { grid-template-columns: minmax(0, 1fr); }
+  .cp-panel--slider.cp-panel--cols2,
+  .cp-panel--slider.cp-panel--cols4 {
+    grid-template-columns: max-content minmax(60px, 1fr);
+  }
+}
+@media (min-width: 768px) {
+  .cp-panel:not(.cp-panel--slider) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

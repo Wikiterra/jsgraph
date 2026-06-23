@@ -10,11 +10,26 @@
   --bottom-bar-h:     clamp(56px, 7cqi + 1.5rem, 72px);
   --timeline-strip-h: clamp(40px, 4cqi + 0.9rem, 46px);
 
-  --color-primary: #2d3436;
+  /* Theme: dark defaults; light overridden below. --ui-fg-rgb is the bar/overlay
+     foreground (flips light↔dark text), --bar-rgb the bar/overlay background,
+     --canvas-bg the scene background. */
+  --ui-fg-rgb: 255, 255, 255;
+  --bar-rgb:   16, 16, 24;
+  --canvas-bg: #000;
+
+  --color-primary: #ece9ff;
   --color-bg:      #1a1a24;
 
-  --bar-bg:   rgba(16, 16, 24, 0.96);
-  --bar-text: rgba(255, 255, 255, 0.9);
+  --bar-bg:   rgba(var(--bar-rgb), 0.96);
+  --bar-text: rgba(var(--ui-fg-rgb), 0.9);
+}
+
+:root[data-theme="light"] {
+  --ui-fg-rgb: 26, 22, 45;
+  --bar-rgb:   233, 236, 242;
+  --canvas-bg: #dbe6f3;
+  --color-primary: #1a1a24;
+  --color-bg:      #f5f6f8;
 }
 
 /* =============================================================
@@ -102,7 +117,7 @@ body {
   cursor: pointer;
   font-size: 13px;
   font-weight: 500;
-  color: rgba(255,255,255,0.65);
+  color: rgba(var(--ui-fg-rgb),0.65);
   background: transparent;
   border: 1px solid transparent;
   transition: color var(--motion-duration), background var(--motion-duration), border-color var(--motion-duration);
@@ -112,8 +127,8 @@ body {
 
 .TabSelectors li.TabEnabled:hover {
   color: var(--bar-text);
-  background: rgba(255,255,255,0.1);
-  border-color: rgba(255,255,255,0.15);
+  background: rgba(var(--ui-fg-rgb),0.1);
+  border-color: rgba(var(--ui-fg-rgb),0.15);
 }
 
 .TabSelectors li[aria-selected="true"] {
@@ -141,7 +156,7 @@ body {
 
 .sms-item {
   font-size: 11px;
-  color: rgba(255,255,255,0.55);
+  color: rgba(var(--ui-fg-rgb),0.55);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -172,7 +187,7 @@ body {
   inset: 0;
   pointer-events: none;
   font-size: 8.5px;
-  color: rgba(255,255,255,0.4);
+  color: rgba(var(--ui-fg-rgb),0.4);
   font-variant-numeric: tabular-nums;
 }
 
@@ -191,7 +206,7 @@ body {
   width: 1px;
   height: 5px;
   margin: 1px auto 0;
-  background: rgba(255,255,255,0.25);
+  background: rgba(var(--ui-fg-rgb),0.25);
 }
 
 /* Native range restyled as a flat timeline track + chunky handle */
@@ -211,12 +226,12 @@ body {
 .timeline-range::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 2px;
-  background: rgba(255,255,255,0.18);
+  background: rgba(var(--ui-fg-rgb),0.18);
 }
 .timeline-range::-moz-range-track {
   height: 4px;
   border-radius: 2px;
-  background: rgba(255,255,255,0.18);
+  background: rgba(var(--ui-fg-rgb),0.18);
 }
 
 .timeline-range::-webkit-slider-thumb {
@@ -254,7 +269,7 @@ body {
 
 .timeline-label {
   font-size: 10px;
-  color: rgba(255,255,255,0.7);
+  color: rgba(var(--ui-fg-rgb),0.7);
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
   text-align: center;
@@ -274,10 +289,10 @@ body {
 #calendar-dropdown {
   position: relative;
   min-width: 0;
-  background: rgba(16, 16, 24, 0.92);
+  background: rgba(var(--bar-rgb), 0.92);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid rgba(var(--ui-fg-rgb),0.12);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
   padding: 4px 28px 4px 8px;
@@ -296,14 +311,14 @@ body {
   justify-content: center;
   width: 20px;
   height: 20px;
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid rgba(var(--ui-fg-rgb),0.12);
   border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.06);
-  color: rgba(255,255,255,0.55);
+  background: rgba(var(--ui-fg-rgb),0.06);
+  color: rgba(var(--ui-fg-rgb),0.55);
   cursor: pointer;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
-.cal-edit-btn:hover { background: rgba(255,255,255,0.14); color: var(--bar-text); }
+.cal-edit-btn:hover { background: rgba(var(--ui-fg-rgb),0.14); color: var(--bar-text); }
 .cal-edit-btn[aria-pressed="true"] {
   background: var(--color-accent);
   border-color: var(--color-accent);
@@ -333,10 +348,10 @@ body {
   display: inline-flex;
   align-items: stretch;
   gap: 0;
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid rgba(var(--ui-fg-rgb),0.12);
   border-radius: var(--radius-sm);
   overflow: hidden;
-  background: rgba(255,255,255,0.05);
+  background: rgba(var(--ui-fg-rgb),0.05);
 }
 
 .cal-spin {
@@ -346,7 +361,7 @@ body {
   min-width: 28px;
   padding: 4px 3px;
   background: transparent;
-  color: rgba(255,255,255,0.9);
+  color: rgba(var(--ui-fg-rgb),0.9);
   font-size: 13px;
   font-variant-numeric: tabular-nums;
   font-weight: 500;
@@ -357,7 +372,7 @@ body {
 
 .cal-spin.cs-wide { min-width: 40px; }
 
-.cal-spin:hover { background: rgba(255,255,255,0.08); }
+.cal-spin:hover { background: rgba(var(--ui-fg-rgb),0.08); }
 
 .cal-spin:focus {
   outline: none;
@@ -378,8 +393,8 @@ body {
   justify-content: center;
   flex: 1;
   border: none;
-  background: rgba(255,255,255,0.06);
-  color: rgba(255,255,255,0.5);
+  background: rgba(var(--ui-fg-rgb),0.06);
+  color: rgba(var(--ui-fg-rgb),0.5);
   font-size: 6px;
   line-height: 1;
   padding: 1px 0;
@@ -388,8 +403,8 @@ body {
 }
 
 .cal-arrow:hover {
-  background: rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.85);
+  background: rgba(var(--ui-fg-rgb),0.15);
+  color: rgba(var(--ui-fg-rgb),0.85);
 }
 
 .cal-arrow:active {
@@ -398,18 +413,18 @@ body {
 }
 
 .cal-field:hover .cal-arrow {
-  background: rgba(255,255,255,0.1);
+  background: rgba(var(--ui-fg-rgb),0.1);
 }
 
 .cal-sep {
-  color: rgba(255,255,255,0.35);
+  color: rgba(var(--ui-fg-rgb),0.35);
   font-size: 12px;
   padding: 0 1px;
   user-select: none;
 }
 
 .cal-utc {
-  color: rgba(255,255,255,0.35);
+  color: rgba(var(--ui-fg-rgb),0.35);
   font-size: 10px;
   margin-left: 2px;
   user-select: none;
@@ -433,7 +448,7 @@ body {
   padding: 0;
   margin: 0;
   overflow: hidden;
-  background: #000;
+  background: var(--canvas-bg);
   z-index: 1;
   touch-action: none; /* let JS handle pinch-zoom and drag */
 }
@@ -474,7 +489,7 @@ body {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   z-index: 999;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(var(--ui-fg-rgb),0.08);
 }
 
 .tl-mode-btn {
@@ -484,9 +499,9 @@ body {
   height: 26px;
   min-width: 36px;
   padding: 0 6px;
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid rgba(var(--ui-fg-rgb),0.15);
   border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.07);
+  background: rgba(var(--ui-fg-rgb),0.07);
   color: var(--bar-text);
   font-size: 11px;
   font-weight: 600;
@@ -498,7 +513,7 @@ body {
 }
 
 .tl-mode-btn:hover {
-  background: rgba(255,255,255,0.15);
+  background: rgba(var(--ui-fg-rgb),0.15);
 }
 
 .tl-mode-btn:focus-visible {
@@ -523,17 +538,17 @@ body {
   justify-content: center;
   width: 34px;
   height: 34px;
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid rgba(var(--ui-fg-rgb),0.15);
   border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.07);
+  background: rgba(var(--ui-fg-rgb),0.07);
   color: var(--bar-text);
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
 }
 
 .pb-btn:hover {
-  background: rgba(255,255,255,0.15);
-  border-color: rgba(255,255,255,0.3);
+  background: rgba(var(--ui-fg-rgb),0.15);
+  border-color: rgba(var(--ui-fg-rgb),0.3);
 }
 
 .pb-btn.pb-primary {
@@ -565,8 +580,8 @@ body {
   height: 30px;
   min-width: 56px;
   padding: 0 10px;
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(var(--ui-fg-rgb),0.07);
+  border: 1px solid rgba(var(--ui-fg-rgb),0.15);
   border-radius: var(--radius-sm);
   color: var(--bar-text);
   font-size: 12px;
@@ -579,8 +594,8 @@ body {
 }
 
 .pb-speed-btn:hover {
-  background: rgba(255,255,255,0.13);
-  border-color: rgba(255,255,255,0.3);
+  background: rgba(var(--ui-fg-rgb),0.13);
+  border-color: rgba(var(--ui-fg-rgb),0.3);
 }
 
 .pb-speed-btn:active { transform: scale(0.96); }
@@ -595,7 +610,7 @@ body {
 
 /* Reset button — square icon, same height as the play button, slightly muted */
 .pb-btn.pb-reset {
-  color: rgba(255,255,255,0.55);
+  color: rgba(var(--ui-fg-rgb),0.55);
   margin-left: 4px;
   width: 40px;
   height: 40px;
@@ -648,7 +663,7 @@ body {
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: rgba(255,255,255,0.35);
+  color: rgba(var(--ui-fg-rgb),0.35);
   cursor: pointer;
   transition: color 0.15s, background 0.15s, border-color 0.15s;
   white-space: nowrap;
@@ -656,14 +671,14 @@ body {
 }
 
 .layer-toggle:hover {
-  color: rgba(255,255,255,0.75);
-  background: rgba(255,255,255,0.08);
+  color: rgba(var(--ui-fg-rgb),0.75);
+  background: rgba(var(--ui-fg-rgb),0.08);
 }
 
 .layer-toggle[aria-pressed="true"] {
   color: #fff;
-  background: rgba(255,255,255,0.1);
-  border-color: rgba(255,255,255,0.2);
+  background: rgba(var(--ui-fg-rgb),0.1);
+  border-color: rgba(var(--ui-fg-rgb),0.2);
 }
 
 /* Move button pressed: accent color to clearly indicate the mode is active */
@@ -683,12 +698,13 @@ body {
    Rays + Luminaries sections (bottom bar, right side).
    Each is a dedicated visually-separated group with a divider on its left edge. */
 .rays-section,
-.luminary-section {
+.luminary-section,
+.position-section {
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 3px 6px;
-  border-left: 1px solid rgba(255,255,255,0.12);
+  border-left: 1px solid rgba(var(--ui-fg-rgb),0.12);
   flex-shrink: 0;
 }
 
@@ -707,10 +723,10 @@ body {
   flex-direction: column;
   gap: 12px;
   padding: 12px 14px;
-  background: rgba(16, 16, 24, 0.96);
+  background: rgba(var(--bar-rgb), 0.96);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid rgba(var(--ui-fg-rgb),0.12);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
   z-index: 1001;
@@ -726,19 +742,19 @@ body {
 
 .param-label {
   font-size: 10px;
-  color: rgba(255,255,255,0.55);
+  color: rgba(var(--ui-fg-rgb),0.55);
   white-space: nowrap;
   cursor: pointer;
   font-variant-numeric: tabular-nums;
 }
 
 .param-val {
-  color: rgba(255,255,255,0.85);
+  color: rgba(var(--ui-fg-rgb),0.85);
   font-weight: 500;
 }
 
 .param-range {
-  width: 72px;
+  width: 216px;
   accent-color: var(--color-accent);
   cursor: pointer;
   height: 14px;
@@ -755,12 +771,35 @@ body {
   align-items: center;
   gap: 12px;
   padding: 4px 10px;
-  background: rgba(16, 16, 24, 0.82);
+  background: rgba(var(--bar-rgb), 0.82);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border-radius: var(--radius-sm);
   pointer-events: none;
 }
+
+/* Observer lat/long strip — standalone, bottom-left above the bottom bar */
+#latlong-strip {
+  position: fixed;
+  bottom: calc(var(--bottom-bar-h) + var(--timeline-strip-h) + 8px);
+  left: 8px;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: rgba(var(--bar-rgb), 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  transition: box-shadow 0.15s, background 0.15s;
+}
+/* Highlight the lat/long readout while Position (move) mode is active */
+#latlong-strip.active {
+  background: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent), 0 2px 10px rgba(0,0,0,0.4);
+}
+#latlong-strip.active .sms-item { color: #fff; }
 
 /* Visually-hidden screen-reader region (replaces inline styles) */
 .sr-only {
@@ -803,7 +842,7 @@ body {
 }
 #calendar-dropdown {
   min-width: 200px !important;
-  background: rgba(16, 16, 24, 0.95) !important;
+  background: rgba(var(--bar-rgb), 0.95) !important;
   padding: 5px 6px;
 }
 #calendar-dropdown .cal-year-track { display: none; }
@@ -824,7 +863,7 @@ body {
 }
 .sms-item {
   font-size: 11px;
-  color: rgba(255,255,255,0.55);
+  color: rgba(var(--ui-fg-rgb),0.55);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -847,7 +886,7 @@ body {
   }
   #calendar-dropdown {
     min-width: 230px !important;
-    background: rgba(16, 16, 24, 0.92) !important;
+    background: rgba(var(--bar-rgb), 0.92) !important;
   }
   #calendar-dropdown .cal-year-track { display: none; }
 }
@@ -888,7 +927,7 @@ body {
   left: 50%;
   transform: translateX(-50%);
   background: rgba(0, 0, 0, 0.62);
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(var(--ui-fg-rgb), 0.85);
   font-size: 11px;
   font-family: inherit;
   padding: 5px 14px;

@@ -782,10 +782,10 @@ CurveAppClass.prototype.CompCameraParams = function( pan, tilt, roll, aimModel )
   var dvc, avc;
   dvc = Math.sqrt( this.HorizDistOnEyeLvl * this.HorizDistOnEyeLvl + this.HorizDropFromEyeLvl * this.HorizDropFromEyeLvl );
   if (aimModel === 'globe' || aimModel === 'fe') {
-    // Globe+FE comparison: aim both halves at eye level so the eye-level line is
-    // one straight (rectilinear) line across the split. The horizons then differ
-    // by the globe dip — which is exactly what the comparison shows.
-    avc = 0;
+    // Globe+FE comparison: aim each half at its own horizon so the horizon lands
+    // at the same screen height in both halves — one continuous line across the
+    // split. The eye-levels then differ by the globe dip (that's expected).
+    avc = (aimModel === 'globe') ? this.HorizDropAnglFromEyeLvl : 0;
   } else if (this.ViewcenterHorizon == 0) {
     // view center is "the horizon" — aim at the horizon of the model being drawn
     // so it stays fixed (centred) under zoom. In Globe+FE comparison mode each

@@ -1,10 +1,32 @@
 /* WikiTerra Jsgraph brand injected into #top-bar */
 .app-shell-brand {
   font-weight: 700;
-  color: #fff;
+  color: var(--bar-text, #fff);
   text-decoration: none;
   letter-spacing: 0.02em;
   font-size: 14px;
   white-space: nowrap;
   flex-shrink: 0;
 }
+
+/* Light/dark theme toggle injected into #top-bar */
+.app-shell-theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin-left: 8px;
+  flex-shrink: 0;
+  border: 1px solid rgba(var(--ui-fg-rgb, 255, 255, 255), 0.18);
+  border-radius: 8px;
+  background: rgba(var(--ui-fg-rgb, 255, 255, 255), 0.06);
+  color: var(--bar-text, #fff);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.app-shell-theme:hover { background: rgba(var(--ui-fg-rgb, 255, 255, 255), 0.14); }
+.app-shell-theme:focus-visible { outline: 2px solid var(--color-accent, #ff8033); outline-offset: 2px; }
+.app-shell-theme .sun, .app-shell-theme .moon { display: none; }
+:root[data-theme="dark"]  .app-shell-theme .moon { display: block; }
+:root[data-theme="light"] .app-shell-theme .sun  { display: block; }

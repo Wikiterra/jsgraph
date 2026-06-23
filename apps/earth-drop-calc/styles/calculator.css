@@ -67,15 +67,15 @@
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: rgba(255,255,255,0.66);
+  color: rgba(var(--ui-fg-rgb),0.66);
   cursor: pointer;
   transition: color 0.15s, background 0.15s, border-color 0.15s;
   white-space: nowrap;
   min-width: var(--tap-min);
 }
 .layer-toggle:hover {
-  color: #fff;
-  background: rgba(255,255,255,0.1);
+  color: var(--bar-text);
+  background: rgba(var(--ui-fg-rgb),0.1);
 }
 .layer-toggle[aria-pressed="true"] {
   color: #fff;
@@ -94,19 +94,22 @@
   justify-content: center;
   width: 30px;
   height: 30px;
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid rgba(var(--ui-fg-rgb),0.15);
   border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.07);
+  background: rgba(var(--ui-fg-rgb),0.07);
   color: var(--bar-text);
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
 }
 .pb-btn:hover {
-  background: rgba(255,255,255,0.15);
-  border-color: rgba(255,255,255,0.3);
+  background: rgba(var(--ui-fg-rgb),0.15);
+  border-color: rgba(var(--ui-fg-rgb),0.3);
 }
 
-/* ---- Synthwave dark theme tokens ---- */
+/* ---- Theme tokens ----
+   Dark defaults; light overridden below. Bars + drawer + panels all theme.
+   --ui-fg-rgb is the foreground (white on dark, dark on light) used by the many
+   subtle rgba overlays; --bar-rgb / --bar-bg the header/toolbar background. */
 :root {
   --top-bar-h:        clamp(40px, 4cqi + 1rem, 48px);
   --bottom-bar-h:     clamp(52px, 5cqi + 1.5rem, 60px);
@@ -115,33 +118,61 @@
   --color-accent:        #ff8033;
   --color-accent-strong: #ff6000;
 
-  /* Surfaces */
-  --color-bg:      #100a26;                 /* deep indigo page bg */
-  --bar-bg:        rgba(20, 13, 43, 0.94);  /* translucent dark-purple bars */
-  --bar-text:      rgba(240, 235, 255, 0.92);
+  /* Bars — themed (light/dark) like the rest of the header */
+  --bar-rgb:       20, 13, 43;
+  --bar-bg:        rgba(var(--bar-rgb), 0.94);
+  --bar-text:      rgba(var(--ui-fg-rgb), 0.92);
 
-  /* Drawer / control-panel surfaces + text (consumed by controlPanel.css) */
+  /* Dark theme content surfaces (default) */
+  --color-bg:      #100a26;
   --color-surface: #1b1233;
   --color-text:    #ece9ff;
   --color-muted:   #b3a8d8;
   --color-border:  #3a2a5c;
   --color-primary: #ece9ff;
+  --drawer-bg:     rgba(27, 18, 51, 0.98);
+  --readonly-bg:   #221a3d;
+  --readonly-text: #cfc8e8;
+  --ui-fg-rgb:     255, 255, 255;
 }
 
-/* ---- Panel drawer (slides up from bottom) ---- */
+:root[data-theme="light"] {
+  --bar-rgb:       233, 236, 242;
+  --color-bg:      #f5f6f8;
+  --color-surface: #ffffff;
+  --color-text:    #1a1a24;
+  --color-muted:   #5b6472;
+  --color-border:  #d9dee6;
+  --color-primary: #1a1a24;
+  --drawer-bg:     rgba(255, 255, 255, 0.98);
+  --readonly-bg:   #f1f5f9;
+  --readonly-text: #475569;
+  --ui-fg-rgb:     26, 22, 45;
+}
+
+/* ---- Panel: floating popover over the canvas ----
+   Each bottom-bar button opens only its own section here; the popover floats at
+   the lower-left so the view (canvas) stays visible. Width caps so the canvas is
+   never fully covered; on phones it spans (almost) full width but stays short. */
 #panel-drawer {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: var(--bottom-bar-h);
-  max-height: 55vh;
-  background: rgba(27, 18, 51, 0.98);
+  left: 8px;
+  bottom: calc(var(--bottom-bar-h) + 8px);
+  width: min(560px, calc(100vw - 16px));
+  max-height: min(58vh, 540px);
+  display: flex;
+  flex-direction: column;
+  background: var(--drawer-bg);
+  border: 1px solid var(--color-border);
   border-top: 2px solid var(--color-accent);
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
   z-index: 800;
-  overflow-y: auto;
-  transition: transform 0.2s ease, opacity 0.15s ease;
-  transform: translateY(100%);
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform 0.18s ease, opacity 0.15s ease;
+  transform: translateY(8px);
   opacity: 0;
   pointer-events: none;
 }
@@ -153,63 +184,33 @@
 }
 
 #panel-drawer-content {
-  padding: 6px 12px 4px;
-  max-height: calc(55vh - 28px);
+  padding: 8px 10px;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
 }
 
-/* Drawer sections — collapsible accordion */
-.drawer-section {
-  margin-bottom: 4px;
-}
-
-.drawer-section-title {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 8px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-primary);
-  cursor: pointer;
-  border-radius: var(--radius-sm);
-  user-select: none;
-  transition: background 0.1s;
-}
-.drawer-section-title:hover { background: rgba(255,255,255,0.07); }
-.drawer-section-title::after {
-  content: '▼';
-  margin-left: auto;
-  font-size: 9px;
-  color: #999;
-  transition: transform 0.15s;
-}
-.drawer-section.open .drawer-section-title::after {
-  transform: rotate(180deg);
-}
-
-.drawer-section-body {
-  overflow: hidden;
-  transition: max-height 0.2s ease;
-  max-height: 0;
-}
-.drawer-section.open .drawer-section-body {
-  max-height: 2000px;
-}
+/* Only the active section shows; its title is redundant (the bar button names it) */
+.drawer-section { margin: 0; }
+.drawer-section:not(.open) { display: none; }
+.drawer-section-title { display: none; }
+.drawer-section-body { overflow: visible; }
 
 #panel-drawer-close {
   display: block;
   width: 100%;
-  padding: 3px;
+  padding: 4px;
   border: none;
-  background: rgba(255,255,255,0.04);
-  color: rgba(255,255,255,0.55);
+  border-top: 1px solid var(--color-border);
+  background: rgba(var(--ui-fg-rgb),0.05);
+  color: var(--color-muted);
   font-size: 11px;
   cursor: pointer;
   text-align: center;
   transition: background 0.15s;
+  flex-shrink: 0;
 }
-#panel-drawer-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
+#panel-drawer-close:hover { background: rgba(var(--ui-fg-rgb),0.12); color: var(--color-text); }
 
 /* ---- Bottom bar model buttons ---- */
 #qs-globe[aria-pressed="true"],
@@ -254,7 +255,7 @@
   gap: 2px;
   flex-shrink: 0;
   padding: 0 4px;
-  border-left: 1px solid rgba(255,255,255,0.12);
+  border-left: 1px solid rgba(var(--ui-fg-rgb),0.12);
 }
 
 .quick-section .layer-toggle {
@@ -269,14 +270,14 @@
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: rgba(255,255,255,0.66);
+  color: rgba(var(--ui-fg-rgb),0.66);
   cursor: pointer;
   transition: color 0.15s, background 0.15s, border-color 0.15s;
   white-space: nowrap;
 }
 .quick-section .layer-toggle:hover {
-  color: #fff;
-  background: rgba(255,255,255,0.1);
+  color: var(--bar-text);
+  background: rgba(var(--ui-fg-rgb),0.1);
 }
 .quick-section .layer-toggle[aria-pressed="true"] {
   color: #fff;
@@ -315,9 +316,9 @@ ul.TabSelectors.HiddenTabs { display: none; }
   color: var(--color-text);
 }
 .Wiki .cp-panel--readonly .cp-field__input {
-  background: #221a3d;
+  background: var(--readonly-bg);
   border-color: var(--color-border);
-  color: #cfc8e8;
+  color: var(--readonly-text);
 }
 .Wiki .cp-panel--readonly .cp-field__label { color: var(--color-muted); }
 

@@ -99,6 +99,18 @@ export function init() {
     }
   });
 
+  /* Canvas fills its container (no blank gap below on tall/mobile screens).
+     CanvasRatioHW == 0 makes jsg size the canvas to the container instead of a
+     fixed aspect ratio (see UpdateCanvasSize in jsg.js). */
+  try {
+    const g = window.graph;
+    if (g) {
+      g.CanvasRatioHW = 0;
+      if (g.UpdateCanvasSize) g.UpdateCanvasSize();
+      if (g.Redraw) g.Redraw();
+    }
+  } catch (e) { /* ignore */ }
+
   /* ── ResizeObserver: trigger jsg redraw when container changes size ─── */
   if (window.ResizeObserver && window.graph) {
     try {
