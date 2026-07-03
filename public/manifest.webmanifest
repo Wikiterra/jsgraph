@@ -1,0 +1,14 @@
+{
+  "name": "WikiTerra · jsgraph",
+  "short_name": "WikiTerra",
+  "description": "Geographic and astronomical visualization tools",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#120c24",
+  "theme_color": "#120c24",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
