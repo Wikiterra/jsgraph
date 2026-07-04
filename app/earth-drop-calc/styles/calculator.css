@@ -113,6 +113,9 @@
 :root {
   --top-bar-h:        clamp(40px, 4cqi + 1rem, 48px);
   --bottom-bar-h:     clamp(52px, 5cqi + 1.5rem, 60px);
+  /* Dedicated panel dock size — ~1/3 of viewport, clamped for short/tall screens.
+     Shared by #panel-drawer and the #JsGraph1 canvas-shrink rule so they always agree. */
+  --dock-size:        clamp(220px, 33vh, 460px);
 
   /* Brand orange accent (matches the rest of the UI) — selected states, drawer edge */
   --color-accent:        #ff8033;
@@ -150,36 +153,35 @@
   --ui-fg-rgb:     26, 22, 45;
 }
 
-/* ---- Panel: floating popover over the canvas ----
-   Each bottom-bar button opens only its own section here; the popover floats at
-   the lower-left so the view (canvas) stays visible. Width caps so the canvas is
-   never fully covered; on phones it spans (almost) full width but stays short. */
+/* ---- Panel: docked split pane, not an overlay ----
+   Dedicated bottom section, at every screen size (desktop included — no side
+   rail), that *pushes* the canvas rather than floating over it — #JsGraph1
+   shrinks via body.drawer-open rules below, so values stay editable while the
+   model is still fully visible, not hidden behind a pop-up. */
 #panel-drawer {
   position: fixed;
-  left: 8px;
-  bottom: calc(var(--bottom-bar-h) + 8px);
-  width: min(560px, calc(100vw - 16px));
-  max-height: min(58vh, 540px);
+  left: 0;
+  right: 0;
+  bottom: var(--bottom-bar-h);
+  width: 100%;
+  height: var(--dock-size);
+  max-height: var(--dock-size);
   display: flex;
   flex-direction: column;
   background: var(--drawer-bg);
-  border: 1px solid var(--color-border);
   border-top: 2px solid var(--color-accent);
-  border-radius: var(--radius-md);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
   z-index: 800;
   overflow: hidden;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  transition: transform 0.18s ease, opacity 0.15s ease;
-  transform: translateY(8px);
-  opacity: 0;
+  transition: transform 0.18s ease;
+  transform: translateY(100%);
   pointer-events: none;
 }
 
 #panel-drawer.open {
   transform: translateY(0);
-  opacity: 1;
   pointer-events: auto;
 }
 
@@ -238,7 +240,16 @@
      models share this single canvas, so both skies match. */
   background: linear-gradient(180deg, #2e6196 0%, #4f8ab8 50%, #8cb8db 100%);
   z-index: 1;
+  transition: bottom 0.18s ease, right 0.18s ease;
 }
+
+/* Split layout: while the drawer is open, shrink the canvas by the same amount
+   the drawer occupies (bottom sheet on mobile, right rail on desktop) instead
+   of letting the drawer float over it — both stay visible + usable at once. */
+body.drawer-open #JsGraph1 {
+  bottom: calc(var(--bottom-bar-h) + var(--dock-size)) !important;
+}
+
 /* jsg creates the canvas at width × 66.67% (aspect). Let jsg control the canvas
    size — the container fills the viewport, and a ResizeObserver (ui.js) triggers
    a redraw when the container changes size. No forced height on the canvas. */
@@ -345,14 +356,23 @@ ul.TabSelectors.HiddenTabs { display: none; }
   .toggle-label { display: inline; }
 }
 
-/* Wide screens: let the popup grow to its content instead of scrolling inside. */
+/* Wide screens: the dock height is fixed at every size now (no more "grow to
+   content" — it would blow past --dock-size and cover the canvas), so content
+   that doesn't fit always scrolls vertically inside #panel-drawer-content. */
 @media (min-width: 768px) {
-  #panel-drawer { max-height: none; }
-  #panel-drawer-content { overflow-y: visible; }
-  /* Drop shared.css's 600px min-width so panels fit the 560px drawer — kills the
+  /* Drop shared.css's 600px min-width so panels fit the drawer — kills the
      horizontal scrollbar on desktop. Mobile keeps min-width:0, so it only scrolls
      when content genuinely overflows the screen. */
   #panel-drawer .ScrollCanvas { min-width: 0; }
+}
+
+/* Wide dock (desktop/tablet, full-width bottom sheet): pack two [value|slider]
+   pairs per row instead of one — the drawer spans the viewport width, plenty
+   of room to use a 2-column grid rather than one long single-file list. */
+@media (min-width: 900px) {
+  .cp-panel--slider.cp-panel--cols2 {
+    grid-template-columns: max-content minmax(80px, 1fr) max-content minmax(80px, 1fr);
+  }
 }
 
 /* ---- Compact phone (< 400px) ---- */
@@ -361,5 +381,4 @@ ul.TabSelectors.HiddenTabs { display: none; }
   .pb-btn { width: 26px; height: 26px; }
   .quick-section { padding: 0 2px; }
   .layer-toggle { padding: 4px 5px; min-width: 32px; }
-  #panel-drawer { max-height: 65vh; }
 }

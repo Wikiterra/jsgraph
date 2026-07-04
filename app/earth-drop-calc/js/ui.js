@@ -13,6 +13,7 @@ export function init() {
     /* If clicking the same section, toggle drawer closed */
     if (activeSection === section && drawer.classList.contains('open')) {
       drawer.classList.remove('open');
+      document.body.classList.remove('drawer-open');
       document.querySelectorAll('.layer-toggle[data-section]').forEach((btn) => {
         btn.setAttribute('aria-pressed', 'false');
       });
@@ -23,6 +24,7 @@ export function init() {
 
     activeSection = section;
     drawer.classList.add('open');
+    document.body.classList.add('drawer-open');
     /* Open only the clicked section's accordion */
     document.querySelectorAll('.drawer-section').forEach((s) => {
       s.classList.toggle('open', s.dataset.section === section);
@@ -50,6 +52,7 @@ export function init() {
   /* Close button */
   document.getElementById('panel-drawer-close')?.addEventListener('click', () => {
     drawer.classList.remove('open');
+    document.body.classList.remove('drawer-open');
     document.querySelectorAll('.layer-toggle[data-section]').forEach((btn) => {
       btn.setAttribute('aria-pressed', 'false');
     });

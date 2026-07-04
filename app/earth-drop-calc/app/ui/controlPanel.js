@@ -84,9 +84,11 @@ function writeRef(r, val, onChange, field, force) {
  * Mults:[], Formats?:[], Digits?:[]}.
  * @param {string} unitsRef
  * @param {string} modelRefName
+ * @param {?number} [rawValue] — current raw (base-unit) field value, used to
+ *   auto-switch metric length/height fields to km past 1000 m.
  * @returns {{ mult: number, unit: string, format: ?string, digits: ?number }}
  */
-function resolveUnits(unitsRef, modelRefName) {
+function resolveUnits(unitsRef, modelRefName, rawValue) {
   const fallback = { mult: 1, unit: '', format: null, digits: null };
   const data = readRef(makeRef(unitsRef, modelRefName));
   if (!data || data.Units == null) return fallback;
@@ -97,6 +99,13 @@ function resolveUnits(unitsRef, modelRefName) {
     sel = readRef(makeRef(selRef, modelRefName));
   }
   sel = sel | 0;
+  // Metric length/height fields were always shown in meters, even at tens of
+  // kilometers — switch to km once the value crosses 1000 m (metric only;
+  // imperial already uses mi/ft, which don't need this).
+  if (sel === 0 && rawValue != null && Math.abs(rawValue) >= 1000 &&
+      (unitsRef === 'LengthUnits' || unitsRef === 'HeightUnits')) {
+    return { mult: 1000, unit: 'km', format: data.Formats ? data.Formats[sel] : null, digits: data.Digits ? data.Digits[sel] : null };
+  }
   return {
     mult: data.Mults ? data.Mults[sel] : 1,
     unit: data.Units ? data.Units[sel] : '',
@@ -172,13 +181,13 @@ function TextField(panel, cfg, opts) {
   inputWrap.appendChild(unitEl);
   field.appendChild(inputWrap);
 
-  function curUnits() {
-    if (cfg.UnitsData) return resolveUnits(cfg.UnitsData, panel.modelRef);
+  function curUnits(rawValue) {
+    if (cfg.UnitsData) return resolveUnits(cfg.UnitsData, panel.modelRef, rawValue);
     return { mult: typeof cfg.Mult === 'number' ? cfg.Mult : 1, unit: cfg.Units || '', format: null, digits: null };
   }
 
   function store() {
-    const u = curUnits();
+    const u = curUnits(readRef(ref));
     let v = parseNum(input.value);
     if (isNaN(v)) { update(); return; }
     v *= (u.mult || 1);
@@ -187,8 +196,8 @@ function TextField(panel, cfg, opts) {
 
   function update() {
     if (!ref) return;
-    const u = curUnits();
     const raw = readRef(ref);
+    const u = curUnits(raw);
     const disp = (u.mult && u.mult !== 0) ? raw / u.mult : raw;
     const format = u.format || cfg.Format || panel.format;
     const digits = u.digits != null ? u.digits : (cfg.Digits != null ? cfg.Digits : panel.digits);
@@ -206,9 +215,9 @@ function TextField(panel, cfg, opts) {
     input.addEventListener('keydown', (/** @type {KeyboardEvent} */ ev) => {
       if (ev.key === 'Enter') { store(); input.select(); ev.preventDefault(); }
       else if (ev.key === 'ArrowUp' || ev.key === 'ArrowDown') {
-        const u = curUnits();
         const cur = readRef(ref);
         if (typeof cur !== 'number') return;
+        const u = curUnits(cur);
         let step = (cfg.Inc || 1) * (u.mult || 1);
         if (ev.ctrlKey) step *= 10; if (ev.altKey) step /= 10;
         const nv = cur + (ev.key === 'ArrowUp' ? step : -step);

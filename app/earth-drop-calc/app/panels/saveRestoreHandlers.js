@@ -12,7 +12,7 @@ ControlPanels.NewPanel( {
   ValueType: 'int',
   Items: [
     {
-      Name: 'm (Metric)',
+      Name: 'km/m (Metric)',
       Value: 0
     }, {
       Name: 'mi/ft (Imperial)',

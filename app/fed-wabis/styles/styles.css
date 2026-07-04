@@ -146,6 +146,7 @@ body {
 .tab-hidden { display: none !important; }
 
 .top-playback {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 3px;
@@ -627,10 +628,15 @@ body {
 /* Step buttons hidden — playback overlay shows only play/pause + reset */
 #pb-step-back, #pb-step-fwd { display: none; }
 
-/* Reset button — square icon, same height as the play button, slightly muted */
+/* Reset button — pulled out of flow so it doesn't skew the play button off-center
+   (only the play button remains in .top-playback's flex, which #top-controls centers). */
 .pb-btn.pb-reset {
-  color: rgba(var(--ui-fg-rgb),0.55);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
   margin-left: 4px;
+  color: rgba(var(--ui-fg-rgb),0.55);
   width: 40px;
   height: 40px;
   border-radius: var(--radius-sm);
