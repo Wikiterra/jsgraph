@@ -11,7 +11,7 @@ export default tseslint.config(
       "**/node_modules/**",
       "**/*.d.ts", // ambient type declarations (e.g. wabis.d.ts) — not lint targets
       "packages/jsgraph-vendor/**",
-      "apps/**/vendor/**",
+      "app/**/vendor/**",
     ],
   },
   js.configs.recommended,
@@ -26,7 +26,7 @@ export default tseslint.config(
     // that is neither imported nor a declared global — catching missing imports.
     // Declared globals = browser + the wabis vendor surface (resolved at runtime)
     // + foundational shared helpers + the two vendor-string-bound models (bridge).
-    files: ["apps/curvature-drop-calc/app/**/*.js", "apps/curvature-drop-calc/js/**/*.js"],
+    files: ["app/curvature-drop-calc/app/**/*.js", "app/curvature-drop-calc/js/**/*.js"],
     languageOptions: {
       globals: {
         ...globals.browser,
@@ -93,7 +93,7 @@ export default tseslint.config(
     // Object.assign(FeDomeApp, {...}) — a deliberate method-partial layout, kept
     // as-is. Declared globals = browser + wabis vendor + shared helpers + the
     // fed runtime singletons.
-    files: ["apps/fed-wabis/app/**/*.js", "apps/fed-wabis/js/**/*.js"],
+    files: ["app/fed-wabis/app/**/*.js", "app/fed-wabis/js/**/*.js"],
     languageOptions: {
       globals: {
         ...globals.browser,

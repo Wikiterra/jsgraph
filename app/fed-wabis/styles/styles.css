@@ -8,7 +8,7 @@
 :root {
   --top-bar-h:        clamp(44px, 5cqi + 1rem, 52px);
   --bottom-bar-h:     clamp(56px, 7cqi + 1.5rem, 72px);
-  --timeline-strip-h: clamp(40px, 4cqi + 0.9rem, 46px);
+  --timeline-strip-h: clamp(44px, 4cqi + 1rem, 50px);
 
   /* Theme: dark defaults; light overridden below. --ui-fg-rgb is the bar/overlay
      foreground (flips light↔dark text), --bar-rgb the bar/overlay background,
@@ -178,12 +178,19 @@ body {
   gap: 1px;
   flex: 1 1 auto;
   min-width: 140px;
-  max-width: 360px;
+}
+
+/* Mode + share buttons grouped left of the timeline */
+.tl-btns {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
 }
 
 .timeline-shell {
   position: relative;
-  height: 26px;
+  height: 30px;
   padding: 0 1px;
 }
 
@@ -219,7 +226,7 @@ body {
   position: absolute;
   inset: auto 0 0 0;
   width: 100%;
-  height: 14px;
+  height: 20px;
   margin: 0;
   background: transparent;
   appearance: none;
@@ -229,22 +236,22 @@ body {
 }
 
 .timeline-range::-webkit-slider-runnable-track {
-  height: 4px;
-  border-radius: 2px;
+  height: 8px;
+  border-radius: 4px;
   background: rgba(var(--ui-fg-rgb),0.18);
 }
 .timeline-range::-moz-range-track {
-  height: 4px;
-  border-radius: 2px;
+  height: 8px;
+  border-radius: 4px;
   background: rgba(var(--ui-fg-rgb),0.18);
 }
 
 .timeline-range::-webkit-slider-thumb {
   appearance: none;
   -webkit-appearance: none;
-  width: 4px;
-  height: 14px;
-  margin-top: -5px;
+  width: 6px;
+  height: 20px;
+  margin-top: -6px;
   border-radius: 2px;
   background: var(--color-accent);
   border: none;
@@ -253,8 +260,8 @@ body {
 }
 .timeline-range:active::-webkit-slider-thumb { cursor: grabbing; }
 .timeline-range::-moz-range-thumb {
-  width: 4px;
-  height: 14px;
+  width: 6px;
+  height: 20px;
   border-radius: 2px;
   background: var(--color-accent);
   border: none;
@@ -941,7 +948,7 @@ body {
   :root {
     --top-bar-h:        44px;
     --bottom-bar-h:     56px;
-    --timeline-strip-h: 32px;
+    --timeline-strip-h: 38px;
   }
 
   #top-bar { gap: 4px; padding: 0 6px; overflow-x: auto; }

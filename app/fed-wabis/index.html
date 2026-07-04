@@ -151,9 +151,14 @@
 
     <!-- Timeline strip: single unified timeline + mode selector (1h / 1d / 1y) -->
     <div id="timeline-strip">
-      <button class="tl-mode-btn" id="tl-mode" aria-label="Timeline mode" title="Switch between hour / day / year timeline">
-        <span id="tl-mode-label">1d</span>
-      </button>
+      <div class="tl-btns">
+        <button class="tl-mode-btn" id="tl-mode" aria-label="Timeline mode" title="Switch between hour / day / year timeline">
+          <span id="tl-mode-label">1d</span>
+        </button>
+        <button class="tl-mode-btn" id="share-btn" aria-label="Copy share link" title="Copy share link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+        </button>
+      </div>
       <div class="tc-timeline" role="group" aria-label="Timeline">
         <div class="timeline-shell">
           <div class="timeline-ticks" aria-hidden="true">
@@ -174,9 +179,6 @@
         </div>
         <span class="timeline-label" id="tc-day-val">Mar 23</span>
       </div>
-      <button class="tl-mode-btn" id="share-btn" aria-label="Copy share link" title="Copy share link">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
-      </button>
     </div>
 
     <!-- Bottom bar: layer toggles + luminaries + rays + param sliders -->

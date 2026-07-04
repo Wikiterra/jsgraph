@@ -33,7 +33,7 @@ importers:
         specifier: ^7.1.2
         version: 7.3.5
 
-  apps/earth-drop-calc:
+  app/earth-drop-calc:
     dependencies:
       jsgraph-vendor:
         specifier: workspace:*
@@ -43,7 +43,7 @@ importers:
         specifier: ^7.1.2
         version: 7.3.5
 
-  apps/fed-wabis:
+  app/fed-wabis:
     dependencies:
       jsgraph-vendor:
         specifier: workspace:*

@@ -16,8 +16,8 @@ export default defineConfig({
       input: {
         index: resolve(root, 'index.html'),
         wiki:  resolve(root, 'wiki.html'),
-        drop:  resolve(root, 'apps/earth-drop-calc/index.html'),
-        fed:   resolve(root, 'apps/fed-wabis/index.html'),
+        drop:  resolve(root, 'app/earth-drop-calc/index.html'),
+        fed:   resolve(root, 'app/fed-wabis/index.html'),
       },
     },
   },
