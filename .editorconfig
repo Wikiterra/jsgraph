@@ -20,13 +20,10 @@ trim_trailing_whitespace = false
 indent_style = tab
 indent_size = 4
 
-[apps/curvature-drop-calc/app/**]
+[app/earth-horizon-sim/app/**]
 indent_style = tab
 
-[apps/curvature-drop-calc/assets/**]
-indent_style = tab
-
-[apps/fed-wabis/**]
+[app/fed-wabis/**]
 indent_style = tab
 
 [.editorconfig]

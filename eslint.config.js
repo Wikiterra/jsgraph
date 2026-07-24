@@ -26,7 +26,7 @@ export default tseslint.config(
     // that is neither imported nor a declared global — catching missing imports.
     // Declared globals = browser + the wabis vendor surface (resolved at runtime)
     // + foundational shared helpers + the two vendor-string-bound models (bridge).
-    files: ["app/curvature-drop-calc/app/**/*.js", "app/curvature-drop-calc/js/**/*.js"],
+    files: ["app/earth-horizon-sim/app/**/*.js", "app/earth-horizon-sim/js/**/*.js"],
     languageOptions: {
       globals: {
         ...globals.browser,
@@ -61,7 +61,7 @@ export default tseslint.config(
         ResetApp: "readonly", SetStdRefraction: "readonly", Set0Refraction: "readonly",
         HandleUrlCommands: "readonly", UpdateLengthModel: "readonly",
         CLengthModel: "readonly", BaroConst: "readonly", ConvertUnit: "readonly",
-        BaroModel: "readonly",
+        BaroModel: "readonly", UpdateAngleModel: "readonly",
         // DIP seam (jsgraph-vendor/src/core/wabisGraph3D.js) — apps depend on this,
         // not on the wabis NewGraphX3D global.
         createGraph3D: "readonly",
