@@ -132,4 +132,20 @@ export default tseslint.config(
       "no-constant-binary-expression": "off",
     },
   },
+  {
+    // Static-site scripts: plain browser globals, no vendor/app singletons.
+    files: ["theme.js"],
+    languageOptions: { globals: globals.browser },
+  },
+  {
+    // Service worker: its own global scope (self, caches, fetch), not `window`.
+    files: ["public/sw.js"],
+    languageOptions: { globals: globals.serviceworker },
+  },
+  {
+    // sphere-drop-calc: plain browser globals + katex (loaded from the CDN
+    // script tag in index.html, not imported — no wabis vendor surface here).
+    files: ["app/sphere-drop-calc/**/*.js"],
+    languageOptions: { globals: { ...globals.browser, katex: "readonly" } },
+  },
 );
