@@ -16,6 +16,10 @@ ControlPanels.NewSliderPanel( {
   SliderValueRef: 'HeightSlider',
   UnitsData: 'HeightUnits',
   Color: 'blue',
+  // 3 decimals (not the panel default 2): in km, a 2 m eye height rounds to
+  // 0.00 at 2 decimals — invisible and unreachable by typing. 3 decimals
+  // keeps metre-scale heights legible while staying in km.
+  Digits: 3,
   Min: 0,
   Max: 1,
   Inc: 0.1,
