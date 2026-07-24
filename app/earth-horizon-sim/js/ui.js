@@ -1,5 +1,5 @@
 /**
- * ui.js — earth-drop-calc panel drawer orchestrator
+ * ui.js — earth-horizon-sim panel drawer orchestrator
  *
  * Three collapsible sections: Measures, Optics, Distance Data.
  */
@@ -134,7 +134,7 @@ export function init() {
       const canvas = window.graph && window.graph.Canvas;
       if (!canvas) return;
       const a = document.createElement('a');
-      a.download = 'earth-drop-calc.png';
+      a.download = 'earth-horizon-sim.png';
       a.href = canvas.toDataURL('image/png');
       a.click();
     } catch (e) { /* ignore */ }

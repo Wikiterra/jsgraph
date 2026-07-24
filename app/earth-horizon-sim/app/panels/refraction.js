@@ -170,7 +170,7 @@ ControlPanels.NewPanel( {
   OnModelChange: UpdateAll,
   NCols: 2,
   ReadOnly: false,
-  Format: 'std',
+  Format: 'fix',
   Digits: DefaultDigits
 
 } ).AddSliderField( {
@@ -252,7 +252,7 @@ ControlPanels.NewPanel( {
   OnModelChange: UpdateAll,
   NCols: 2,
   ReadOnly: true,
-  Format: 'std',
+  Format: 'fix',
   Digits: DefaultDigits
 
 } ).AddHeader( {

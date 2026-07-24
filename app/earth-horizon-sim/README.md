@@ -1,4 +1,4 @@
-# Advanced Earth Curvature Calculator — Refactored
+# Earth Horizon Simulator — Refactored
 
 Refactor of [walter.bislins.ch/CurveCalc](http://walter.bislins.ch/CurveCalc)
 into a clean, file-based architecture. The original was a single saved wiki
@@ -13,7 +13,6 @@ To open: load `index.html` directly in a browser (no build step).
 src/
 ├── index.html               Calculator-only HTML, no wiki chrome.
 ├── README.md                This file.
-├── assets/                  PNG/GIF images for the bottom reference tabs.
 ├── styles/
 │   └── calculator.css       Layout + colour overrides specific to the calculator.
 ├── vendor/                  Untouched libraries by walter.bislins.ch.
@@ -90,8 +89,7 @@ non-`defer` `<script src=...>` tags loaded in this order:
       Each panel script uses `ControlPanels.NewPanel(...).Render()` which
       `document.writeln`s the panel table where the script tag sits.
    5. Read-only data panels (Nearest Target, Horizon).
-   6. Reference image tabs (Angles / NoRefraction / Refraction).
-   7. `app/core/init.js` — `xOnLoad` handler that fires once the DOM is ready.
+   6. `app/core/init.js` — `xOnLoad` handler that fires once the DOM is ready.
 
 Because each panel script is **synchronously loaded** at its DOM position, the
 `document.writeln` calls inside the existing `ControlPanel.Render()` still

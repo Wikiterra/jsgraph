@@ -1,5 +1,5 @@
 /* =============================================================================
- * calculator.css — earth-drop-calc app styles
+ * calculator.css — earth-horizon-sim app styles
  *
  * Layout mirrors fed-wabis: fixed top/bottom bars, canvas fills rest.
  * Panel content renders inside a drawer overlay.
@@ -306,17 +306,10 @@ body.drawer-open #JsGraph1 {
 }
 
 /* ---- Tab Selectors ---- */
-.TabBoxes > div { display: block; }
-.TabBoxes > div.TabHide { display: none; }
 ul.TabSelectors li.TabHide { display: none; }
 ul.TabSelectors li.TabActive { border-color: #000 !important; }
 ul.TabSelectors li.TabButton { border-radius: 4px; }
 ul.TabSelectors.HiddenTabs { display: none; }
-
-/* ---- Reference images (semantic figure/figcaption) ---- */
-.ref-pic { width: 100%; margin: 0; }
-.ref-pic img { width: 100%; display: block; }
-.ref-pic figcaption { font-size: 13px; color: #555; text-align: center; }
 
 /* ---- Control-panel inputs: dark theme contrast ----
    Legacy `.Wiki input { background:#fff }` (vendor styles.css) outranks the token

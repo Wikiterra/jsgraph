@@ -8,7 +8,7 @@ function MakeObjectSliders(ix, container) {
     Name: 'Object-Sliders' + ix,
     ModelRef: 'CurveApp',
     OnModelChange: UpdateAll,
-    Format: 'std',
+    Format: 'fix',
     Digits: DefaultDigits,
     ReadOnly: false,
     PanelFormat: 'InputMediumWidth',

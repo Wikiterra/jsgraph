@@ -22,7 +22,7 @@
 //   EARTH_RADIUS_MIN     — 100000 m, minimum earth radius clamp.
 // =============================================================================
 
-var DefaultDigits   = 6;
+var DefaultDigits   = 2;
 var DeviceRatio_Off = 1.5;
 var PI90            = Math.PI / 2;
 

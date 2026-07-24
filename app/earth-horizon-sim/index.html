@@ -22,14 +22,14 @@
   <link rel="manifest" href="../../manifest.webmanifest">
   <link rel="apple-touch-icon" href="../../apple-touch-icon.png">
   <script>if ('serviceWorker' in navigator) addEventListener('load', function () { navigator.serviceWorker.register('../../sw.js'); });</script>
-  <title>Advanced Earth Curvature Calculator</title>
+  <title>Earth Horizon Simulator</title>
 
   <script>
     var NUMBER_FORMATING = 'en';
     var ROOT = './';
     var ASP_PAGE = 'index.html';
     var ASP_REF = '';
-    var PAGE_NAME = 'Advanced Earth Curvature Calculator';
+    var PAGE_NAME = 'Earth Horizon Simulator';
     var PAGE_URL = '';
     var MEDIA_FOLDER = '';
     var WIKIDOC_URL = '';
@@ -79,16 +79,6 @@
           </div>
         </div>
 
-        <!-- Section: View (Model is in the bottom bar; Camera Aim + Show Data here) -->
-        <div class="drawer-section" data-section="view">
-          <div class="drawer-section-title">👁 View</div>
-          <div class="drawer-section-body">
-            <div class="Scroller Paragraph">
-              <div class="ScrollCanvas" id="panel-options"></div>
-            </div>
-          </div>
-        </div>
-
         <!-- Section 2: Optics (refraction + atmosphere/barometer) -->
         <div class="drawer-section" data-section="optics">
           <div class="drawer-section-title">🔬 Optics</div>
@@ -103,6 +93,9 @@
         <div class="drawer-section" data-section="data">
           <div class="drawer-section-title">📊 Distance Data</div>
           <div class="drawer-section-body">
+            <div class="Scroller Paragraph">
+              <div class="ScrollCanvas" id="panel-showdata"></div>
+            </div>
             <div class="Scroller Paragraph">
               <div class="ScrollCanvas" id="panel-targetdata"></div>
             </div>
@@ -154,14 +147,6 @@
           </svg>
           <span class="toggle-label">Data</span>
         </button>
-        <button class="layer-toggle" data-section="view" aria-pressed="false" aria-label="View options">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
-            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-          <span class="toggle-label">View</span>
-        </button>
         <button class="layer-toggle" data-section="settings" id="qs-units" aria-pressed="false" aria-label="Units">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -172,36 +157,13 @@
           <span class="toggle-label">Units</span>
         </button>
 
-      <!-- Model selector — separate group: FE / Globe / Both (compare) -->
+      <!-- Model selector — separate group: Flat / Globe / Both (compare) -->
       <div class="quick-section" role="group" aria-label="Model">
-        <button class="layer-toggle" data-prop="ShowModel" data-val="2" aria-pressed="false" id="qs-fe">FE</button>
+        <button class="layer-toggle" data-prop="ShowModel" data-val="2" aria-pressed="false" id="qs-fe">Flat</button>
         <button class="layer-toggle" data-prop="ShowModel" data-val="1" aria-pressed="true" id="qs-globe">Globe</button>
-        <button class="layer-toggle" data-prop="ShowModel" data-val="3" aria-pressed="false" id="qs-both">FE+Globe</button>
+        <button class="layer-toggle" data-prop="ShowModel" data-val="3" aria-pressed="false" id="qs-both">Flat+Globe</button>
       </div>
     </footer>
-
-    <!-- Reference images. The TabBoxes/TabHide wrappers are required by Tabs.js
-         (it toggles them by index); the inner markup is semantic figure/caption. -->
-    <div id="CurveCalcGraphsBoxes" class="TabBoxes">
-      <div class="TabHide">
-        <figure class="ref-pic">
-          <img src="assets/CurveCalcAngles.png" alt="" loading="lazy" decoding="async">
-          <figcaption>Curvature Calculator showing Angles</figcaption>
-        </figure>
-      </div>
-      <div>
-        <figure class="ref-pic">
-          <img src="assets/CurveCalcNoRefraction2.png" alt="" loading="lazy" decoding="async">
-          <figcaption>Curvature Calculator showing No Refraction</figcaption>
-        </figure>
-      </div>
-      <div class="TabHide">
-        <figure class="ref-pic">
-          <img src="assets/CurveCalcRefraction2.png" alt="" loading="lazy" decoding="async">
-          <figcaption>Curvature Calculator showing Refraction</figcaption>
-        </figure>
-      </div>
-    </div>
 
     <!-- Screen reader region -->
     <div id="canvas-status" role="status" aria-live="polite" aria-atomic="true"

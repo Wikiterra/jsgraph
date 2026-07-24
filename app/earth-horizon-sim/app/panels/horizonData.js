@@ -6,7 +6,7 @@ ControlPanels.NewPanel( {
   OnModelChange: UpdateAll,
   NCols: 2,
   ReadOnly: true,
-  Format: 'std',
+  Format: 'fix',
   Digits: DefaultDigits
 
 } ).AddHeader( {

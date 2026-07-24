@@ -4,7 +4,7 @@ ControlPanels.NewSliderPanel( {
   Name: 'BasicsPanel',
   ModelRef: 'CurveApp',
   OnModelChange: UpdateAll,
-  Format: 'std',
+  Format: 'fix',
   Digits: DefaultDigits,
   ReadOnly: false,
   PanelFormat: 'InputMediumWidth'
@@ -53,28 +53,16 @@ ControlPanels.NewSliderPanel( {
 
 } ).RenderInto('panel-basics');
 
-/* View options — Camera Aim + Show Data. Model lives in the bottom bar
-   (FE / Globe / Both), so it's not duplicated here. Rendered into its own
-   floating "View" panel, separate from Measures. */
+/* Show Data — which read-only data fields to display. Model lives in the
+   bottom bar (Flat / Globe / Both); the view is always eye-level anchored
+   (flat's horizon stays at eye level, the globe's horizon drops as observer
+   height grows) so there's no separate camera-aim choice to make. Rendered
+   into the Data drawer section, next to the data it toggles. */
 ControlPanels.NewPanel( {
-  Name: 'OptionsPanel',
+  Name: 'ShowDataPanel',
   ModelRef: 'CurveApp',
   NCols: 2,
   OnModelChange: UpdateAll
-
-} ).AddRadiobuttonField( {
-  Name: 'ViewcenterHorizon',
-  Label: 'Camera Aim',
-  ValueType: 'int',
-  Items: [
-    {
-      Name: 'Horizon',
-      Value: 0
-    }, {
-      Name: 'Eye-Level',
-      Value: 3
-    }
-  ]
 
 } ).AddCheckboxField( {
   Name: 'ShowData',
@@ -96,4 +84,4 @@ ControlPanels.NewPanel( {
     }
   ]
 
-} ).RenderInto('panel-options');
+} ).RenderInto('panel-showdata');

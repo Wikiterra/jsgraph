@@ -20,14 +20,14 @@ const EDC = "http://localhost:5301/";
 const edcReady = () => typeof (globalThis as any).CurveAppClass === "function";
 
 const apps: Record<string, AppCase> = {
-  "earth-drop-calc": {
+  "earth-horizon-sim": {
     url: EDC,
     canvas: "canvas",
     ready: edcReady,
   },
   // Globe+FE split view — exercises the FE grid, globe grid, split-screen camera and
   // the data panels (branches the default Globe render doesn't reach).
-  "earth-drop-calc-both": {
+  "earth-horizon-sim-both": {
     url: EDC,
     canvas: "canvas",
     ready: edcReady,

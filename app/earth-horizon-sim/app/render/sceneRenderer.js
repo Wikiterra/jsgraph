@@ -329,7 +329,7 @@ function DrawModel( g ) {
     g.SetPlane( g.Camera.CamViewCenter, xDir, yDir, true );
 
     // measurements
-    var numFormat = { Mode: 'fix0', Precision: 4, UsePrefix: false, Units: '' };
+    var numFormat = { Mode: 'fix0', Precision: 2, UsePrefix: false, Units: '' };
 
     var txt = NumFormatter.NumToString( m.TheodoliteTilt, numFormat ) + '°';
     g.SetBgColor( 'white' );
@@ -374,7 +374,7 @@ function DrawModel( g ) {
   if (m.IsShowBothModels()) {
     var oldTrans = g.SelectTrans( 'viewport' );
     // label left
-    var txt = 'Flat Earth';
+    var txt = 'Flat';
     g.SetTextAttr( 'Arial', 16, 'black', 'bold', 'normal', 'left', 'top', 10 );
     g.SetAreaAttr( 'yellow', 'white', 1 );
     g.TextBox( txt, 0, 0, 3 );
@@ -402,15 +402,15 @@ function DrawModel( g ) {
   }
 
   var numFormat = {
-    Mode: 'std',
-    Precision: 4,
+    Mode: 'fix',
+    Precision: 2,
     UsePrefix: false,
     Units: '',
   };
 
   var numFormat4 = {
-    Mode: 'std',
-    Precision: 4,
+    Mode: 'fix',
+    Precision: 2,
     UsePrefix: false,
     Units: '',
   };
@@ -638,7 +638,7 @@ function DrawModel( g ) {
     refrLines.push( txt );
 
     if (m.Height < 84852) {
-      numFormat.Precision = 5;
+      numFormat.Precision = 2;
       var txt2 = '';
       if (m.TemperatureGradient < 1) {
         txt2 = 'Temp. Gradient dT/dh = ' + NumFormatter.NumToString( AVal(m.TemperatureGradient), numFormat ) + AUnit()+ ' ';

@@ -188,8 +188,8 @@ function CurveAppClass() {
   };
   this.HeightUnits = {
     Selection: '.UnitsType',
-    Units: [ 'm', 'ft', 'ft' ],
-    Mults: [ 1, 0.3048, 0.3048 ]
+    Units: [ 'km', 'ft', 'ft' ],
+    Mults: [ 1000, 0.3048, 0.3048 ]
   };
   this.GradientUnits = {
     Selection: '.UnitsType',
