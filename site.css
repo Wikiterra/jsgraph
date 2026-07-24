@@ -73,6 +73,11 @@ body {
   color: var(--text);
 }
 
+/* ---- default link colour — accent orange matches both themes ---- */
+a { color: var(--accent); }
+a:visited { color: var(--accent2); }
+a:hover { color: var(--text); text-decoration: none; }
+
 /* ---- nav ---- */
 nav {
   background: var(--nav-bg);
