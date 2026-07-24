@@ -33,7 +33,7 @@ importers:
         specifier: ^7.1.2
         version: 7.3.5
 
-  app/earth-drop-calc:
+  app/earth-horizon-sim:
     dependencies:
       jsgraph-vendor:
         specifier: workspace:*
@@ -48,6 +48,12 @@ importers:
       jsgraph-vendor:
         specifier: workspace:*
         version: link:../../packages/jsgraph-vendor
+    devDependencies:
+      vite:
+        specifier: ^7.1.2
+        version: 7.3.5
+
+  app/sphere-drop-calc:
     devDependencies:
       vite:
         specifier: ^7.1.2

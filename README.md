@@ -4,9 +4,10 @@ Monorepo (pnpm + TypeScript) que unifica las dos apps construidas sobre el
 framework **wabis** (jsg / jsgx3d, © Walter Bislins) y elimina la duplicación
 del motor gráfico entre ellas.
 
-> Alcance: solo las apps que usan wabis. Los demás proyectos de `wikiterra-apps/`
-> (clock-24h-sun, moon-photos-map, sphere-drop-calc, aether-cosmology-fed-model)
-> son repos independientes y **no** forman parte de este monorepo.
+> Alcance principal: las apps que usan wabis. Los demás proyectos de `wikiterra-apps/`
+> (clock-24h-sun, moon-photos-map, aether-cosmology-fed-model) son repos independientes
+> y **no** forman parte de este monorepo. Excepción: `sphere-drop-calc` sí vive aquí como
+> mini-app ligera (sin wabis) — un port de su propio repo independiente del mismo nombre.
 
 ## Estructura
 
@@ -16,8 +17,9 @@ packages/
     src/                 · framework wabis, INTACTO salvo parches mínimos (ver MIGRATION-PLAN §8)
     src/core/            · seam SOLID propio (createGraph3D + port Graph3D.ts)
 apps/
-  curvature-drop-calc/  Calculadora de curvatura/caída (piloto de migración).
-  fed-wabis/     Flat Earth Dome Model (wabis-calc-v2).
+  earth-horizon-sim/    Calculadora de curvatura/caída (piloto de migración, package "curvature-drop-calc").
+  fed-wabis/             Flat Earth Dome Model (wabis-calc-v2).
+  sphere-drop-calc/      Mini-calc de drop/ocultación en esfera — sin wabis, sin build engine 3D.
 ```
 
 > Hubo dos packages (`jsgraph-vendor` + `jsgraph-core`); el "core" quedó tan fino
@@ -60,10 +62,11 @@ reescribir solo ese adapter, sin tocar las apps.
 
 ```bash
 pnpm install                       # instala dependencias del workspace
-pnpm --filter curvature-drop-calc dev  # arranca una app (Vite per-app)
-pnpm --filter fed-wabis dev     # la otra
-pnpm dev                           # o el Vite raíz: sirve AMBAS (sub-paths /apps/…)
-pnpm build     # build estático unificado de las dos apps → dist/ (GitHub Pages)
+pnpm --filter curvature-drop-calc dev  # arranca earth-horizon-sim (Vite per-app)
+pnpm --filter fed-wabis dev     # fed-wabis
+pnpm --filter sphere-drop-calc dev  # sphere-drop-calc (sin wabis)
+pnpm dev                           # o el Vite raíz: sirve TODAS (sub-paths /apps/…)
+pnpm build     # build estático unificado de las apps → dist/ (GitHub Pages)
 pnpm preview   # sirve dist/ localmente (como lo verá Pages)
 pnpm characterize  # red de seguridad: snapshots matemáticos + screenshots de canvas
 pnpm typecheck     # type-check del seam TS (src/core)

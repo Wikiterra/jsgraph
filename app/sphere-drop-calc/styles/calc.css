@@ -1,0 +1,82 @@
+/* =============================================================================
+ * calc.css — sphere-drop-calc app styles.
+ * Layout only; all colours come from site.css custom properties so the app
+ * follows the shared light/dark theme.
+ * ============================================================================= */
+
+.method-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 1.5rem;
+}
+
+.method-tabs button {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.method-tabs button:hover { border-color: var(--accent); }
+.method-tabs button[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.calc-form { max-width: 22rem; }
+
+.calc-form .row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: .6rem;
+}
+.calc-form label { color: var(--p-text); font-size: .875rem; }
+
+.calc-form input[type="number"],
+.calc-form input[type="text"] {
+  width: 9rem;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+.calc-form input[readonly] { color: var(--accent); font-weight: 600; }
+
+.formula-sub {
+  margin: -6px 0 12px .5rem;
+  padding-left: .75rem;
+  border-left: 2px solid var(--border);
+  color: var(--muted);
+  font-size: .9em;
+}
+
+/* KaTeX's hidden accessibility MathML is unclipped in layout even though it's
+   visually hidden — a wide equation can blow out the page width on narrow
+   screens unless each formula box is allowed to scroll on its own. */
+[id^="formula-"] { overflow-x: auto; overflow-y: hidden; }
+
+.table-scroll { overflow-x: auto; }
+
+.ref-pic {
+  margin-top: .5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  overflow: hidden;
+}
+.ref-pic svg { display: block; width: 100%; height: auto; }
+.ref-pic .diagram-surface { fill: none; stroke: var(--muted); stroke-width: 2; }
+.ref-pic .diagram-sight { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.ref-pic .diagram-arrow { stroke: var(--text); stroke-width: 1.25; }
+.ref-pic .diagram-arrowhead { fill: var(--text); }
+.ref-pic .diagram-point { fill: var(--accent); }
+.ref-pic .diagram-label { fill: var(--p-text); font-size: 13px; font-style: italic; }

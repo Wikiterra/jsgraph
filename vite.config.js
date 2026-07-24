@@ -18,6 +18,7 @@ export default defineConfig({
         wiki:  resolve(root, 'wiki.html'),
         horizon: resolve(root, 'app/earth-horizon-sim/index.html'),
         fed:   resolve(root, 'app/fed-wabis/index.html'),
+        sphere: resolve(root, 'app/sphere-drop-calc/index.html'),
       },
     },
   },

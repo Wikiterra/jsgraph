@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="WikiTerra jsgraph — documentation for the Flat Earth Dome Model and Earth Curvature Calculator apps">
+  <meta name="description" content="WikiTerra jsgraph — documentation for the Flat Earth Dome Model, Earth Horizon Simulator and Sphere Drop Calc apps">
   <meta name="theme-color" content="#120c24">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%231a5276' stroke='%23ccc' stroke-width='2'/%3E%3C/svg%3E">
   <link rel="manifest" href="manifest.webmanifest">
@@ -112,11 +112,11 @@
       </table>
     </div>
 
-    <!-- ===== EARTH DROP CALC ===== -->
+    <!-- ===== EARTH HORIZON SIMULATOR ===== -->
     <div class="app-section">
       <div class="app-header">
-        <h2>Earth Curvature Calculator</h2>
-        <a href="app/earth-drop-calc/">Open app →</a>
+        <h2>Earth Horizon Simulator</h2>
+        <a href="app/earth-horizon-sim/">Open app →</a>
       </div>
 
       <p>Calculates and visualizes how much of a distant target is hidden below the horizon from a given observer altitude, comparing the globe earth and flat earth models side by side, with optional atmospheric refraction.</p>
@@ -183,9 +183,10 @@
     <div class="app-section">
       <div class="app-header">
         <h2>Earth Curvature — the Math</h2>
+        <a href="app/sphere-drop-calc/">Open app →</a>
       </div>
 
-      <p>Three equivalent ways to derive how much of a distant target drops below the horizon due to curvature, before refraction is applied. The Earth Curvature Calculator's <code>computeHorizonGeometry()</code> (<code>app/earth-drop-calc/app/core/physics.js</code>) implements the perimeter/trigonometric form directly, generalized with a refracted radius.</p>
+      <p>Three equivalent ways to derive how much of a distant target drops below the horizon due to curvature, before refraction is applied. The Earth Horizon Simulator's <code>computeHorizonGeometry()</code> (<code>app/earth-horizon-sim/app/core/physics.js</code>) implements the perimeter/trigonometric form directly, generalized with a refracted radius. The <a href="app/sphere-drop-calc/">Sphere Drop Calc</a> mini-app below lets you plug in numbers against each of the three derivations directly.</p>
 
       <h3>Variables</h3>
       <div id="ecm-vars"></div>
@@ -214,7 +215,7 @@
 
       <h3>References</h3>
       <ul>
-        <li><a href="http://walter.bislins.ch/bloge/index.asp?page=Advanced+Earth+Curvature+Calculator" target="_blank">Advanced Earth Curvature Calculator — Walter Bislins</a> (source model behind this repo's Earth Curvature Calculator)</li>
+        <li><a href="http://walter.bislins.ch/bloge/index.asp?page=Advanced+Earth+Curvature+Calculator" target="_blank">Advanced Earth Curvature Calculator — Walter Bislins</a> (source model behind this repo's Earth Horizon Simulator)</li>
         <li><a href="https://dizzib.github.io/earth/curve-calc/?d0=31&amp;h0=10&amp;unit=metric" target="_blank">Earth curvature calculator — Dizzib</a></li>
         <li><a href="https://www.udeuschle.de/panoramas/makepanoramas_en.htm" target="_blank">Panorama generator — udeuschle.de</a></li>
       </ul>
@@ -234,7 +235,8 @@
 <pre><code>pnpm install                              # install workspace deps
 pnpm dev                                  # serve both apps (Vite root)
 pnpm --filter fed-wabis dev               # serve only fed-wabis
-pnpm --filter earth-drop-calc dev         # serve only drop-calc
+pnpm --filter curvature-drop-calc dev     # serve only earth-horizon-sim
+pnpm --filter sphere-drop-calc dev        # serve only sphere-drop-calc
 pnpm build                                # build → dist/ (GitHub Pages)
 pnpm preview                              # preview dist/ locally
 pnpm characterize                         # safety net: math + canvas snapshots
@@ -244,8 +246,9 @@ pnpm lint                                 # ESLint</code></pre>
 
       <h3>Repo structure</h3>
 <pre><code>apps/
-  earth-drop-calc/    Curvature / drop calculator
+  earth-horizon-sim/  Curvature / horizon simulator
   fed-wabis/          Flat Earth Dome Model
+  sphere-drop-calc/   Sphere drop/occlusion mini-calculator
 packages/
   jsgraph-vendor/     Shared wabis engine + design tokens</code></pre>
     </div>
