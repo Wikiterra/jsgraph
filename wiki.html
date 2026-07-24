@@ -11,6 +11,7 @@
   <script>if ('serviceWorker' in navigator) addEventListener('load', function () { navigator.serviceWorker.register('sw.js'); });</script>
   <title>Docs · WikiTerra jsgraph</title>
   <link rel="stylesheet" href="site.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css">
   <script>
     /* Set theme before paint (no flash): stored choice, else OS preference. */
     (function () {
@@ -178,6 +179,47 @@
       <p>The full app state is encoded in the URL (via DataX). Copy the address bar to share the exact configuration with someone else, or bookmark it to return later.</p>
     </div>
 
+    <!-- ===== EARTH CURVATURE MATH ===== -->
+    <div class="app-section">
+      <div class="app-header">
+        <h2>Earth Curvature — the Math</h2>
+      </div>
+
+      <p>Three equivalent ways to derive how much of a distant target drops below the horizon due to curvature, before refraction is applied. The Earth Curvature Calculator's <code>computeHorizonGeometry()</code> (<code>app/earth-drop-calc/app/core/physics.js</code>) implements the perimeter/trigonometric form directly, generalized with a refracted radius.</p>
+
+      <h3>Variables</h3>
+      <div id="ecm-vars"></div>
+
+      <h3>1. Pythagorean</h3>
+      <div id="ecm-pyth-1"></div>
+      <div id="ecm-pyth-2"></div>
+
+      <h3>2. Circle perimeter</h3>
+      <div id="ecm-perim-1"></div>
+      <div id="ecm-perim-2"></div>
+
+      <h3>3. Trigonometric</h3>
+      <div id="ecm-trig-1"></div>
+
+      <p>Horizon distance approximation: <span id="ecm-horizon-approx"></span></p>
+
+      <h3>Worked examples (geometric drop only, no refraction)</h3>
+      <table class="controls">
+        <tr><th>Locations (A–B)</th><th>Observer height (km)</th><th>Distance (km)</th><th>Hidden height (km)</th></tr>
+        <tr><td>Lanzarote (Uga) – Tenerife (Teide)</td><td>0.4</td><td>300</td><td>4.2</td></tr>
+        <tr><td>Barcelona – Mallorca</td><td>0.5</td><td>200</td><td>3.5</td></tr>
+        <tr><td>Valencia – Ibiza</td><td>0.3</td><td>150</td><td>2.8</td></tr>
+        <tr><td>Madrid – Toledo</td><td>0.2</td><td>100</td><td>1.5</td></tr>
+      </table>
+
+      <h3>References</h3>
+      <ul>
+        <li><a href="http://walter.bislins.ch/bloge/index.asp?page=Advanced+Earth+Curvature+Calculator" target="_blank">Advanced Earth Curvature Calculator — Walter Bislins</a> (source model behind this repo's Earth Curvature Calculator)</li>
+        <li><a href="https://dizzib.github.io/earth/curve-calc/?d0=31&amp;h0=10&amp;unit=metric" target="_blank">Earth curvature calculator — Dizzib</a></li>
+        <li><a href="https://www.udeuschle.de/panoramas/makepanoramas_en.htm" target="_blank">Panorama generator — udeuschle.de</a></li>
+      </ul>
+    </div>
+
     <!-- ===== DEV ===== -->
     <div class="dev-section">
       <h2>Developer setup</h2>
@@ -210,6 +252,30 @@ packages/
 
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      katex.render(String.raw`
+        \text{\textbf{Variables}}\\
+        d: \text{observed distance}\\
+        d_1: \text{distance to the geometric horizon}\\
+        h_0: \text{observer height}\\
+        h_1: \text{hidden height (curvature drop)}\\
+        R: \text{Earth radius}\\
+        \alpha: \text{subtended angle (radians)}
+      `, document.getElementById('ecm-vars'));
+
+      katex.render(String.raw`(R + h_0)^2 = d_1^2 + R^2 \Rightarrow d_1 = \sqrt{h_0^2 + 2Rh_0}`, document.getElementById('ecm-pyth-1'));
+      katex.render(String.raw`(R + h_1)^2 = (d - d_1)^2 + R^2 \Rightarrow h_1 = \sqrt{(d - d_1)^2 + R^2} - R`, document.getElementById('ecm-pyth-2'));
+
+      katex.render(String.raw`\alpha = \dfrac{d}{R}`, document.getElementById('ecm-perim-1'));
+      katex.render(String.raw`h_1 = R(1 - \cos\alpha)`, document.getElementById('ecm-perim-2'));
+
+      katex.render(String.raw`h_1 = R(1 - \cos\alpha) \Rightarrow h_1 = R\left(\dfrac{1}{\cos(d/R)} - 1\right)`, document.getElementById('ecm-trig-1'));
+
+      katex.render(String.raw`d_1 \approx 113\sqrt{h_0}\ \text{(km, } h_0 \text{ in km)}`, document.getElementById('ecm-horizon-approx'));
+    });
+  </script>
   <script type="module" src="./theme.js"></script>
 </body>
 </html>
