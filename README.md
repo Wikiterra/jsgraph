@@ -9,6 +9,10 @@ del motor gráfico entre ellas.
 > y **no** forman parte de este monorepo. Excepción: `sphere-drop-calc` sí vive aquí como
 > mini-app ligera (sin wabis) — un port de su propio repo independiente del mismo nombre.
 
+Repo hermano: `../earth-sim-godot` porta `fed-wabis` a Godot 4.7, leyendo
+`app/fed-wabis/app/demos-data.js` y `earth-map-data.js` de aquí en tiempo de
+build (ver sus `tools/export-*.mjs`).
+
 ## Estructura
 
 ```
